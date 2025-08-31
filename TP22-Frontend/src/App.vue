@@ -1,7 +1,6 @@
 <template>
   <div id="app">
-    <h1>Hello Vue.js</h1>
-    <p>This is Tp22 Frontend!</p>
+    <router-view />
   </div>
 </template>
 
@@ -12,9 +11,18 @@ export default {
 </script>
 
 <style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Arial', sans-serif;
+  line-height: 1.6;
+}
+
 #app {
-  text-align: center;
-  margin-top: 50px;
-  font-family: Arial, sans-serif;
+  min-height: 100vh;
 }
 </style>

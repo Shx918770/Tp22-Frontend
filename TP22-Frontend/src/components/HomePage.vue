@@ -629,7 +629,14 @@ export default {
 /* Explore Section */
 .explore-section {
   padding: 4rem 2rem;
-  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 50%, #f1f3f4 100%);
+  background: linear-gradient(135deg, 
+    #f8f9fa 0%, 
+    #e9ecef 25%, 
+    #f1f3f4 50%, 
+    #e3f2fd 75%, 
+    #f3e5f5 100%);
+  background-size: 400% 400%;
+  animation: gradientShift 15s ease infinite;
   position: relative;
   overflow: hidden;
 }
@@ -649,6 +656,7 @@ export default {
   opacity: 0.7;
 }
 
+/* 添加浮动的几何图形 */
 .explore-section::after {
   content: '';
   position: absolute;
@@ -657,20 +665,59 @@ export default {
   right: 0;
   bottom: 0;
   background: 
-    linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.1) 50%, transparent 70%),
-    linear-gradient(-45deg, transparent 30%, rgba(255, 255, 255, 0.05) 50%, transparent 70%);
-  animation: shimmer 8s ease-in-out infinite;
+    url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800"><defs><radialGradient id="float1" cx="0.5" cy="0.5" r="0.5"><stop offset="0%" stop-color="%234CAF50" stop-opacity="0.08"/><stop offset="100%" stop-color="%234CAF50" stop-opacity="0"/></radialGradient><radialGradient id="float2" cx="0.5" cy="0.5" r="0.5"><stop offset="0%" stop-color="%232196F3" stop-opacity="0.06"/><stop offset="100%" stop-color="%232196F3" stop-opacity="0"/></radialGradient><radialGradient id="float3" cx="0.5" cy="0.5" r="0.5"><stop offset="0%" stop-color="%239C27B0" stop-opacity="0.05"/><stop offset="100%" stop-color="%239C27B0" stop-opacity="0"/></radialGradient></defs><circle cx="200" cy="150" r="40" fill="url(%23float1)"/><circle cx="1000" cy="250" r="30" fill="url(%23float2)"/><circle cx="600" cy="400" r="50" fill="url(%23float3)"/><path d="M300 300 L350 280 L400 300 L350 320 Z" fill="url(%23float1)" opacity="0.6"/><path d="M900 180 L950 160 L1000 180 L950 200 Z" fill="url(%23float2)" opacity="0.6"/><circle cx="400" cy="500" r="25" fill="url(%23float3)"/></svg>');
+  background-size: cover;
+  animation: floatBackground 20s ease-in-out infinite;
+  opacity: 0.8;
 }
+
+
 
 @keyframes shimmer {
   0%, 100% { opacity: 0.3; }
   50% { opacity: 0.6; }
 }
 
+@keyframes floatBackground {
+  0%, 100% { 
+    transform: translateY(0px) rotate(0deg) scale(1);
+    opacity: 0.8;
+  }
+  25% { 
+    transform: translateY(-10px) rotate(1deg) scale(1.02);
+    opacity: 0.9;
+  }
+  50% { 
+    transform: translateY(-5px) rotate(-1deg) scale(0.98);
+    opacity: 0.7;
+  }
+  75% { 
+    transform: translateY(-15px) rotate(2deg) scale(1.01);
+    opacity: 0.85;
+  }
+}
+
+@keyframes gradientShift {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  25% {
+    background-position: 100% 50%;
+  }
+  50% {
+    background-position: 100% 100%;
+  }
+  75% {
+    background-position: 0% 100%;
+  }
+}
+
 .container {
   max-width: 1200px;
   margin: 0 auto;
   text-align: center;
+  position: relative;
+  z-index: 1;
 }
 
 .section-title {
@@ -855,7 +902,6 @@ export default {
   justify-content: center;
 }
 
-/* Social 按钮 - 蓝色主题 */
 .category-btn.social {
   border-left: 4px solid #2196F3;
 }
@@ -874,7 +920,6 @@ export default {
   transform: scale(1.1);
 }
 
-/* Environment 按钮 - 绿色主题 */
 .category-btn.environment {
   border-left: 4px solid #4CAF50;
 }
@@ -893,7 +938,6 @@ export default {
   transform: scale(1.1);
 }
 
-/* Economic 按钮 - 紫色主题 */
 .category-btn.economic {
   border-left: 4px solid #9C27B0;
 }
@@ -912,7 +956,6 @@ export default {
   transform: scale(1.1);
 }
 
-/* Infrastructure 按钮 - 橙色主题 */
 .category-btn.infrastructure {
   border-left: 4px solid #FF9800;
 }
@@ -1194,7 +1237,45 @@ export default {
 /* Compare Section */
 .compare-section {
   padding: 4rem 2rem;
-  background: #f8f9fa;
+  background: linear-gradient(135deg, 
+    #f3e5f5 0%, 
+    #e3f2fd 25%, 
+    #f1f3f4 50%, 
+    #e9ecef 75%, 
+    #f8f9fa 100%);
+  background-size: 400% 400%;
+  animation: gradientShift 15s ease infinite reverse;
+  position: relative;
+  overflow: hidden;
+}
+
+.compare-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(circle at 20% 30%, rgba(76, 175, 80, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 70%, rgba(33, 150, 243, 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 40% 80%, rgba(156, 39, 176, 0.06) 0%, transparent 50%),
+    url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800"><defs><pattern id="grid" width="60" height="60" patternUnits="userSpaceOnUse"><path d="M 60 0 L 0 0 0 60" fill="none" stroke="%23e9ecef" stroke-width="0.5"/></pattern><pattern id="dots" width="30" height="30" patternUnits="userSpaceOnUse"><circle cx="15" cy="15" r="1" fill="%23d1d5db" opacity="0.3"/></pattern></defs><rect width="1200" height="800" fill="url(%23grid)"/><rect width="1200" height="800" fill="url(%23dots)"/></svg>');
+  opacity: 0.7;
+}
+
+.compare-section::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800"><defs><radialGradient id="float4" cx="0.5" cy="0.5" r="0.5"><stop offset="0%" stop-color="%234CAF50" stop-opacity="0.08"/><stop offset="100%" stop-color="%234CAF50" stop-opacity="0"/></radialGradient><radialGradient id="float5" cx="0.5" cy="0.5" r="0.5"><stop offset="0%" stop-color="%232196F3" stop-opacity="0.06"/><stop offset="100%" stop-color="%232196F3" stop-opacity="0"/></radialGradient><radialGradient id="float6" cx="0.5" cy="0.5" r="0.5"><stop offset="0%" stop-color="%239C27B0" stop-opacity="0.05"/><stop offset="100%" stop-color="%239C27B0" stop-opacity="0"/></radialGradient></defs><circle cx="150" cy="200" r="35" fill="url(%23float4)"/><circle cx="950" cy="150" r="45" fill="url(%23float5)"/><circle cx="700" cy="350" r="30" fill="url(%23float6)"/><path d="M250 400 L300 380 L350 400 L300 420 Z" fill="url(%23float4)" opacity="0.6"/><path d="M800 250 L850 230 L900 250 L850 270 Z" fill="url(%23float5)" opacity="0.6"/><circle cx="500" cy="450" r="20" fill="url(%23float6)"/></svg>');
+  background-size: cover;
+  animation: floatBackground 20s ease-in-out infinite reverse;
+  opacity: 0.8;
 }
 
 .compare-form {

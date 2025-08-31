@@ -3,10 +3,17 @@
     <!-- Header/Hero Section -->
     <header class="hero-section">
       <div class="hero-content">
-        <div class="logo">
-          <div class="logo-icon">🌿</div>
-          <span class="logo-text">MelSustain</span>
-        </div>
+                 <div class="logo">
+           <div class="logo-icon">
+             <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+               <rect width="40" height="40" rx="8" fill="#4CAF50"/>
+               <path d="M20 8C13.37 8 8 13.37 8 20C8 26.63 13.37 32 20 32C26.63 32 32 26.63 32 20C32 13.37 26.63 8 20 8ZM20 30C14.48 30 10 25.52 10 20C10 14.48 14.48 10 20 10C25.52 10 30 14.48 30 20C30 25.52 25.52 30 20 30Z" fill="white"/>
+               <path d="M20 12C15.58 12 12 15.58 12 20C12 24.42 15.58 28 20 28C24.42 28 28 24.42 28 20C28 15.58 24.42 12 20 12ZM20 26C16.69 26 14 23.31 14 20C14 16.69 16.69 14 20 14C23.31 14 26 16.69 26 20C26 23.31 23.31 26 20 26Z" fill="white"/>
+               <path d="M20 16C17.79 16 16 17.79 16 20C16 22.21 17.79 24 20 24C22.21 24 24 22.21 24 20C24 17.79 22.21 16 20 16Z" fill="white"/>
+             </svg>
+           </div>
+           <span class="logo-text">MelSustain</span>
+         </div>
         <h1 class="hero-title">
           Discover Melbourne's Most 
           <span class="highlight">Sustainable Suburbs</span>
@@ -14,21 +21,26 @@
         <p class="hero-subtitle">
           Make informed housing decisions with comprehensive sustainability profiles and side-by-side suburb comparisons for Melbourne families.
         </p>
-        <div class="hero-buttons">
-          <button class="btn btn-primary">
-            <span class="btn-icon">🔍</span>
-            Explore Suburbs
-          </button>
-          <button class="btn btn-secondary">
-            <span class="btn-icon">⚖️</span>
-            Compare Now
-          </button>
-        </div>
+                 <div class="hero-buttons">
+                       <button class="btn btn-primary" @click="scrollToSection('explore-section')">
+              <svg class="btn-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
+                <path d="M21 21L16.514 16.506L21 21ZM19 10.5C19 15.194 15.194 19 10.5 19C5.806 19 2 15.194 2 10.5C2 5.806 5.806 2 10.5 2C15.194 2 19 5.806 19 10.5Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              Explore Suburbs
+            </button>
+            <button class="btn btn-secondary" @click="scrollToSection('compare-section')">
+              <svg class="btn-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
+                <path d="M8 3V5M16 3V5M3 8H5M19 8H21M3 12H21M3 16H5M19 16H21M8 19V21M16 19V21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M12 8V16M8 12H16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              Compare Now
+            </button>
+         </div>
       </div>
     </header>
 
     <!-- Explore Sustainable Living Section -->
-    <section class="explore-section">
+    <section id="explore-section" class="explore-section">
       <div class="container">
         <h2 class="section-title">Explore Sustainable Living</h2>
         <p class="section-description">
@@ -37,141 +49,126 @@
         
         <div class="search-container">
           <div class="search-bar">
-            <span class="search-icon">🔍</span>
+            <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
+              <path d="M21 21L16.514 16.506L21 21ZM19 10.5C19 15.194 15.194 19 10.5 19C5.806 19 2 15.194 2 10.5C2 5.806 5.806 2 10.5 2C15.194 2 19 5.806 19 10.5Z" stroke="#666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
             <input 
               type="text" 
               placeholder="Enter a suburb name or sustainability feature..."
               class="search-input"
             >
             <button class="search-button">
-              <span class="arrow-icon">→</span>
+              <svg class="arrow-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
+                <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
             </button>
           </div>
         </div>
 
-        <div class="category-filters">
-          <button class="category-btn social">
-            <span class="category-icon">👥</span>
-            Social
-          </button>
-          <button class="category-btn environment">
-            <span class="category-icon">🌱</span>
-            Environment
-          </button>
-          <button class="category-btn economic">
-            <span class="category-icon">📈</span>
-            Economic
-          </button>
-          <button class="category-btn infrastructure">
-            <span class="category-icon">🏗️</span>
-            Infrastructure
-          </button>
-        </div>
-      </div>
-    </section>
+                  <div class="category-filters">
+            <button class="category-btn social">
+              <svg class="category-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
+                <path d="M17 21V19C17 17.9391 16.5786 16.9217 15.8284 16.1716C15.0783 15.4214 14.0609 15 13 15H5C3.93913 15 2.92172 15.4214 2.17157 16.1716C1.42143 16.9217 1 17.9391 1 19V21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="2"/>
+                <path d="M23 21V19C22.9993 18.1137 22.7044 17.2528 22.1614 16.5523C21.6184 15.8519 20.8581 15.3516 20 15.13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M16 3.13C16.8604 3.35031 17.623 3.85071 18.1676 4.55232C18.7122 5.25392 19.0078 6.11683 19.0078 7.005C19.0078 7.89317 18.7122 8.75608 18.1676 9.45768C17.623 10.1593 16.8604 10.6597 16 10.88" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              Social
+            </button>
+            <button class="category-btn environment">
+              <svg class="category-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
+                <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              Environment
+            </button>
+            <button class="category-btn economic">
+              <svg class="category-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
+                <path d="M3 3V21H21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M9 9L12 6L16 10L21 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M21 5V9H17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              Economic
+            </button>
+            <button class="category-btn infrastructure">
+              <svg class="category-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
+                <path d="M3 9L12 2L21 9V20C21 20.5304 20.7893 21.0391 20.4142 21.4142C20.0391 21.7893 19.5304 22 19 22H5C4.46957 22 3.96086 21.7893 3.58579 21.4142C3.21071 21.0391 3 20.5304 3 20V9Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M9 22V12H15V22" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              Infrastructure
+            </button>
+          </div>
 
-    <!-- Suburb Cards Section -->
-    <section class="suburbs-section">
-      <div class="container">
         <div class="suburb-cards">
-          <div class="suburb-card">
-            <div class="card-image">
-              <div class="rating">⭐ 4.8</div>
-            </div>
-            <div class="card-content">
-              <h3 class="suburb-name">Carlton</h3>
-              <div class="metrics">
-                <div class="metric social">
-                  <span class="metric-icon">👥</span>
-                  <span class="metric-text">Social 85%</span>
-                </div>
-                <div class="metric environment">
-                  <span class="metric-icon">🌱</span>
-                  <span class="metric-text">Environment 92%</span>
-                </div>
-                <div class="metric economic">
-                  <span class="metric-icon">📈</span>
-                  <span class="metric-text">Economic 88%</span>
-                </div>
-                <div class="metric infrastructure">
-                  <span class="metric-icon">🏗️</span>
-                  <span class="metric-text">Infrastructure 90%</span>
+                                 <div class="suburb-card">
+              <div class="card-image carlton-image">
+                <div class="rating">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
+                  </svg>
+                  4.8
                 </div>
               </div>
-              <button class="view-details-btn">
-                <span class="btn-icon">→</span>
-                View Details
-              </button>
-            </div>
-          </div>
+                           <div class="card-content">
+                <h3 class="suburb-name">Carlton</h3>
+                <p class="suburb-description">A vibrant inner-city suburb known for its cultural diversity and excellent sustainability practices.</p>
+                <button class="view-details-btn" @click="viewSuburbDetails('carlton')">
+                  <span>View Details</span>
+                  <svg class="btn-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
+                    <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </button>
+              </div>
+           </div>
 
-          <div class="suburb-card">
-            <div class="card-image">
-              <div class="rating">⭐ 4.7</div>
-            </div>
-            <div class="card-content">
-              <h3 class="suburb-name">Fitzroy</h3>
-              <div class="metrics">
-                <div class="metric social">
-                  <span class="metric-icon">👥</span>
-                  <span class="metric-text">Social 82%</span>
-                </div>
-                <div class="metric environment">
-                  <span class="metric-icon">🌱</span>
-                  <span class="metric-text">Environment 89%</span>
-                </div>
-                <div class="metric economic">
-                  <span class="metric-icon">📈</span>
-                  <span class="metric-text">Economic 85%</span>
-                </div>
-                <div class="metric infrastructure">
-                  <span class="metric-icon">🏗️</span>
-                  <span class="metric-text">Infrastructure 87%</span>
+                      <div class="suburb-card">
+              <div class="card-image fitzroy-image">
+                <div class="rating">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
+                  </svg>
+                  4.7
                 </div>
               </div>
-              <button class="view-details-btn">
-                <span class="btn-icon">→</span>
-                View Details
-              </button>
+              <div class="card-content">
+                <h3 class="suburb-name">Fitzroy</h3>
+                <p class="suburb-description">A trendy and artistic suburb with strong community engagement and green initiatives.</p>
+                <button class="view-details-btn" @click="viewSuburbDetails('fitzroy')">
+                  <span>View Details</span>
+                  <svg class="btn-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
+                    <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </button>
+              </div>
             </div>
-          </div>
 
-          <div class="suburb-card">
-            <div class="card-image">
-              <div class="rating">⭐ 4.6</div>
-            </div>
-            <div class="card-content">
-              <h3 class="suburb-name">Richmond</h3>
-              <div class="metrics">
-                <div class="metric social">
-                  <span class="metric-icon">👥</span>
-                  <span class="metric-text">Social 80%</span>
-                </div>
-                <div class="metric environment">
-                  <span class="metric-icon">🌱</span>
-                  <span class="metric-text">Environment 86%</span>
-                </div>
-                <div class="metric economic">
-                  <span class="metric-icon">📈</span>
-                  <span class="metric-text">Economic 83%</span>
-                </div>
-                <div class="metric infrastructure">
-                  <span class="metric-icon">🏗️</span>
-                  <span class="metric-text">Infrastructure 85%</span>
+            <div class="suburb-card">
+              <div class="card-image richmond-image">
+                <div class="rating">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
+                  </svg>
+                  4.6
                 </div>
               </div>
-              <button class="view-details-btn">
-                <span class="btn-icon">→</span>
-                View Details
-              </button>
+              <div class="card-content">
+                <h3 class="suburb-name">Richmond</h3>
+                <p class="suburb-description">A dynamic suburb with excellent transport links and growing sustainability infrastructure.</p>
+                <button class="view-details-btn" @click="viewSuburbDetails('richmond')">
+                  <span>View Details</span>
+                  <svg class="btn-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
+                    <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </button>
+              </div>
             </div>
-          </div>
         </div>
       </div>
     </section>
 
     <!-- Compare Suburbs Section -->
-    <section class="compare-section">
+    <section id="compare-section" class="compare-section">
       <div class="container">
         <h2 class="section-title">Compare Suburbs Side-by-Side</h2>
         <p class="section-description">
@@ -261,11 +258,18 @@
       <div class="container">
         <div class="footer-content">
           <!-- Left Column - Branding -->
-          <div class="footer-brand">
-            <div class="footer-logo">
-              <div class="logo-icon">🌿</div>
-              <span class="logo-text">MelSustain</span>
-            </div>
+                     <div class="footer-brand">
+             <div class="footer-logo">
+               <div class="logo-icon">
+                 <svg width="32" height="32" viewBox="0 0 40 40" fill="none">
+                   <rect width="40" height="40" rx="8" fill="#4CAF50"/>
+                   <path d="M20 8C13.37 8 8 13.37 8 20C8 26.63 13.37 32 20 32C26.63 32 32 26.63 32 20C32 13.37 26.63 8 20 8ZM20 30C14.48 30 10 25.52 10 20C10 14.48 14.48 10 20 10C25.52 10 30 14.48 30 20C30 25.52 25.52 30 20 30Z" fill="white"/>
+                   <path d="M20 12C15.58 12 12 15.58 12 20C12 24.42 15.58 28 20 28C24.42 28 28 24.42 28 20C28 15.58 24.42 12 20 12ZM20 26C16.69 26 14 23.31 14 20C14 16.69 16.69 14 20 14C23.31 14 26 16.69 26 20C26 23.31 23.31 26 20 26Z" fill="white"/>
+                   <path d="M20 16C17.79 16 16 17.79 16 20C16 22.21 17.79 24 20 24C22.21 24 24 22.21 24 20C24 17.79 22.21 16 20 16Z" fill="white"/>
+                 </svg>
+               </div>
+               <span class="logo-text">MelSustain</span>
+             </div>
             <p class="footer-mission">
               Empowering Melbourne families with sustainability insights for better housing decisions.
             </p>
@@ -325,67 +329,201 @@ export default {
     return {
       // 数据将在这里逐步添加
     }
+  },
+  methods: {
+    scrollToSection(sectionId) {
+      const element = document.getElementById(sectionId);
+      if (element) {
+        element.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start'
+        });
+      }
+    },
+    viewSuburbDetails(suburbName) {
+      // 这里可以添加导航到详情页面的逻辑
+      console.log(`Viewing details for ${suburbName}`);
+      // 可以添加路由导航或其他操作
+      alert(`正在查看 ${suburbName} 的详细信息...`);
+    }
   }
 }
 </script>
 
 <style scoped>
 .homepage {
-  font-family: 'Arial', sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   line-height: 1.6;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
 }
 
 /* Hero Section */
 .hero-section {
-  background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), 
-              url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600"><rect width="1200" height="600" fill="%23333"/><circle cx="200" cy="150" r="50" fill="%23fff" opacity="0.1"/><circle cx="1000" cy="200" r="30" fill="%23fff" opacity="0.1"/><rect x="300" y="300" width="100" height="200" fill="%23fff" opacity="0.1"/><rect x="800" y="250" width="80" height="150" fill="%23fff" opacity="0.1"/></svg>');
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.5) 50%, rgba(0, 0, 0, 0.6) 100%), 
+              url('https://images.unsplash.com/photo-1519501025264-65ba15a82390?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80');
   background-size: cover;
   background-position: center;
-  min-height: 100vh;
+  background-attachment: fixed;
+  min-height: 90vh;
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
   text-align: center;
   padding: 2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, 
+    rgba(255, 255, 255, 0.05) 0%, 
+    rgba(255, 255, 255, 0.02) 50%, 
+    rgba(255, 255, 255, 0.05) 100%);
+  animation: float 25s ease-in-out infinite;
+}
+
+.hero-section::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at 30% 20%, rgba(76, 175, 80, 0.1) 0%, transparent 50%),
+              radial-gradient(circle at 70% 80%, rgba(33, 150, 243, 0.1) 0%, transparent 50%),
+              linear-gradient(135deg, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.1) 50%, rgba(0, 0, 0, 0.2) 100%);
+  pointer-events: none;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-20px) rotate(1deg); }
 }
 
 .hero-content {
-  max-width: 800px;
+  max-width: 1000px;
+  position: relative;
+  z-index: 3;
+  animation: fadeInUp 1s ease-out;
+  padding: 0 1rem;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .logo {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 2rem;
-  font-size: 1.5rem;
-  font-weight: bold;
+  margin-bottom: 2.5rem;
+  font-size: 2rem;
+  font-weight: 700;
+  animation: slideInDown 1s ease-out 0.2s both;
 }
 
 .logo-icon {
-  font-size: 2rem;
-  margin-right: 0.5rem;
+  font-size: 2.5rem;
+  margin-right: 0.8rem;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes slideInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
 }
 
 .hero-title {
   font-size: 3.5rem;
-  font-weight: bold;
+  font-weight: 800;
   margin-bottom: 1.5rem;
-  line-height: 1.2;
+  line-height: 1.1;
+  animation: slideInUp 1s ease-out 0.4s both;
+  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), 0 2px 10px rgba(0, 0, 0, 0.3);
 }
 
 .highlight {
-  color: #4CAF50;
+  background: linear-gradient(135deg, #4CAF50, #45a049);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  position: relative;
+}
+
+.highlight::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(135deg, #4CAF50, #45a049);
+  border-radius: 2px;
+  transform: scaleX(0);
+  animation: expandWidth 1s ease-out 1s forwards;
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes expandWidth {
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes gradientShift {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
 }
 
 .hero-subtitle {
   font-size: 1.2rem;
-  margin-bottom: 3rem;
-  opacity: 0.9;
-  max-width: 600px;
+  margin-bottom: 2.5rem;
+  opacity: 0.95;
+  max-width: 700px;
   margin-left: auto;
   margin-right: auto;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
 }
 
 .hero-buttons {
@@ -396,7 +534,7 @@ export default {
 }
 
 .btn {
-  padding: 1rem 2rem;
+  padding: 1.2rem 2.5rem;
   border: none;
   border-radius: 50px;
   font-size: 1.1rem;
@@ -404,38 +542,71 @@ export default {
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  transition: all 0.3s ease;
+  gap: 0.8rem;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  animation: slideInUp 1s ease-out 0.6s both;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.btn:hover::before {
+  left: 100%;
 }
 
 .btn-primary {
-  background: #4CAF50;
+  background: linear-gradient(135deg, #4CAF50, #45a049, #2E7D32);
   color: white;
+  background-size: 200% 200%;
+  animation: slideInUp 1s ease-out 0.6s both, gradientShift 3s ease infinite;
 }
 
 .btn-primary:hover {
-  background: #45a049;
-  transform: translateY(-2px);
+  background: linear-gradient(135deg, #45a049, #4CAF50, #2E7D32);
+  transform: translateY(-5px) scale(1.05);
+  box-shadow: 0 15px 35px rgba(76, 175, 80, 0.4);
+  background-size: 200% 200%;
+  animation: gradientShift 2s ease infinite;
 }
 
 .btn-secondary {
-  background: #666;
+  background: linear-gradient(135deg, #6c757d, #5a6268);
   color: white;
 }
 
 .btn-secondary:hover {
-  background: #555;
-  transform: translateY(-2px);
+  background: linear-gradient(135deg, #5a6268, #6c757d);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(108, 117, 125, 0.4);
 }
 
 .btn-icon {
   font-size: 1.2rem;
+  transition: all 0.3s ease;
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
   .hero-title {
-    font-size: 2.5rem;
+    font-size: 2.8rem;
+  }
+  
+  .hero-subtitle {
+    font-size: 1.1rem;
+    max-width: 500px;
   }
   
   .hero-buttons {
@@ -448,12 +619,52 @@ export default {
     max-width: 300px;
     justify-content: center;
   }
+  
+  .hero-section {
+    background-attachment: scroll;
+    min-height: 85vh;
+  }
 }
 
 /* Explore Section */
 .explore-section {
   padding: 4rem 2rem;
-  background: #f8f9fa;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 50%, #f1f3f4 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.explore-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(circle at 20% 30%, rgba(76, 175, 80, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 70%, rgba(33, 150, 243, 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 40% 80%, rgba(156, 39, 176, 0.06) 0%, transparent 50%),
+    url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800"><defs><pattern id="grid" width="60" height="60" patternUnits="userSpaceOnUse"><path d="M 60 0 L 0 0 0 60" fill="none" stroke="%23e9ecef" stroke-width="0.5"/></pattern><pattern id="dots" width="30" height="30" patternUnits="userSpaceOnUse"><circle cx="15" cy="15" r="1" fill="%23d1d5db" opacity="0.3"/></pattern></defs><rect width="1200" height="800" fill="url(%23grid)"/><rect width="1200" height="800" fill="url(%23dots)"/></svg>');
+  opacity: 0.7;
+}
+
+.explore-section::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.1) 50%, transparent 70%),
+    linear-gradient(-45deg, transparent 30%, rgba(255, 255, 255, 0.05) 50%, transparent 70%);
+  animation: shimmer 8s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.6; }
 }
 
 .container {
@@ -472,7 +683,7 @@ export default {
 .section-description {
   font-size: 1.1rem;
   color: #666;
-  margin-bottom: 3rem;
+  margin-bottom: 2.5rem;
   max-width: 600px;
   margin-left: auto;
   margin-right: auto;
@@ -480,17 +691,65 @@ export default {
 
 .search-container {
   margin-bottom: 3rem;
+  position: relative;
+}
+
+.search-container::before {
+  content: '';
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 4px;
+  background: linear-gradient(135deg, #4CAF50, #45a049);
+  border-radius: 2px;
+  opacity: 0.7;
 }
 
 .search-bar {
   display: flex;
   align-items: center;
-  background: white;
-  border-radius: 50px;
-  padding: 0.5rem;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-  max-width: 600px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.98));
+  backdrop-filter: blur(25px);
+  border-radius: 60px;
+  padding: 1.2rem 1.5rem;
+  box-shadow: 
+    0 20px 60px rgba(0, 0, 0, 0.08),
+    0 8px 25px rgba(0, 0, 0, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  max-width: 700px;
   margin: 0 auto;
+  position: relative;
+  z-index: 1;
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  overflow: hidden;
+}
+
+.search-bar::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(76, 175, 80, 0.1), transparent);
+  transition: left 0.6s ease;
+}
+
+.search-bar:focus-within {
+  box-shadow: 
+    0 25px 80px rgba(76, 175, 80, 0.2),
+    0 12px 35px rgba(76, 175, 80, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  border-color: rgba(76, 175, 80, 0.4);
+  transform: translateY(-5px) scale(1.02);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(255, 255, 255, 1));
+}
+
+.search-bar:focus-within::before {
+  left: 100%;
 }
 
 .search-icon {
@@ -509,22 +768,52 @@ export default {
 }
 
 .search-button {
-  background: #2196F3;
+  background: linear-gradient(135deg, #4CAF50, #45a049, #2E7D32);
   color: white;
   border: none;
   border-radius: 50%;
-  width: 50px;
-  height: 50px;
+  width: 55px;
+  height: 55px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 
+    0 8px 25px rgba(76, 175, 80, 0.3),
+    0 4px 15px rgba(76, 175, 80, 0.2);
+  position: relative;
+  overflow: hidden;
+  margin-left: 0.5rem;
+}
+
+.search-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), transparent);
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
 .search-button:hover {
-  background: #1976D2;
-  transform: scale(1.05);
+  background: linear-gradient(135deg, #45a049, #4CAF50, #2E7D32);
+  transform: scale(1.15) rotate(8deg);
+  box-shadow: 
+    0 12px 35px rgba(76, 175, 80, 0.4),
+    0 6px 20px rgba(76, 175, 80, 0.3);
+}
+
+.search-button:hover::before {
+  opacity: 1;
+}
+
+.search-button:active {
+  transform: scale(0.95);
 }
 
 .arrow-icon {
@@ -534,189 +823,370 @@ export default {
 
 .category-filters {
   display: flex;
-  gap: 1rem;
+  gap: 1.2rem;
   justify-content: center;
   flex-wrap: wrap;
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
 }
 
 .category-btn {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.8rem 1.5rem;
+  gap: 0.8rem;
+  padding: 1.3rem 2.8rem;
   border: none;
-  border-radius: 25px;
-  background: white;
+  border-radius: 35px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.98));
+  backdrop-filter: blur(20px);
   color: #333;
   font-weight: 600;
+  font-size: 1rem;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 
+    0 10px 30px rgba(0, 0, 0, 0.08),
+    0 4px 15px rgba(0, 0, 0, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  position: relative;
+  overflow: hidden;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  min-width: 140px;
+  justify-content: center;
 }
 
-.category-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
-}
-
+/* Social 按钮 - 蓝色主题 */
 .category-btn.social {
   border-left: 4px solid #2196F3;
 }
 
+.category-btn.social:hover {
+  background: linear-gradient(135deg, rgba(33, 150, 243, 0.1), rgba(255, 255, 255, 0.95));
+  transform: translateY(-5px);
+  box-shadow: 
+    0 15px 40px rgba(33, 150, 243, 0.2),
+    0 8px 25px rgba(33, 150, 243, 0.15);
+  border-color: rgba(33, 150, 243, 0.3);
+}
+
+.category-btn.social:hover .category-icon {
+  color: #1976D2;
+  transform: scale(1.1);
+}
+
+/* Environment 按钮 - 绿色主题 */
 .category-btn.environment {
   border-left: 4px solid #4CAF50;
 }
 
+.category-btn.environment:hover {
+  background: linear-gradient(135deg, rgba(76, 175, 80, 0.1), rgba(255, 255, 255, 0.95));
+  transform: translateY(-5px);
+  box-shadow: 
+    0 15px 40px rgba(76, 175, 80, 0.2),
+    0 8px 25px rgba(76, 175, 80, 0.15);
+  border-color: rgba(76, 175, 80, 0.3);
+}
+
+.category-btn.environment:hover .category-icon {
+  color: #45a049;
+  transform: scale(1.1);
+}
+
+/* Economic 按钮 - 紫色主题 */
 .category-btn.economic {
   border-left: 4px solid #9C27B0;
 }
 
+.category-btn.economic:hover {
+  background: linear-gradient(135deg, rgba(156, 39, 176, 0.1), rgba(255, 255, 255, 0.95));
+  transform: translateY(-5px);
+  box-shadow: 
+    0 15px 40px rgba(156, 39, 176, 0.2),
+    0 8px 25px rgba(156, 39, 176, 0.15);
+  border-color: rgba(156, 39, 176, 0.3);
+}
+
+.category-btn.economic:hover .category-icon {
+  color: #7B1FA2;
+  transform: scale(1.1);
+}
+
+/* Infrastructure 按钮 - 橙色主题 */
 .category-btn.infrastructure {
   border-left: 4px solid #FF9800;
 }
 
+.category-btn.infrastructure:hover {
+  background: linear-gradient(135deg, rgba(255, 152, 0, 0.1), rgba(255, 255, 255, 0.95));
+  transform: translateY(-5px);
+  box-shadow: 
+    0 15px 40px rgba(255, 152, 0, 0.2),
+    0 8px 25px rgba(255, 152, 0, 0.15);
+  border-color: rgba(255, 152, 0, 0.3);
+}
+
+.category-btn.infrastructure:hover .category-icon {
+  color: #F57C00;
+  transform: scale(1.1);
+}
+
 .category-icon {
   font-size: 1.2rem;
-}
-
-/* Suburbs Section */
-.suburbs-section {
-  padding: 4rem 2rem;
-  background: white;
-}
-
-.suburb-cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-  gap: 2rem;
-  margin-top: 2rem;
-}
-
-.suburb-card {
-  background: white;
-  border-radius: 15px;
-  overflow: hidden;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
 }
 
-.suburb-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+
+
+.suburb-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  margin-top: 2.5rem;
+  padding: 0 1rem;
+  max-width: 1000px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
-.card-image {
-  height: 200px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+.suburb-card {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.98));
+  backdrop-filter: blur(25px);
+  border-radius: 25px;
+  overflow: hidden;
+  box-shadow: 
+    0 20px 60px rgba(0, 0, 0, 0.08),
+    0 8px 25px rgba(0, 0, 0, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  transform: translateY(0);
 }
 
-.card-image::before {
+.suburb-card::before {
   content: '';
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 200"><rect width="400" height="200" fill="%23667eea"/><circle cx="100" cy="80" r="20" fill="%23fff" opacity="0.1"/><circle cx="300" cy="120" r="15" fill="%23fff" opacity="0.1"/><rect x="150" y="100" width="60" height="80" fill="%23fff" opacity="0.1"/><rect x="250" y="60" width="40" height="60" fill="%23fff" opacity="0.1"/></svg>');
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  border-radius: 25px;
+}
+
+.suburb-card:hover {
+  transform: translateY(-15px) scale(1.05);
+  box-shadow: 
+    0 30px 80px rgba(0, 0, 0, 0.15),
+    0 15px 40px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(255, 255, 255, 1));
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.suburb-card:hover::before {
+  opacity: 1;
+}
+
+.suburb-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(76, 175, 80, 0.05), rgba(76, 175, 80, 0));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  border-radius: 25px;
+}
+
+.suburb-card:hover::after {
+  opacity: 1;
+}
+
+.card-image {
+  height: 160px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
   background-size: cover;
+  background-position: center;
+}
+
+.carlton-image {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 50%, rgba(240, 147, 251, 0.1) 100%), 
+              url('https://images.unsplash.com/photo-1519501025264-65ba15a82390?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');
+  background-size: cover;
+  background-position: center;
+}
+
+.fitzroy-image {
+  background: linear-gradient(135deg, rgba(76, 175, 80, 0.1) 0%, rgba(69, 160, 73, 0.1) 50%, rgba(46, 125, 50, 0.1) 100%), 
+              url('https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');
+  background-size: cover;
+  background-position: center;
+}
+
+.richmond-image {
+  background: linear-gradient(135deg, rgba(255, 152, 0, 0.1) 0%, rgba(245, 124, 0, 0.1) 50%, rgba(230, 81, 0, 0.1) 100%), 
+              url('https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');
+  background-size: cover;
+  background-position: center;
+}
+
+
+.card-image::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), transparent 50%, rgba(255, 255, 255, 0.05));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.suburb-card:hover .card-image::after {
+  opacity: 1;
 }
 
 .rating {
   position: absolute;
-  top: 1rem;
-  right: 1rem;
-  background: rgba(0, 0, 0, 0.7);
+  top: 1.2rem;
+  right: 1.2rem;
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.9));
+  backdrop-filter: blur(10px);
   color: white;
-  padding: 0.5rem 1rem;
-  border-radius: 20px;
-  font-weight: 600;
-  font-size: 0.9rem;
+  padding: 0.6rem 1.2rem;
+  border-radius: 25px;
+  font-weight: 700;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  box-shadow: 
+    0 8px 25px rgba(0, 0, 0, 0.3),
+    0 4px 15px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+.rating svg {
+  color: #FFD700;
+  filter: drop-shadow(0 2px 4px rgba(255, 215, 0, 0.3));
 }
 
 .card-content {
   padding: 1.5rem;
+  position: relative;
 }
 
 .suburb-name {
   font-size: 1.5rem;
-  font-weight: bold;
-  color: #333;
-  margin-bottom: 1rem;
+  font-weight: 800;
+  color: #2c3e50;
+  margin-bottom: 1.2rem;
+  text-align: center;
+  position: relative;
 }
 
-.metrics {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.8rem;
+.suburb-name::after {
+  content: '';
+  position: absolute;
+  bottom: -0.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(135deg, #4CAF50, #45a049);
+  border-radius: 2px;
+  opacity: 0.7;
+}
+
+.suburb-description {
+  color: #666;
+  font-size: 0.95rem;
+  line-height: 1.5;
   margin-bottom: 1.5rem;
+  text-align: center;
 }
 
-.metric {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem;
-  border-radius: 8px;
-  font-size: 0.9rem;
-  font-weight: 600;
-}
 
-.metric.social {
-  background: rgba(33, 150, 243, 0.1);
-  color: #2196F3;
-}
-
-.metric.environment {
-  background: rgba(76, 175, 80, 0.1);
-  color: #4CAF50;
-}
-
-.metric.economic {
-  background: rgba(156, 39, 176, 0.1);
-  color: #9C27B0;
-}
-
-.metric.infrastructure {
-  background: rgba(255, 152, 0, 0.1);
-  color: #FF9800;
-}
-
-.metric-icon {
-  font-size: 1rem;
-}
 
 .view-details-btn {
   width: 100%;
-  background: #4CAF50;
+  background: linear-gradient(135deg, #4CAF50, #45a049, #2E7D32);
   color: white;
   border: none;
-  padding: 1rem;
-  border-radius: 8px;
-  font-weight: 600;
+  padding: 1.2rem;
+  border-radius: 16px;
+  font-weight: 700;
+  font-size: 1rem;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  transition: all 0.3s ease;
+  gap: 0.8rem;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 2px solid rgba(76, 175, 80, 0.3);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 25px rgba(76, 175, 80, 0.2);
+}
+
+.view-details-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.6s ease;
+  z-index: 1;
 }
 
 .view-details-btn:hover {
-  background: #45a049;
-  transform: translateY(-2px);
+  background: linear-gradient(135deg, #45a049, #4CAF50, #2E7D32);
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 
+    0 20px 50px rgba(76, 175, 80, 0.35),
+    0 12px 30px rgba(76, 175, 80, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.view-details-btn:hover::before {
+  left: 100%;
+}
+
+.view-details-btn:active {
+  transform: translateY(-2px) scale(1.01);
+  box-shadow: 0 12px 30px rgba(76, 175, 80, 0.3);
+}
+
+.view-details-btn .btn-icon {
+  transition: all 0.3s ease;
+}
+
+.view-details-btn:hover .btn-icon {
+  transform: translateX(4px) scale(1.1);
 }
 
 /* Responsive Design for Cards */
 @media (max-width: 768px) {
   .suburb-cards {
-    grid-template-columns: 1fr;
-  }
-  
-  .metrics {
     grid-template-columns: 1fr;
   }
 }
@@ -760,20 +1230,24 @@ export default {
 
 .suburb-select {
   width: 100%;
-  padding: 1rem;
+  padding: 1.2rem;
   border: 2px solid #e0e0e0;
-  border-radius: 10px;
-  background: white;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
   font-size: 1rem;
   appearance: none;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
 }
 
 .suburb-select:focus {
   outline: none;
   border-color: #4CAF50;
-  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+  box-shadow: 0 8px 25px rgba(76, 175, 80, 0.15);
+  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.98);
 }
 
 .select-arrow {
@@ -787,22 +1261,24 @@ export default {
 }
 
 .vs-divider {
-  background: #4CAF50;
+  background: linear-gradient(135deg, #4CAF50, #45a049);
   color: white;
-  padding: 0.5rem 1rem;
-  border-radius: 25px;
+  padding: 0.8rem 1.5rem;
+  border-radius: 30px;
   font-weight: bold;
-  font-size: 0.9rem;
+  font-size: 1rem;
   white-space: nowrap;
+  box-shadow: 0 6px 20px rgba(76, 175, 80, 0.3);
+  animation: pulse 2s ease-in-out infinite;
 }
 
 .compare-btn {
   width: 100%;
-  background: #666;
+  background: linear-gradient(135deg, #667eea, #764ba2);
   color: white;
   border: none;
-  padding: 1rem 2rem;
-  border-radius: 10px;
+  padding: 1.2rem 2rem;
+  border-radius: 15px;
   font-size: 1.1rem;
   font-weight: 600;
   cursor: pointer;
@@ -810,12 +1286,16 @@ export default {
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  transition: all 0.3s ease;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+  position: relative;
+  overflow: hidden;
 }
 
 .compare-btn:hover {
-  background: #555;
-  transform: translateY(-2px);
+  background: linear-gradient(135deg, #764ba2, #667eea);
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 12px 35px rgba(102, 126, 234, 0.4);
 }
 
 /* Responsive Design for Compare */
@@ -832,11 +1312,23 @@ export default {
 
 /* Why Choose MelSustain Section */
 .why-section {
-  padding: 4rem 2rem;
-  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+  padding: 6rem 2rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
   color: white;
   position: relative;
   overflow: hidden;
+}
+
+.why-section::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 400"><defs><radialGradient id="b" cx="0.5" cy="0.5" r="0.5"><stop offset="0%" stop-color="%23ffffff" stop-opacity="0.1"/><stop offset="100%" stop-color="%23ffffff" stop-opacity="0"/></radialGradient></defs><circle cx="300" cy="100" r="60" fill="url(%23b)"/><circle cx="900" cy="200" r="40" fill="url(%23b)"/><circle cx="600" cy="300" r="80" fill="url(%23b)"/><path d="M200 250 L250 200 L300 250 L250 300 Z" fill="url(%23b)" opacity="0.3"/><path d="M1000 150 L1050 100 L1100 150 L1050 200 Z" fill="url(%23b)" opacity="0.3"/></svg>');
+  background-size: cover;
+  animation: float 25s ease-in-out infinite reverse;
 }
 
 .why-section::before {
@@ -872,23 +1364,27 @@ export default {
 }
 
 .feature-card {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  border-radius: 15px;
-  padding: 2rem;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(20px);
+  border-radius: 20px;
+  padding: 2.5rem;
   text-align: center;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
 }
 
 .feature-card:hover {
-  transform: translateY(-5px);
-  background: rgba(255, 255, 255, 0.15);
+  transform: translateY(-8px) scale(1.02);
+  background: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
 }
 
 .feature-icon {
-  font-size: 3rem;
-  margin-bottom: 1rem;
+  font-size: 3.5rem;
+  margin-bottom: 1.5rem;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+  animation: float 3s ease-in-out infinite;
 }
 
 .feature-card h3 {
@@ -912,9 +1408,22 @@ export default {
 
 /* Footer Section */
 .footer {
-  background: #2c3e50;
+  background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
   color: white;
-  padding: 3rem 2rem 1rem;
+  padding: 4rem 2rem 1rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.footer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 300"><defs><pattern id="dots" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="10" cy="10" r="1" fill="%23ffffff" opacity="0.1"/></pattern></defs><rect width="1200" height="300" fill="url(%23dots)"/></svg>');
+  opacity: 0.3;
 }
 
 .footer-content {
@@ -951,19 +1460,21 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
-  background: #3498db;
+  width: 45px;
+  height: 45px;
+  background: linear-gradient(135deg, #3498db, #2980b9);
   border-radius: 50%;
   color: white;
   text-decoration: none;
-  transition: all 0.3s ease;
-  font-size: 1.2rem;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  font-size: 1.3rem;
+  box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
 }
 
 .social-icon:hover {
-  background: #2980b9;
-  transform: translateY(-2px);
+  background: linear-gradient(135deg, #2980b9, #3498db);
+  transform: translateY(-4px) scale(1.1);
+  box-shadow: 0 8px 25px rgba(52, 152, 219, 0.4);
 }
 
 .footer-nav {
@@ -1034,19 +1545,21 @@ export default {
 }
 
 .newsletter-btn {
-  background: #4CAF50;
+  background: linear-gradient(135deg, #4CAF50, #45a049);
   color: white;
   border: none;
-  border-radius: 5px;
-  padding: 0.8rem;
+  border-radius: 8px;
+  padding: 0.8rem 1rem;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   font-size: 1.2rem;
+  box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
 }
 
 .newsletter-btn:hover {
-  background: #45a049;
-  transform: scale(1.05);
+  background: linear-gradient(135deg, #45a049, #4CAF50);
+  transform: scale(1.1) rotate(5deg);
+  box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4);
 }
 
 .footer-bottom {

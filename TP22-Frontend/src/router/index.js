@@ -20,6 +20,11 @@ const router = createRouter({
       path: '/environment',
       name: 'environment',
       component: EnvironmentPage
+    },
+    {
+      path: '/environment/trees',
+      name: 'TreeDetail',
+      component: () => import('@/components/environment/trees/TreeDetailPage.vue')
     }
   ],
 })

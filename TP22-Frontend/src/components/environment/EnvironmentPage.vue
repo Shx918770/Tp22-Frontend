@@ -68,7 +68,7 @@
 
           <div class="indicators-grid">
             <!-- Tree Canopy Coverage -->
-            <div class="indicator-card canopy">
+            <div class="indicator-card canopy" @click="$router.push({ path: '/environment/trees', query: { suburb: selectedSuburb } })"style="cursor: pointer;">
               <div class="indicator-content">
                 <div class="indicator-icon">
                   <svg width="40" height="40" viewBox="0 0 24 24" fill="none">

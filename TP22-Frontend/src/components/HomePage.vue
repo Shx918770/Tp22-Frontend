@@ -116,7 +116,7 @@
         </div>
 
         <!-- Suburb cards -->
-        <div v-else class="suburb-cards">
+        <div v-else class="suburb-cards force-horizontal">
           <div 
             v-for="suburb in recommendedSuburbs" 
             :key="suburb.id" 
@@ -131,19 +131,23 @@
               </div>
             </div>
             <div class="card-content">
-              <h3 class="suburb-name">{{ suburb.name }}</h3>
-              <p class="suburb-description">{{ suburb.description }}</p>
-              <button class="view-details-btn" @click="viewSuburbDetails(suburb.name)">
-                <span>View Details</span>
-                <svg class="btn-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
-                  <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-              </button>
+              <div class="card-text-content">
+                <h3 class="suburb-name">{{ suburb.name }}</h3>
+                <p class="suburb-description">{{ suburb.description }}</p>
+              </div>
+              <div class="card-button-container">
+                <button class="view-details-btn" @click="viewSuburbDetails(suburb.name)">
+                  <span>View Details</span>
+                  <svg class="btn-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
+                    <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </button>
+              </div>
             </div>
           </div>
 
           <!-- Fallback cards if no data from API -->
-          <div v-if="recommendedSuburbs.length === 0" class="fallback-cards">
+          <div v-if="recommendedSuburbs.length === 0" class="fallback-cards force-horizontal">
             <div class="suburb-card">
               <div class="card-image carlton-image">
                 <div class="rating">
@@ -154,14 +158,18 @@
                 </div>
               </div>
               <div class="card-content">
-                <h3 class="suburb-name">Carlton</h3>
-                <p class="suburb-description">A vibrant inner-city suburb known for its cultural diversity and excellent sustainability practices.</p>
-                <button class="view-details-btn" @click="viewSuburbDetails('Carlton')">
-                  <span>View Details</span>
-                  <svg class="btn-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
-                    <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                  </svg>
-                </button>
+                <div class="card-text-content">
+                  <h3 class="suburb-name">Carlton</h3>
+                  <p class="suburb-description">A vibrant inner-city suburb known for its cultural diversity and excellent sustainability practices.</p>
+                </div>
+                <div class="card-button-container">
+                  <button class="view-details-btn" @click="viewSuburbDetails('Carlton')">
+                    <span>View Details</span>
+                    <svg class="btn-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
+                      <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </button>
+                </div>
               </div>
             </div>
             
@@ -175,14 +183,18 @@
                 </div>
               </div>
               <div class="card-content">
-                <h3 class="suburb-name">Fitzroy</h3>
-                <p class="suburb-description">A trendy and artistic suburb with strong community engagement and green initiatives.</p>
-                <button class="view-details-btn" @click="viewSuburbDetails('Fitzroy')">
-                  <span>View Details</span>
-                  <svg class="btn-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
-                    <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                  </svg>
-                </button>
+                <div class="card-text-content">
+                  <h3 class="suburb-name">Fitzroy</h3>
+                  <p class="suburb-description">A trendy and artistic suburb with strong community engagement and green initiatives.</p>
+                </div>
+                <div class="card-button-container">
+                  <button class="view-details-btn" @click="viewSuburbDetails('Fitzroy')">
+                    <span>View Details</span>
+                    <svg class="btn-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
+                      <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </button>
+                </div>
               </div>
             </div>
 
@@ -196,14 +208,18 @@
                 </div>
               </div>
               <div class="card-content">
-                <h3 class="suburb-name">Richmond</h3>
-                <p class="suburb-description">A dynamic suburb with excellent transport links and growing sustainability infrastructure.</p>
-                <button class="view-details-btn" @click="viewSuburbDetails('Richmond')">
-                  <span>View Details</span>
-                  <svg class="btn-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
-                    <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                  </svg>
-                </button>
+                <div class="card-text-content">
+                  <h3 class="suburb-name">Richmond</h3>
+                  <p class="suburb-description">A dynamic suburb with excellent transport links and growing sustainability infrastructure.</p>
+                </div>
+                <div class="card-button-container">
+                  <button class="view-details-btn" @click="viewSuburbDetails('Richmond')">
+                    <span>View Details</span>
+                    <svg class="btn-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
+                      <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -775,7 +791,7 @@ export default {
   opacity: 0.7;
 }
 
-/* 添加浮动的几何图形 */
+/* Add floating geometric shapes */
 .explore-section::after {
   content: '';
   position: absolute;
@@ -1100,15 +1116,86 @@ export default {
 
 
 
-.suburb-cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 2rem;
+/* Horizontal layout for suburb cards - left, center, right */
+.suburb-cards,
+.fallback-cards {
   margin-top: 2.5rem;
   padding: 0 1rem;
-  max-width: 1000px;
+  max-width: 1400px;
   margin-left: auto;
   margin-right: auto;
+}
+
+/* Improved horizontal layout - 3 cards in a row with better spacing */
+.force-horizontal {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)) !important;
+  gap: 2.5rem !important;
+  width: 100% !important;
+  justify-content: center !important;
+  align-items: stretch !important;
+}
+
+.force-horizontal > .suburb-card {
+  display: block !important;
+  width: 100% !important;
+  margin: 0 !important;
+  max-width: 400px !important;
+  justify-self: center !important;
+}
+
+/* Enhanced responsive design */
+@media (max-width: 1200px) {
+  .force-horizontal {
+    gap: 2rem !important;
+    padding: 0 0.5rem !important;
+  }
+}
+
+@media (max-width: 992px) {
+  .force-horizontal {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)) !important;
+    gap: 1.5rem !important;
+  }
+  
+  .force-horizontal > .suburb-card {
+    max-width: 350px !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .force-horizontal {
+    grid-template-columns: 1fr !important;
+    gap: 2rem !important;
+    padding: 0 !important;
+  }
+  
+  .force-horizontal > .suburb-card {
+    max-width: 100% !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .suburb-cards,
+  .fallback-cards {
+    padding: 0 0.5rem;
+  }
+  
+  .force-horizontal {
+    gap: 1.5rem !important;
+  }
+}
+
+/* Additional improvements for card content alignment */
+.card-text-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.card-button-container {
+  margin-top: auto;
+  padding-top: 1rem;
 }
 
 .suburb-card {
@@ -1124,6 +1211,10 @@ export default {
   position: relative;
   border: 2px solid rgba(255, 255, 255, 0.3);
   transform: translateY(0);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 420px;
 }
 
 .suburb-card::before {
@@ -1251,6 +1342,10 @@ export default {
 .card-content {
   padding: 1.5rem;
   position: relative;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  justify-content: space-between;
 }
 
 .suburb-name {
@@ -1281,6 +1376,11 @@ export default {
   line-height: 1.5;
   margin-bottom: 1.5rem;
   text-align: center;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 60px;
 }
 
 
@@ -1349,7 +1449,7 @@ export default {
 /* Responsive Design for Cards */
 @media (max-width: 768px) {
   .suburb-cards {
-    grid-template-columns: 1fr;
+    padding: 0 0.5rem;
   }
 }
 

@@ -240,11 +240,11 @@
             <div class="input-group">
               <label>First Suburb</label>
               <div class="select-wrapper">
-                <select class="suburb-select">
+                <select class="suburb-select" v-model="firstSuburb">
                   <option value="">Select first suburb...</option>
-                  <option value="carlton">Carlton</option>
-                  <option value="fitzroy">Fitzroy</option>
-                  <option value="richmond">Richmond</option>
+                  <option v-for="suburb in availableSuburbs" :key="suburb.id" :value="suburb.name">
+                    {{ suburb.name }}
+                  </option>
                 </select>
                 <span class="select-arrow">▼</span>
               </div>
@@ -255,21 +255,51 @@
             <div class="input-group">
               <label>Second Suburb</label>
               <div class="select-wrapper">
-                <select class="suburb-select">
+                <select class="suburb-select" v-model="secondSuburb">
                   <option value="">Select second suburb...</option>
-                  <option value="carlton">Carlton</option>
-                  <option value="fitzroy">Fitzroy</option>
-                  <option value="richmond">Richmond</option>
+                  <option v-for="suburb in availableSuburbs" :key="suburb.id" :value="suburb.name">
+                    {{ suburb.name }}
+                  </option>
                 </select>
                 <span class="select-arrow">▼</span>
               </div>
             </div>
           </div>
           
-          <button class="compare-btn">
-            <span class="btn-icon">⚖️</span>
-            Compare Suburbs
+          <button class="compare-btn" @click="compareSuburbs" :disabled="!canCompare || comparing">
+            <div v-if="comparing" class="loading-spinner-small"></div>
+            <span v-else class="btn-icon">⚖️</span>
+            {{ comparing ? 'Comparing...' : 'Compare Suburbs' }}
           </button>
+
+          <!-- Comparison Results -->
+          <div v-if="comparisonData" class="comparison-results">
+            <h3>Comparison Results</h3>
+            <div class="comparison-cards">
+              <div v-for="suburb in comparisonData.suburbs" :key="suburb.id" class="comparison-card">
+                <h4>{{ suburb.name }}</h4>
+                <div class="rating">Rating: {{ suburb.rating }}/5</div>
+                <div class="scores">
+                  <div class="score-item">
+                    <span>Social:</span>
+                    <span>{{ suburb.sustainabilityScores.social.toFixed(1) }}/5</span>
+                  </div>
+                  <div class="score-item">
+                    <span>Environmental:</span>
+                    <span>{{ suburb.sustainabilityScores.environmental.toFixed(1) }}/5</span>
+                  </div>
+                  <div class="score-item">
+                    <span>Economic:</span>
+                    <span>{{ suburb.sustainabilityScores.economic.toFixed(1) }}/5</span>
+                  </div>
+                  <div class="score-item">
+                    <span>Infrastructure:</span>
+                    <span>{{ suburb.sustainabilityScores.infrastructure.toFixed(1) }}/5</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -393,11 +423,23 @@ export default {
       recommendedSuburbs: [],
       stats: null,
       loading: false,
-      error: null
+      error: null,
+      // Comparison functionality
+      firstSuburb: '',
+      secondSuburb: '',
+      availableSuburbs: [],
+      comparisonData: null,
+      comparing: false
     }
   },
   async mounted() {
     await this.loadInitialData()
+    await this.loadAvailableSuburbs()
+  },
+  computed: {
+    canCompare() {
+      return this.firstSuburb && this.secondSuburb && this.firstSuburb !== this.secondSuburb
+    }
   },
   methods: {
     async loadInitialData() {
@@ -415,8 +457,14 @@ export default {
         if (suburbsResponse.status === 'fulfilled') {
           const suburbsResult = apiUtils.extractData(suburbsResponse.value)
           if (suburbsResult.success) {
-            this.recommendedSuburbs = suburbsResult.data || []
+            this.recommendedSuburbs = (suburbsResult.data || []).map(suburb => 
+              apiUtils.formatSuburbData(suburb)
+            ).filter(suburb => suburb !== null)
+          } else {
+            this.recommendedSuburbs = []
           }
+        } else {
+          this.recommendedSuburbs = []
         }
 
         // Handle stats
@@ -480,6 +528,47 @@ export default {
 
     navigateToEnvironment() {
       this.$router.push('/environment');
+    },
+
+    async loadAvailableSuburbs() {
+      try {
+        const response = await homepageApi.searchSuburbs()
+        const result = apiUtils.extractData(response)
+        
+        if (result.success) {
+          this.availableSuburbs = (result.data || []).map(suburb => 
+            apiUtils.formatSuburbData(suburb)
+          ).filter(suburb => suburb !== null)
+        } else {
+          this.availableSuburbs = []
+        }
+      } catch (error) {
+        console.warn('Failed to load available suburbs:', error)
+      }
+    },
+
+    async compareSuburbs() {
+      if (!this.canCompare) return
+      
+      this.comparing = true
+      this.comparisonData = null
+      
+      try {
+        const suburbNames = [this.firstSuburb, this.secondSuburb]
+        const response = await homepageApi.compareSuburbs(suburbNames)
+        const result = apiUtils.extractData(response)
+        
+        if (result.success) {
+          this.comparisonData = result.data
+        } else {
+          this.error = result.message || 'Failed to compare suburbs'
+        }
+      } catch (error) {
+        console.error('Error comparing suburbs:', error)
+        this.error = 'Failed to compare suburbs'
+      } finally {
+        this.comparing = false
+      }
     }
   }
 }
@@ -1671,6 +1760,102 @@ export default {
   box-shadow: 0 12px 35px rgba(102, 126, 234, 0.4);
 }
 
+/* Comparison Results */
+.comparison-results {
+  margin-top: 3rem;
+  padding: 2rem;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 20px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.comparison-results h3 {
+  text-align: center;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 2rem;
+}
+
+.comparison-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+.comparison-card {
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 15px;
+  padding: 1.5rem;
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  transition: all 0.3s ease;
+}
+
+.comparison-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+}
+
+.comparison-card h4 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.comparison-card .rating {
+  text-align: center;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #4CAF50;
+  margin-bottom: 1.5rem;
+}
+
+.scores {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.score-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.8rem;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.score-item span:first-child {
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.score-item span:last-child {
+  font-weight: 700;
+  color: #4CAF50;
+}
+
+.compare-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+.loading-spinner-small {
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-left: 2px solid white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-right: 0.5rem;
+}
+
 /* Responsive Design for Compare */
 @media (max-width: 768px) {
   .suburb-inputs {
@@ -1680,6 +1865,14 @@ export default {
   
   .vs-divider {
     align-self: center;
+  }
+  
+  .comparison-cards {
+    grid-template-columns: 1fr;
+  }
+  
+  .comparison-results {
+    padding: 1.5rem;
   }
 }
 

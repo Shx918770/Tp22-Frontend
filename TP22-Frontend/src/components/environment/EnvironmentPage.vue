@@ -513,18 +513,41 @@
           
         </div>
       </section>
+
+      <!-- Loading Overlay -->
+      <div v-if="loading" class="loading-overlay">
+        <div class="loading-container">
+          <div class="loading-spinner"></div>
+          <p>Loading environmental data...</p>
+        </div>
+      </div>
+
+      <!-- Error Overlay -->
+      <div v-if="error" class="error-overlay">
+        <div class="error-container">
+          <div class="error-icon">⚠️</div>
+          <p>{{ error }}</p>
+          <button class="retry-btn" @click="retryLoading">Retry</button>
+        </div>
+      </div>
     </main>
   </div>
 </template>
 
 <script>
+import { environmentApi, apiUtils } from '../../services/api.js'
+
 export default {
   name: 'EnvironmentPage',
   data() {
     return {
       selectedTimePeriod: '6m',
       energyTab: 'block',
-      animationStarted: false
+      animationStarted: false,
+      environmentalIndicators: [],
+      trendData: [],
+      loading: false,
+      error: null
     }
   },
   mounted() {
@@ -535,15 +558,168 @@ export default {
   computed: {
     selectedSuburb() {
       return this.$route?.query?.suburb || '';
+    },
+    
+    // Process environmental indicators for display
+    processedIndicators() {
+      const defaultIndicators = {
+        treeCanopy: { value: 70, unit: '%', trend: '+5.2%' },
+        airQuality: { value: 60, unit: 'AQI', status: 'Moderate' },
+        waterUsage: { value: 50, unit: '%', dailyUsage: '180L' }
+      };
+
+      if (!this.environmentalIndicators.length) {
+        return defaultIndicators;
+      }
+
+      const processed = {};
+      this.environmentalIndicators.forEach(indicator => {
+        const type = indicator.indicatorType?.toLowerCase();
+        switch(type) {
+          case 'tree_canopy':
+          case 'canopy':
+            processed.treeCanopy = {
+              value: Math.round(indicator.value || 70),
+              unit: indicator.unit || '%',
+              trend: this.calculateTrend(indicator) || '+5.2%'
+            };
+            break;
+          case 'air_quality':
+          case 'aqi':
+            processed.airQuality = {
+              value: Math.round(indicator.value || 60),
+              unit: indicator.unit || 'AQI',
+              status: this.getAirQualityStatus(indicator.value || 60)
+            };
+            break;
+          case 'water_usage':
+          case 'water':
+            processed.waterUsage = {
+              value: Math.round(indicator.value || 50),
+              unit: indicator.unit || '%',
+              dailyUsage: this.calculateWaterUsage(indicator.value || 50)
+            };
+            break;
+        }
+      });
+
+      return { ...defaultIndicators, ...processed };
+    }
+  },
+  watch: {
+    selectedSuburb: {
+      immediate: true,
+      handler(newSuburb) {
+        if (newSuburb) {
+          this.loadEnvironmentalData(newSuburb);
+        }
+      }
+    },
+    selectedTimePeriod(newPeriod) {
+      if (this.selectedSuburb) {
+        this.loadTrendData(this.selectedSuburb, newPeriod);
+      }
     }
   },
   methods: {
+    async loadEnvironmentalData(suburb) {
+      if (!suburb) return;
+      
+      this.loading = true;
+      this.error = null;
+      
+      try {
+        // Load latest environmental indicators and trend data in parallel
+        const [indicatorsResponse, trendResponse] = await Promise.allSettled([
+          environmentApi.getLatestIndicators(suburb),
+          environmentApi.getIndicatorTrend(suburb, 'air_quality', this.getMonthsFromPeriod(this.selectedTimePeriod))
+        ]);
+
+        // Handle environmental indicators
+        if (indicatorsResponse.status === 'fulfilled') {
+          const indicatorsResult = apiUtils.extractData(indicatorsResponse.value);
+          if (indicatorsResult.success) {
+            this.environmentalIndicators = apiUtils.formatEnvironmentalIndicators(indicatorsResult.data || []);
+          } else {
+            this.environmentalIndicators = [];
+          }
+        } else {
+          this.environmentalIndicators = [];
+        }
+
+        // Handle trend data
+        if (trendResponse.status === 'fulfilled') {
+          const trendResult = apiUtils.extractData(trendResponse.value);
+          if (trendResult.success) {
+            this.trendData = apiUtils.formatEnvironmentalIndicators(trendResult.data || []);
+          } else {
+            this.trendData = [];
+          }
+        } else {
+          this.trendData = [];
+        }
+
+      } catch (error) {
+        console.error('Error loading environmental data:', error);
+        this.error = `Failed to load environmental data for ${suburb}`;
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    async loadTrendData(suburb, period) {
+      if (!suburb) return;
+      
+      try {
+        const months = this.getMonthsFromPeriod(period);
+        const response = await environmentApi.getIndicatorTrend(suburb, 'air_quality', months);
+        const result = apiUtils.extractData(response);
+        
+        if (result.success) {
+          this.trendData = result.data || [];
+        }
+      } catch (error) {
+        console.warn('Failed to load trend data:', error);
+      }
+    },
+
+    getMonthsFromPeriod(period) {
+      switch(period) {
+        case '6m': return 6;
+        case '1y': return 12;
+        case '2y': return 24;
+        default: return 6;
+      }
+    },
+
+    calculateTrend(indicator) {
+      // Simple trend calculation - in real app this would be more sophisticated
+      if (indicator.value > 65) return '+5.2%';
+      if (indicator.value > 45) return '+2.1%';
+      return '-1.3%';
+    },
+
+    getAirQualityStatus(value) {
+      if (value <= 50) return 'Good';
+      if (value <= 100) return 'Moderate';
+      if (value <= 150) return 'Unhealthy for Sensitive Groups';
+      return 'Unhealthy';
+    },
+
+    calculateWaterUsage(efficiency) {
+      // Calculate daily usage based on efficiency (lower efficiency = higher usage)
+      const baseUsage = 200; // Base usage in liters
+      const usage = Math.round(baseUsage * (100 - efficiency) / 50);
+      return `${usage}L`;
+    },
+
     initializeAnimations() {
       // Start progress ring animations
       setTimeout(() => {
         this.animationStarted = true;
       }, 500);
     },
+    
     setupTimeSelector() {
       const timeButtons = document.querySelectorAll('.time-btn');
       timeButtons.forEach(btn => {
@@ -553,6 +729,14 @@ export default {
           this.selectedTimePeriod = e.target.dataset.period;
         });
       });
+    },
+
+    retryLoading() {
+      if (this.selectedSuburb) {
+        this.loadEnvironmentalData(this.selectedSuburb)
+      } else {
+        this.error = null
+      }
     }
   }
 }
@@ -1857,5 +2041,77 @@ export default {
 .suburb-display .pin {
   margin-right: 0.4rem;
   filter: drop-shadow(0 1px 2px rgba(0,0,0,0.15));
+}
+
+/* Loading and Error Overlays */
+.loading-overlay,
+.error-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(5px);
+}
+
+.loading-overlay .loading-container,
+.error-overlay .error-container {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border-radius: 20px;
+  padding: 3rem;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  max-width: 400px;
+  margin: 2rem;
+}
+
+.loading-overlay .loading-spinner {
+  width: 60px;
+  height: 60px;
+  border: 6px solid rgba(76, 175, 80, 0.1);
+  border-left: 6px solid #4CAF50;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 1.5rem auto;
+}
+
+.loading-overlay p,
+.error-overlay p {
+  color: #2c3e50;
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.error-overlay .error-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+}
+
+.error-overlay .retry-btn {
+  background: linear-gradient(135deg, #4CAF50, #45a049);
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 25px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+  margin-top: 1.5rem;
+  font-size: 1rem;
+}
+
+.error-overlay .retry-btn:hover {
+  background: linear-gradient(135deg, #45a049, #4CAF50);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4);
 }
 </style>

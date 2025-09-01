@@ -83,7 +83,7 @@
           <div v-else-if="error" class="error-container">
             <div class="error-icon">⚠️</div>
             <p>{{ error }}</p>
-            <button class="retry-btn" @click="loadSuburbData(selectedSuburb)">Retry</button>
+            <button class="retry-btn" @click="retryLoading">Retry</button>
           </div>
 
           <!-- Compact Facility Grid -->
@@ -473,8 +473,12 @@ export default {
         if (statsResponse.status === 'fulfilled') {
           const statsResult = apiUtils.extractData(statsResponse.value)
           if (statsResult.success) {
-            this.facilityStats = statsResult.data
+            this.facilityStats = apiUtils.formatFacilityStats(statsResult.data)
+          } else {
+            this.facilityStats = apiUtils.getDefaultFacilityStats()
           }
+        } else {
+          this.facilityStats = apiUtils.getDefaultFacilityStats()
         }
 
         // Handle facilities
@@ -498,6 +502,14 @@ export default {
         this.error = `Failed to load data for ${suburb}`
       } finally {
         this.loading = false
+      }
+    },
+
+    retryLoading() {
+      if (this.selectedSuburb) {
+        this.loadSuburbData(this.selectedSuburb)
+      } else {
+        this.error = null
       }
     }
   }

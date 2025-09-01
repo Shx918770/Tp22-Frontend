@@ -59,6 +59,16 @@ export const homepageApi = {
     return api.get(`/homepage/suburbs-by-rating?${params.toString()}`)
   },
 
+  // Compare suburbs
+  compareSuburbs(suburbNames) {
+    return api.post('/homepage/compare-suburbs', suburbNames)
+  },
+
+  // Get suburb details
+  getSuburbDetails(suburbName) {
+    return api.get(`/homepage/suburb-details?suburbName=${encodeURIComponent(suburbName)}`)
+  },
+
   // Health check
   healthCheck() {
     return api.get('/homepage/health')
@@ -188,21 +198,207 @@ export const apiUtils = {
     }
   },
 
-  // Extract data from API response
+  // Extract data from API response with validation
   extractData(response) {
-    if (response.data && response.data.success) {
-      return {
-        success: true,
-        message: response.data.message,
-        data: response.data.data,
-        total: response.data.total,
+    try {
+      if (!response || !response.data) {
+        return {
+          success: false,
+          message: 'No response data received',
+          data: null,
+        }
       }
-    } else {
+
+      if (response.data.success) {
+        return {
+          success: true,
+          message: response.data.message || 'Success',
+          data: this.validateData(response.data.data),
+          total: response.data.total || 0,
+        }
+      } else {
+        return {
+          success: false,
+          message: response.data.message || 'Request failed',
+          data: null,
+        }
+      }
+    } catch (error) {
+      console.error('Error extracting data:', error)
       return {
         success: false,
-        message: response.data?.message || 'Invalid response format',
+        message: 'Error processing response data',
         data: null,
       }
+    }
+  },
+
+  // Validate and sanitize data
+  validateData(data) {
+    if (data === null || data === undefined) {
+      return null
+    }
+
+    // Handle arrays
+    if (Array.isArray(data)) {
+      return data.filter(item => item !== null && item !== undefined)
+    }
+
+    // Handle objects
+    if (typeof data === 'object') {
+      const validated = {}
+      for (const [key, value] of Object.entries(data)) {
+        if (value !== null && value !== undefined) {
+          validated[key] = value
+        }
+      }
+      return validated
+    }
+
+    return data
+  },
+
+  // Safe number conversion with fallback
+  safeNumber(value, fallback = 0) {
+    const num = parseFloat(value)
+    return isNaN(num) ? fallback : num
+  },
+
+  // Safe string conversion with fallback
+  safeString(value, fallback = '') {
+    if (value === null || value === undefined) {
+      return fallback
+    }
+    return String(value)
+  },
+
+  // Format suburb data with fallbacks
+  formatSuburbData(suburb) {
+    if (!suburb) return null
+    
+    return {
+      id: suburb.id || 0,
+      name: this.safeString(suburb.name, 'Unknown Suburb'),
+      rating: this.safeNumber(suburb.rating, 0),
+      population: this.safeNumber(suburb.population, 0),
+      area: this.safeNumber(suburb.area, 0),
+      description: this.safeString(suburb.description, 'No description available'),
+      imageUrl: this.safeString(suburb.imageUrl, '/default-suburb.jpg'),
+    }
+  },
+
+  // Format facility stats with fallbacks
+  formatFacilityStats(stats) {
+    if (!stats) return this.getDefaultFacilityStats()
+    
+    return {
+      totalFacilities: this.safeNumber(stats.totalFacilities, 0),
+      facilityCounts: {
+        EDUCATION: this.safeNumber(stats.facilityCounts?.EDUCATION, 0),
+        HEALTHCARE: this.safeNumber(stats.facilityCounts?.HEALTHCARE, 0),
+        RECREATION: this.safeNumber(stats.facilityCounts?.RECREATION, 0),
+        SHOPPING: this.safeNumber(stats.facilityCounts?.SHOPPING, 0),
+      },
+      detailedCounts: stats.detailedCounts || {},
+    }
+  },
+
+  // Get default facility stats
+  getDefaultFacilityStats() {
+    return {
+      totalFacilities: 0,
+      facilityCounts: {
+        EDUCATION: 0,
+        HEALTHCARE: 0,
+        RECREATION: 0,
+        SHOPPING: 0,
+      },
+      detailedCounts: {},
+    }
+  },
+
+  // Format environmental indicators with fallbacks
+  formatEnvironmentalIndicators(indicators) {
+    if (!Array.isArray(indicators)) return []
+    
+    return indicators.map(indicator => ({
+      id: indicator.id || 0,
+      suburbId: indicator.suburbId || 0,
+      indicatorType: this.safeString(indicator.indicatorType, 'unknown'),
+      value: this.safeNumber(indicator.value, 0),
+      unit: this.safeString(indicator.unit, ''),
+      recordedDate: indicator.recordedDate || new Date().toISOString(),
+    }))
+  },
+
+  // Unified API call wrapper with consistent error handling
+  async safeApiCall(apiFunction, fallbackData = null, customErrorMessage = null) {
+    try {
+      const response = await apiFunction()
+      const result = this.extractData(response)
+      
+      if (result.success) {
+        return {
+          success: true,
+          data: result.data,
+          message: result.message,
+          total: result.total,
+        }
+      } else {
+        return {
+          success: false,
+          data: fallbackData,
+          message: customErrorMessage || result.message || 'Request failed',
+          error: 'API_ERROR',
+        }
+      }
+    } catch (error) {
+      const errorResult = this.handleError(error)
+      return {
+        success: false,
+        data: fallbackData,
+        message: customErrorMessage || errorResult.message,
+        error: errorResult.status === 0 ? 'NETWORK_ERROR' : 'API_ERROR',
+      }
+    }
+  },
+
+  // Batch API calls with error handling
+  async safeBatchApiCalls(apiCalls, fallbackData = []) {
+    try {
+      const results = await Promise.allSettled(apiCalls)
+      const processedResults = []
+      
+      results.forEach((result, index) => {
+        if (result.status === 'fulfilled') {
+          const extractedData = this.extractData(result.value)
+          processedResults.push({
+            success: extractedData.success,
+            data: extractedData.success ? extractedData.data : fallbackData[index] || null,
+            message: extractedData.message,
+            index,
+          })
+        } else {
+          processedResults.push({
+            success: false,
+            data: fallbackData[index] || null,
+            message: 'Request failed',
+            error: result.reason,
+            index,
+          })
+        }
+      })
+      
+      return processedResults
+    } catch (error) {
+      console.error('Batch API call error:', error)
+      return apiCalls.map((_, index) => ({
+        success: false,
+        data: fallbackData[index] || null,
+        message: 'Batch request failed',
+        error: 'BATCH_ERROR',
+        index,
+      }))
     }
   },
 

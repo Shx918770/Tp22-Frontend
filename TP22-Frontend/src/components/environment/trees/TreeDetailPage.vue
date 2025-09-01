@@ -34,7 +34,7 @@
       <!-- Bottom: Trend Chart -->
       <div class="trend-chart">
         <h3>Life Expectancy Trends</h3>
-        <div class="chart-placeholder">[Trend chart will be here]</div>
+        <LineChart :chart-data="trendData" />
       </div>
     </div>
   </div>
@@ -44,6 +44,7 @@
 import { LMap, LTileLayer, LCircleMarker } from "@vue-leaflet/vue-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
+import LineChart from "./LineChart.vue";
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -54,26 +55,39 @@ L.Icon.Default.mergeOptions({
 
 export default {
   name: "TreeDetailPage",
-  components: { LMap, LTileLayer, LCircleMarker },
+  components: { LMap, LTileLayer, LCircleMarker, LineChart },
   data() {
     return {
       suburb: this.$route.query.suburb || "Unknown",
       trees: [
-        { id: 1, lat: -37.81, lon: 144.96, name: "Eucalyptus" },
-        { id: 2, lat: -37.815, lon: 144.97, name: "Plane Tree" }
+        { id: 1, lat: -37.81, lon: 144.96, name: "Eucalyptus", life: 80 },
+        { id: 2, lat: -37.815, lon: 144.97, name: "Plane Tree", life: 60 }
       ],
       mapCenter: [-37.81, 144.96]
     };
   },
   computed: {
     speciesCount() {
-        const counts = {};
-        this.trees.forEach(tree => {
+      const counts = {};
+      this.trees.forEach(tree => {
         counts[tree.name] = (counts[tree.name] || 0) + 1;
-        });
-        return counts;
-        }
+      });
+      return counts;
+    },
+    trendData() {
+      return {
+        labels: this.trees.map(t => t.name),
+        datasets: [
+          {
+            label: "Life Expectancy (years)",
+            data: this.trees.map(t => t.life),
+            borderColor: "green",
+            backgroundColor: "rgba(0, 128, 0, 0.3)"
+          }
+        ]
+      };
     }
+  }
 };
 </script>
 

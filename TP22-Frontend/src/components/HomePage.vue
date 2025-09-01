@@ -66,7 +66,7 @@
         </div>
 
                   <div class="category-filters">
-            <button class="category-btn social">
+            <button class="category-btn social" @click="navigateToSocial">
               <svg class="category-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
                 <path d="M17 21V19C17 17.9391 16.5786 16.9217 15.8284 16.1716C15.0783 15.4214 14.0609 15 13 15H5C3.93913 15 2.92172 15.4214 2.17157 16.1716C1.42143 16.9217 1 17.9391 1 19V21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 <circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="2"/>
@@ -327,7 +327,6 @@ export default {
   name: 'HomePage',
   data() {
     return {
-      // 数据将在这里逐步添加
     }
   },
   methods: {
@@ -341,10 +340,11 @@ export default {
       }
     },
     viewSuburbDetails(suburbName) {
-      // 这里可以添加导航到详情页面的逻辑
       console.log(`Viewing details for ${suburbName}`);
-      // 可以添加路由导航或其他操作
       alert(`正在查看 ${suburbName} 的详细信息...`);
+    },
+    navigateToSocial() {
+      this.$router.push('/social');
     }
   }
 }

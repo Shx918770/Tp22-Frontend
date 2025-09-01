@@ -31,7 +31,7 @@
           <div class="nav-tab active">Social</div>
           <div class="nav-tab">Economic</div>
           <div class="nav-tab">Infrastructure</div>
-          <div class="nav-tab">Environment</div>
+          <router-link to="/environment" class="nav-tab">Environment</router-link>
           <div class="nav-tab">Community</div>
           <div class="nav-tab">Actions</div>
         </div>

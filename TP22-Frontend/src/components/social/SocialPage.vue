@@ -24,16 +24,16 @@
             </svg>
           </div>
           <span class="logo-text">MelSustain</span>
+          <span v-if="selectedSuburb" class="suburb-display"><span class="pin">📍</span>{{ selectedSuburb }}</span>
         </div>
         
         <div class="nav-tabs">
-          <router-link to="/" class="nav-tab">Overview</router-link>
+          <router-link :to="{ path: '/', query: $route.query }" class="nav-tab">Overview</router-link>
           <div class="nav-tab active">Social</div>
           <div class="nav-tab">Economic</div>
           <div class="nav-tab">Infrastructure</div>
-          <router-link to="/environment" class="nav-tab">Environment</router-link>
-          <div class="nav-tab">Community</div>
-          <div class="nav-tab">Actions</div>
+          <router-link :to="{ path: '/environment', query: $route.query }" class="nav-tab">Environment</router-link>
+          <router-link :to="{ path: '/', hash: '#compare-section', query: $route.query }" class="nav-tab">Compare</router-link>
         </div>
       </div>
     </nav>
@@ -413,6 +413,14 @@ export default {
     return {
       // Data for social sustainability metrics
     }
+  },
+  computed: {
+    selectedSuburb() {
+      return this.$route?.query?.suburb || '';
+    }
+  },
+  mounted() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   },
   methods: {
     // Methods for handling user interactions
@@ -1646,6 +1654,36 @@ export default {
   .service-item {
     padding: 1rem;
   }
+}
+.selected-suburb-pill {
+  margin-left: 0.8rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #2c3e50;
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.7rem;
+  border-radius: 999px;
+}
+
+.suburb-display {
+  margin-left: 0.8rem;
+  font-size: 1.25rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #2c3e50, #4CAF50, #2196F3);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: 0.2px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.suburb-display .pin {
+  margin-right: 0.4rem;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.15));
 }
 </style>
 

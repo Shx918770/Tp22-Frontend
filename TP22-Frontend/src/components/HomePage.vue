@@ -56,8 +56,10 @@
               type="text" 
               placeholder="Enter a suburb name or sustainability feature..."
               class="search-input"
+              v-model="suburbInput"
+              @keyup.enter="searchSuburb"
             >
-            <button class="search-button">
+            <button class="search-button" @click="searchSuburb">
               <svg class="arrow-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
                 <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
@@ -327,6 +329,7 @@ export default {
   name: 'HomePage',
   data() {
     return {
+      suburbInput: ''
     }
   },
   methods: {
@@ -340,8 +343,14 @@ export default {
       }
     },
     viewSuburbDetails(suburbName) {
-      console.log(`Viewing details for ${suburbName}`);
-      alert(`正在查看 ${suburbName} 的详细信息...`);
+      const name = (suburbName || '').toString();
+      if (!name) return;
+      this.$router.push({ path: '/social', query: { suburb: name } });
+    },
+    searchSuburb() {
+      const name = (this.suburbInput || '').trim();
+      if (!name) return;
+      this.$router.push({ path: '/social', query: { suburb: name } });
     },
     navigateToSocial() {
       this.$router.push('/social');

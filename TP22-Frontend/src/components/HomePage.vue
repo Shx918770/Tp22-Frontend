@@ -102,8 +102,49 @@
             </button>
           </div>
 
-        <div class="suburb-cards">
-                                 <div class="suburb-card">
+        <!-- Loading state -->
+        <div v-if="loading" class="loading-container">
+          <div class="loading-spinner"></div>
+          <p>Loading suburbs data...</p>
+        </div>
+
+        <!-- Error state -->
+        <div v-else-if="error" class="error-container">
+          <div class="error-icon">⚠️</div>
+          <p>{{ error }}</p>
+          <button class="retry-btn" @click="loadInitialData">Retry</button>
+        </div>
+
+        <!-- Suburb cards -->
+        <div v-else class="suburb-cards">
+          <div 
+            v-for="suburb in recommendedSuburbs" 
+            :key="suburb.id" 
+            class="suburb-card"
+          >
+            <div class="card-image" :style="{ backgroundImage: `url(${suburb.imageUrl})` }">
+              <div class="rating">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
+                </svg>
+                {{ suburb.rating }}
+              </div>
+            </div>
+            <div class="card-content">
+              <h3 class="suburb-name">{{ suburb.name }}</h3>
+              <p class="suburb-description">{{ suburb.description }}</p>
+              <button class="view-details-btn" @click="viewSuburbDetails(suburb.name)">
+                <span>View Details</span>
+                <svg class="btn-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
+                  <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Fallback cards if no data from API -->
+          <div v-if="recommendedSuburbs.length === 0" class="fallback-cards">
+            <div class="suburb-card">
               <div class="card-image carlton-image">
                 <div class="rating">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
@@ -112,19 +153,19 @@
                   4.8
                 </div>
               </div>
-                           <div class="card-content">
+              <div class="card-content">
                 <h3 class="suburb-name">Carlton</h3>
                 <p class="suburb-description">A vibrant inner-city suburb known for its cultural diversity and excellent sustainability practices.</p>
-                <button class="view-details-btn" @click="viewSuburbDetails('carlton')">
+                <button class="view-details-btn" @click="viewSuburbDetails('Carlton')">
                   <span>View Details</span>
                   <svg class="btn-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
                     <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                   </svg>
                 </button>
               </div>
-           </div>
-
-                      <div class="suburb-card">
+            </div>
+            
+            <div class="suburb-card">
               <div class="card-image fitzroy-image">
                 <div class="rating">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
@@ -136,7 +177,7 @@
               <div class="card-content">
                 <h3 class="suburb-name">Fitzroy</h3>
                 <p class="suburb-description">A trendy and artistic suburb with strong community engagement and green initiatives.</p>
-                <button class="view-details-btn" @click="viewSuburbDetails('fitzroy')">
+                <button class="view-details-btn" @click="viewSuburbDetails('Fitzroy')">
                   <span>View Details</span>
                   <svg class="btn-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
                     <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -157,7 +198,7 @@
               <div class="card-content">
                 <h3 class="suburb-name">Richmond</h3>
                 <p class="suburb-description">A dynamic suburb with excellent transport links and growing sustainability infrastructure.</p>
-                <button class="view-details-btn" @click="viewSuburbDetails('richmond')">
+                <button class="view-details-btn" @click="viewSuburbDetails('Richmond')">
                   <span>View Details</span>
                   <svg class="btn-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
                     <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -165,6 +206,7 @@
                 </button>
               </div>
             </div>
+          </div>
         </div>
       </div>
     </section>
@@ -325,14 +367,58 @@
 </template>
 
 <script>
+import { homepageApi, apiUtils } from '../services/api.js'
+
 export default {
   name: 'HomePage',
   data() {
     return {
-      suburbInput: ''
+      suburbInput: '',
+      recommendedSuburbs: [],
+      stats: null,
+      loading: false,
+      error: null
     }
   },
+  async mounted() {
+    await this.loadInitialData()
+  },
   methods: {
+    async loadInitialData() {
+      this.loading = true
+      this.error = null
+      
+      try {
+        // Load recommended suburbs and stats in parallel
+        const [suburbsResponse, statsResponse] = await Promise.allSettled([
+          homepageApi.getRecommendedSuburbs(3),
+          homepageApi.getStats()
+        ])
+
+        // Handle recommended suburbs
+        if (suburbsResponse.status === 'fulfilled') {
+          const suburbsResult = apiUtils.extractData(suburbsResponse.value)
+          if (suburbsResult.success) {
+            this.recommendedSuburbs = suburbsResult.data || []
+          }
+        }
+
+        // Handle stats
+        if (statsResponse.status === 'fulfilled') {
+          const statsResult = apiUtils.extractData(statsResponse.value)
+          if (statsResult.success) {
+            this.stats = statsResult.data
+          }
+        }
+
+      } catch (error) {
+        console.error('Error loading initial data:', error)
+        this.error = 'Failed to load data from server'
+      } finally {
+        this.loading = false
+      }
+    },
+
     scrollToSection(sectionId) {
       const element = document.getElementById(sectionId);
       if (element) {
@@ -342,19 +428,40 @@ export default {
         });
       }
     },
+
     viewSuburbDetails(suburbName) {
       const name = (suburbName || '').toString();
       if (!name) return;
       this.$router.push({ path: '/social', query: { suburb: name } });
     },
-    searchSuburb() {
+
+    async searchSuburb() {
       const name = (this.suburbInput || '').trim();
       if (!name) return;
-      this.$router.push({ path: '/social', query: { suburb: name } });
+      
+      try {
+        // Optionally, you could search for the suburb first to validate it exists
+        const response = await homepageApi.searchSuburbs(name)
+        const result = apiUtils.extractData(response)
+        
+        if (result.success && result.data && result.data.length > 0) {
+          // Suburb found, navigate to social page
+          this.$router.push({ path: '/social', query: { suburb: name } });
+        } else {
+          // Suburb not found, still navigate but let the social page handle it
+          this.$router.push({ path: '/social', query: { suburb: name } });
+        }
+      } catch (error) {
+        console.warn('Search validation failed, proceeding anyway:', error)
+        // Even if search fails, still navigate
+        this.$router.push({ path: '/social', query: { suburb: name } });
+      }
     },
+
     navigateToSocial() {
       this.$router.push('/social');
     },
+
     navigateToEnvironment() {
       this.$router.push('/environment');
     }
@@ -1244,6 +1351,79 @@ export default {
   .suburb-cards {
     grid-template-columns: 1fr;
   }
+}
+
+/* Loading and Error States */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  text-align: center;
+}
+
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid rgba(76, 175, 80, 0.1);
+  border-left: 4px solid #4CAF50;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading-container p {
+  color: #666;
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+.error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  text-align: center;
+  background: rgba(244, 67, 54, 0.1);
+  border-radius: 15px;
+  margin: 2rem 0;
+}
+
+.error-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.error-container p {
+  color: #d32f2f;
+  font-size: 1.1rem;
+  font-weight: 500;
+  margin-bottom: 1.5rem;
+}
+
+.retry-btn {
+  background: linear-gradient(135deg, #4CAF50, #45a049);
+  color: white;
+  border: none;
+  padding: 0.8rem 2rem;
+  border-radius: 25px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+}
+
+.retry-btn:hover {
+  background: linear-gradient(135deg, #45a049, #4CAF50);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4);
 }
 
 /* Compare Section */

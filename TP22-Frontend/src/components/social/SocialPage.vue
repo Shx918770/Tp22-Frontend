@@ -64,14 +64,30 @@
           <!-- Header with Total -->
           <div class="facilities-header">
             <div class="total-counter">
-              <div class="counter-number">186</div>
+              <div class="counter-number">{{ facilityStats?.totalFacilities || 186 }}</div>
               <div class="counter-label">Social Facilities</div>
             </div>
-            <div class="header-subtitle">Discover Melbourne's community infrastructure</div>
+            <div class="header-subtitle">
+              <span v-if="selectedSuburb">{{ selectedSuburb }}'s community infrastructure</span>
+              <span v-else>Discover Melbourne's community infrastructure</span>
+            </div>
+          </div>
+
+          <!-- Loading state -->
+          <div v-if="loading" class="loading-container">
+            <div class="loading-spinner"></div>
+            <p>Loading facility data...</p>
+          </div>
+
+          <!-- Error state -->
+          <div v-else-if="error" class="error-container">
+            <div class="error-icon">⚠️</div>
+            <p>{{ error }}</p>
+            <button class="retry-btn" @click="loadSuburbData(selectedSuburb)">Retry</button>
           </div>
 
           <!-- Compact Facility Grid -->
-          <div class="facilities-grid">
+          <div v-else class="facilities-grid">
             <!-- Education Bubble -->
             <div class="facility-bubble education">
               <div class="bubble-icon">
@@ -80,12 +96,12 @@
                 </svg>
               </div>
               <div class="bubble-content">
-                <div class="bubble-number">15</div>
+                <div class="bubble-number">{{ facilityStats?.facilityCounts?.EDUCATION || 15 }}</div>
                 <div class="bubble-label">Education</div>
                 <div class="bubble-details">
-                  <span class="detail-pill">9 Primary</span>
-                  <span class="detail-pill">4 Secondary</span>
-                  <span class="detail-pill">1 University</span>
+                  <span class="detail-pill">{{ facilityStats?.detailedCounts?.EDUCATION?.Primary || 9 }} Primary</span>
+                  <span class="detail-pill">{{ facilityStats?.detailedCounts?.EDUCATION?.Secondary || 4 }} Secondary</span>
+                  <span class="detail-pill">{{ facilityStats?.detailedCounts?.EDUCATION?.Library || 1 }} Library</span>
                 </div>
               </div>
               <div class="bubble-glow"></div>
@@ -99,11 +115,11 @@
                 </svg>
               </div>
               <div class="bubble-content">
-                <div class="bubble-number">4</div>
+                <div class="bubble-number">{{ facilityStats?.facilityCounts?.HEALTHCARE || 4 }}</div>
                 <div class="bubble-label">Healthcare</div>
                 <div class="bubble-details">
-                  <span class="detail-pill">1 Hospital</span>
-                  <span class="detail-pill">2 Clinics</span>
+                  <span class="detail-pill">{{ facilityStats?.detailedCounts?.HEALTHCARE?.Clinic || 1 }} Clinic</span>
+                  <span class="detail-pill">{{ facilityStats?.detailedCounts?.HEALTHCARE?.Pharmacy || 1 }} Pharmacy</span>
                   <span class="detail-pill">Emergency</span>
                 </div>
               </div>
@@ -120,31 +136,31 @@
                 </svg>
               </div>
               <div class="bubble-content">
-                <div class="bubble-number">22</div>
+                <div class="bubble-number">{{ facilityStats?.facilityCounts?.RECREATION || 22 }}</div>
                 <div class="bubble-label">Recreation</div>
                 <div class="bubble-details">
-                  <span class="detail-pill">11 Parks</span>
-                  <span class="detail-pill">6 Playgrounds</span>
-                  <span class="detail-pill">4 Sports</span>
+                  <span class="detail-pill">{{ facilityStats?.detailedCounts?.RECREATION?.Park || 11 }} Parks</span>
+                  <span class="detail-pill">{{ facilityStats?.detailedCounts?.RECREATION?.Community || 6 }} Community</span>
+                  <span class="detail-pill">{{ facilityStats?.detailedCounts?.RECREATION?.Sports || 4 }} Sports</span>
                 </div>
               </div>
               <div class="bubble-glow"></div>
             </div>
 
-            <!-- Dining & Shopping Bubble -->
-            <div class="facility-bubble dining">
+            <!-- Shopping Bubble -->
+            <div class="facility-bubble shopping">
               <div class="bubble-icon">
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
                   <path d="M3 7V5C3 3.89543 3.89543 3 5 3H19C20.1046 3 21 3.89543 21 5V7M3 7L5 19C5 20.1046 5.89543 21 7 21H17C18.1046 21 19 20.1046 19 19L21 7M3 7H21M9 11V17M15 11V17" stroke="currentColor" stroke-width="2"/>
                 </svg>
               </div>
               <div class="bubble-content">
-                <div class="bubble-number">145</div>
-                <div class="bubble-label">Dining & Shopping</div>
+                <div class="bubble-number">{{ facilityStats?.facilityCounts?.SHOPPING || 145 }}</div>
+                <div class="bubble-label">Shopping</div>
                 <div class="bubble-details">
-                  <span class="detail-pill">87 Restaurants</span>
-                  <span class="detail-pill">29 Cafes</span>
-                  <span class="detail-pill">29 Bars</span>
+                  <span class="detail-pill">{{ facilityStats?.detailedCounts?.SHOPPING?.Mall || 87 }} Mall</span>
+                  <span class="detail-pill">{{ facilityStats?.detailedCounts?.SHOPPING?.Supermarket || 29 }} Supermarket</span>
+                  <span class="detail-pill">Other</span>
                 </div>
               </div>
               <div class="bubble-glow"></div>
@@ -407,11 +423,17 @@
 </template>
 
 <script>
+import { socialApi, apiUtils } from '../../services/api.js'
+
 export default {
   name: 'SocialPage',
   data() {
     return {
-      // Data for social sustainability metrics
+      facilityStats: null,
+      facilities: [],
+      accessibilityData: [],
+      loading: false,
+      error: null
     }
   },
   computed: {
@@ -419,11 +441,65 @@ export default {
       return this.$route?.query?.suburb || '';
     }
   },
+  watch: {
+    selectedSuburb: {
+      immediate: true,
+      handler(newSuburb) {
+        if (newSuburb) {
+          this.loadSuburbData(newSuburb)
+        }
+      }
+    }
+  },
   mounted() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   },
   methods: {
-    // Methods for handling user interactions
+    async loadSuburbData(suburb) {
+      if (!suburb) return
+      
+      this.loading = true
+      this.error = null
+      
+      try {
+        // Load all social data in parallel
+        const [statsResponse, facilitiesResponse, accessibilityResponse] = await Promise.allSettled([
+          socialApi.getFacilityStats(suburb),
+          socialApi.getFacilities(suburb),
+          socialApi.getFacilityAccessibility(suburb)
+        ])
+
+        // Handle facility stats
+        if (statsResponse.status === 'fulfilled') {
+          const statsResult = apiUtils.extractData(statsResponse.value)
+          if (statsResult.success) {
+            this.facilityStats = statsResult.data
+          }
+        }
+
+        // Handle facilities
+        if (facilitiesResponse.status === 'fulfilled') {
+          const facilitiesResult = apiUtils.extractData(facilitiesResponse.value)
+          if (facilitiesResult.success) {
+            this.facilities = facilitiesResult.data || []
+          }
+        }
+
+        // Handle accessibility
+        if (accessibilityResponse.status === 'fulfilled') {
+          const accessibilityResult = apiUtils.extractData(accessibilityResponse.value)
+          if (accessibilityResult.success) {
+            this.accessibilityData = accessibilityResult.data || []
+          }
+        }
+
+      } catch (error) {
+        console.error('Error loading suburb data:', error)
+        this.error = `Failed to load data for ${suburb}`
+      } finally {
+        this.loading = false
+      }
+    }
   }
 }
 </script>
@@ -832,6 +908,10 @@ export default {
   box-shadow: 0 25px 60px rgba(255, 152, 0, 0.3);
 }
 
+.facility-bubble.shopping:hover {
+  box-shadow: 0 25px 60px rgba(255, 152, 0, 0.3);
+}
+
 .bubble-icon {
   width: 50px;
   height: 50px;
@@ -863,6 +943,11 @@ export default {
 }
 
 .facility-bubble.dining .bubble-icon {
+  background: linear-gradient(135deg, rgba(255, 152, 0, 0.2), rgba(255, 152, 0, 0.3));
+  color: #FF9800;
+}
+
+.facility-bubble.shopping .bubble-icon {
   background: linear-gradient(135deg, rgba(255, 152, 0, 0.2), rgba(255, 152, 0, 0.3));
   color: #FF9800;
 }
@@ -907,6 +992,10 @@ export default {
 }
 
 .facility-bubble.dining .bubble-number {
+  color: #FF9800;
+}
+
+.facility-bubble.shopping .bubble-number {
   color: #FF9800;
 }
 
@@ -1684,6 +1773,79 @@ export default {
 .suburb-display .pin {
   margin-right: 0.4rem;
   filter: drop-shadow(0 1px 2px rgba(0,0,0,0.15));
+}
+
+/* Loading and Error States */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  text-align: center;
+}
+
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid rgba(76, 175, 80, 0.1);
+  border-left: 4px solid #4CAF50;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading-container p {
+  color: #666;
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+.error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  text-align: center;
+  background: rgba(244, 67, 54, 0.1);
+  border-radius: 15px;
+  margin: 2rem 0;
+}
+
+.error-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.error-container p {
+  color: #d32f2f;
+  font-size: 1.1rem;
+  font-weight: 500;
+  margin-bottom: 1.5rem;
+}
+
+.retry-btn {
+  background: linear-gradient(135deg, #4CAF50, #45a049);
+  color: white;
+  border: none;
+  padding: 0.8rem 2rem;
+  border-radius: 25px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+}
+
+.retry-btn:hover {
+  background: linear-gradient(135deg, #45a049, #4CAF50);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4);
 }
 </style>
 

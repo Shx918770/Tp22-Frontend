@@ -666,12 +666,13 @@ export default {
       return counts;
     },
     trendChartData() {
+      const limitedTrees = this.trees.slice(0, 10);
       return {
-        labels: this.trees.map((t) => t.name),
+        labels: limitedTrees.map((t) => t.name),
         datasets: [
           {
             label: "Life Expectancy (years)",
-            data: this.trees.map((t) => t.life),
+            data: limitedTrees.map((t) => t.life),
             borderColor: "green",
             backgroundColor: "rgba(0,128,0,0.3)"
           }

@@ -576,6 +576,9 @@
 
 <script>
 import { environmentApi, apiUtils } from '../../services/api.js'
+import { LMap, LTileLayer, LCircleMarker } from "vue2-leaflet";
+import "leaflet/dist/leaflet.css";
+import LineChart from "@/components/environment/LineChart.vue";
 
 export default {
   name: 'EnvironmentPage',

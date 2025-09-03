@@ -2,7 +2,8 @@ import axios from 'axios'
 
 // Create axios instance with default configuration
 const api = axios.create({
-  baseURL: 'http://melsustain-backend-env.eba-rutapszq.ap-southeast-2.elasticbeanstalk.com/api',
+  // baseURL: 'http://melsustain-backend-env.eba-rutapszq.ap-southeast-2.elasticbeanstalk.com/api',
+  baseURL:'https://api.melsustain.tech/api',
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',

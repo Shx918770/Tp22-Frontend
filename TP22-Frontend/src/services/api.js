@@ -113,6 +113,11 @@ export const environmentApi = {
     return api.get(`/trees?suburb=${encodeURIComponent(suburb)}`)
   },
 
+  getAirBySuburb: (suburb) =>
+    api.get(`/environment/air`, { params: { suburb } }),
+  getAirTrend: (suburb) =>
+    api.get(`/environment/air/trend`, { params: { suburb } }),
+
   // Get latest indicators by suburb name
   getLatestIndicators(suburb) {
     return api.get(`/environment/indicators/latest?suburb=${encodeURIComponent(suburb)}`)

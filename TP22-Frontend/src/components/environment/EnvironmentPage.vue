@@ -212,6 +212,53 @@
         </div>
       </section>
 
+      <!-- Air Detail Section -->
+      <section id="air-detail-section" class="air-detail-section">
+        <div class="container">
+          <div class="detail-card">
+            <h2 class="section-title">Air Quality Insights</h2>
+            <p class="section-subtitle">Pollutant distribution, daily levels, and long-term trends</p>
+
+            <div class="detail-grid">
+              <!-- Map -->
+              <div class="card-panel">
+                <h3 class="panel-title">Air Monitoring Stations</h3>
+                <l-map style="height: 300px; width: 100%;" :zoom="mapZoom" :center="mapCenter">
+                  <l-tile-layer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                  <l-marker
+                    v-for="(station, idx) in airStations"
+                    :key="idx"
+                    :lat-lng="[station.lat, station.lng]"
+                  >
+                    <l-popup>
+                      {{ station.name }} <br/>
+                      PM2.5: {{ station.pm25 }} µg/m³ <br/>
+                      O3: {{ station.o3 }} ppb
+                    </l-popup>
+                  </l-marker>
+                </l-map>
+              </div>
+
+              <!-- Pollutants List -->
+              <div class="card-panel">
+                <h3 class="panel-title">Pollutants Today</h3>
+                <ul class="species-list">
+                  <li v-for="(val, key) in formattedPollutants" :key="key">
+                    <strong>{{ key }}</strong> : {{ val || '' }}
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <!-- Trend Chart -->
+            <div class="card-panel trend-panel">
+              <h3 class="panel-title">Air Quality Trend (PM2.5)</h3>
+              <LineChart :chart-data="airTrendData || { labels: [], datasets: [] }" />
+            </div>
+          </div>
+        </div>
+      </section>
+
       <!-- Air Quality Monitoring Trends - Wave Visualization -->
       <section class="air-quality-trends">
         <div class="container">
@@ -608,28 +655,25 @@ export default {
     return {
       trees: [],
       mapCenter: [-37.81, 144.96],
+      mapZoom: 11,
       treeIcon: L.divIcon({
         html:"🌳",
         className:"tree-emoji-icon",
         iconSize: [24, 24]
-      })
-      // selectedTimePeriod: '6m',
-      // energyTab: 'block',
-      // animationStarted: false,
-      // environmentalIndicators: [],
-      // trendData: [],
-      // loading: false,
-      // error: null
+      }),
+      airStations: [],        // for map
+      latestPollutants: {},   // for list
+      airTrendData: null,     // for trend
+      loading: false,
+      error: null
     }
   },
   methods: {
+    // data of tree
     async loadTrees(suburb) {
       try {
         const res = await environmentApi.getTreesBySuburb(suburb)
         const result = apiUtils.extractData(res)
-
-        console.log("Raw response:", res.data)
-        console.log("Extracted result:", result)
 
         if (result.success && Array.isArray(result.data)) {
           this.trees = result.data.map(tree => ({
@@ -639,25 +683,110 @@ export default {
             name: tree.commonName,
             life: tree.usefulLifeExpectencyValue || 0
           }))
-          console.log("Loaded trees (mapped):", this.trees.slice(0, 5))
-        // set the center of map is the first tree
-        if (this.trees.length > 0) {
-          this.mapCenter = [this.trees[0].lat, this.trees[0].lng]
+          if (this.trees.length > 0) {
+            this.mapCenter = [this.trees[0].lat, this.trees[0].lng]
+          }
+        } else {
+          this.trees = []
         }
-      } else {
-        this.trees=[]
-      }
-    } catch (error) {
+      } catch (error) {
         console.error("fail to get the data of trees:", error)
+      }
+    },
+
+    // data of air
+    async loadAirData(suburb) {
+      try {
+        const res = await environmentApi.getAirBySuburb(suburb);
+        this.latestPollutants = res.data?.data || {};
+
+        this.airStations = [{
+          name: `${suburb} Station`,
+          lat: this.mapCenter[0],
+          lng: this.mapCenter[1],
+          pm25: res.data?.PM25 || 0,
+          o3: res.data?.O3 || 0
+        }];
+
+        const trendRes = await environmentApi.getAirTrend(suburb);
+        const trend = trendRes.data?.data || [];
+        this.airTrendData = {
+          labels: trend.map(d => d.date),
+          datasets: [{
+            label: "PM2.5 (µg/m³)",
+            data: trend.map(d => d.PM25),
+            borderColor: "blue",
+            backgroundColor: "rgba(0,0,255,0.3)"
+          }]
+        };
+      } catch (e) {
+        console.error("Failed to load air data", e);
+      }
+    },
+
+    // one in
+    async loadEnvironmentalData(suburb) {
+      if (!suburb) return;
+      this.loading = true;
+      this.error = null;
+
+      try {
+        await this.loadTrees(suburb);
+        await this.loadAirData(suburb);
+      } catch (e) {
+        console.error("Failed to load environmental data", e);
+        this.error = `Failed to load data for ${suburb}`;
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    toggleTreeDetail() {
+      this.$nextTick(() => {
+        document
+          .getElementById("tree-detail-section")
+          ?.scrollIntoView({ behavior: "smooth" });
+      });
+    },
+
+    toggleAirDetail() {
+      this.$nextTick(() => {
+        document
+          .getElementById("air-detail-section")
+          ?.scrollIntoView({ behavior: "smooth" });
+      });
+    }
+  },
+  watch: {
+    selectedSuburb: {
+      immediate: true,
+      handler(newSuburb) {
+        if (newSuburb) {
+          this.loadAirData(newSuburb);
+        }
       }
     }
   },
   mounted() {
-    this.initializeAnimations();
-    this.setupTimeSelector();
+    // initializeAnimations();
+    // setupTimeSelector();
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    
   },
   computed: {
+    formattedPollutants() {
+      if (!this.latestPollutants) return {};
+      return {
+        Suburb: this.latestPollutants.suburb || '',
+        Date: this.latestPollutants.date || '',
+        CO: this.latestPollutants.CO || '',
+        NO2: this.latestPollutants.NO2 || '',
+        O3: this.latestPollutants.O3 || '',
+        PM10: this.latestPollutants.PM10 || '',
+        PM25: this.latestPollutants.PM25 || '',
+        SO2: this.latestPollutants.SO2 || ''
+      };
+    },
     speciesCount() {
       const counts = {};
       this.trees.forEach((tree) => {
@@ -741,102 +870,6 @@ export default {
     selectedTimePeriod(newPeriod) {
       if (this.selectedSuburb) {
         this.loadTrendData(this.selectedSuburb, newPeriod);
-      }
-    }
-  },
-  methods: {
-    toggleTreeDetail(){
-      this.$nextTick(() => {
-        document
-          .getElementById("tree-detail-section")
-          ?.scrollIntoView({ behavior: "smooth" });
-      });
-    },
-    async loadEnvironmentalData(suburb) {
-      if (!suburb) return;
-      this.loading = true;
-      this.error = null;
-
-      try {
-        const res = await environmentApi.getTreesBySuburb(suburb);  
-        const trees = res.data;
-
-        if (Array.isArray(trees)) {
-          this.trees = trees.map(tree => ({
-            id: tree.comId,
-            lat: tree.latitude,
-            lng: tree.longitude,
-            name: tree.commonName,
-            life: tree.usefulLifeExpectencyValue || 0
-          }));
-        } else {
-          this.trees = [];
-        }
-
-        if (this.trees.length > 0) {
-          this.mapCenter = [this.trees[0].lat, this.trees[0].lng];
-        }
-
-      } catch (error) {
-        console.error("Failed to get tree data:", error);
-        this.error = `Failed to load tree data for ${suburb}`;
-      } finally {
-        this.loading = false;
-      }
-    },
-    getMonthsFromPeriod(period) {
-      switch(period) {
-        case '6m': return 6;
-        case '1y': return 12;
-        case '2y': return 24;
-        default: return 6;
-      }
-    },
-
-    calculateTrend(indicator) {
-      // Simple trend calculation - in real app this would be more sophisticated
-      if (indicator.value > 65) return '+5.2%';
-      if (indicator.value > 45) return '+2.1%';
-      return '-1.3%';
-    },
-
-    getAirQualityStatus(value) {
-      if (value <= 50) return 'Good';
-      if (value <= 100) return 'Moderate';
-      if (value <= 150) return 'Unhealthy for Sensitive Groups';
-      return 'Unhealthy';
-    },
-
-    calculateWaterUsage(efficiency) {
-      // Calculate daily usage based on efficiency (lower efficiency = higher usage)
-      const baseUsage = 200; // Base usage in liters
-      const usage = Math.round(baseUsage * (100 - efficiency) / 50);
-      return `${usage}L`;
-    },
-
-    initializeAnimations() {
-      // Start progress ring animations
-      setTimeout(() => {
-        this.animationStarted = true;
-      }, 500);
-    },
-    
-    setupTimeSelector() {
-      const timeButtons = document.querySelectorAll('.time-btn');
-      timeButtons.forEach(btn => {
-        btn.addEventListener('click', (e) => {
-          timeButtons.forEach(b => b.classList.remove('active'));
-          e.target.classList.add('active');
-          this.selectedTimePeriod = e.target.dataset.period;
-        });
-      });
-    },
-
-    retryLoading() {
-      if (this.selectedSuburb) {
-        this.loadEnvironmentalData(this.selectedSuburb)
-      } else {
-        this.error = null
       }
     }
   }

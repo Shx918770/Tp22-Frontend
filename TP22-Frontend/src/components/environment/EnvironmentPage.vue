@@ -576,9 +576,18 @@
 
 <script>
 import { environmentApi, apiUtils } from '../../services/api.js'
-import { LMap, LTileLayer, LCircleMarker } from "vue2-leaflet";
+import { LMap, LTileLayer, LCircleMarker } from "@vue-leaflet/vue-leaflet";
 import "leaflet/dist/leaflet.css";
+import L from "leaflet";
 import LineChart from "@/components/environment/LineChart.vue";
+
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon-2x.png",
+  iconUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png",
+  shadowUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png"
+});
+
 
 export default {
   name: 'EnvironmentPage',

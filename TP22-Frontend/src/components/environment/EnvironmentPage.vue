@@ -169,44 +169,47 @@
       </section>
 
       <!-- Tree Detail Section -->
-       <section 
-          v-show="true" 
-          id="tree-detail-section" 
-          class="tree-detail-section"
-        >
-          <div class="tree-detail-top">
-            <!-- Left: Map -->
-            <div class="tree-map">
-              <h3>Tree Distribution Map</h3>
-              <l-map ref="mapRef" style="height: 400px; width: 100%;" :zoom="13" :center="mapCenter">
-                <l-tile-layer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-                <l-circle-marker
-                  v-for="tree in trees"
-                  :key="tree.id"
-                  :lat-lng="[tree.lat, tree.lon]"
-                  :radius="6"
-                  color="green"
-                />
-              </l-map>
+       <section id="tree-detail-section" class="tree-detail-section">
+        <div class="container">
+          <div class="detail-card">
+            <h2 class="section-title">Tree Insights</h2>
+            <p class="section-subtitle">Tree distribution, species diversity and lifespan trends</p>
+
+            <div class="detail-grid">
+              <!-- map -->
+              <div class="card-panel">
+                <h3 class="panel-title">Tree Distribution Map</h3>
+                <l-map ref="mapRef" style="height: 300px; width: 100%;" :zoom="13" :center="mapCenter">
+                  <l-tile-layer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                  <l-circle-marker
+                    v-for="tree in trees"
+                    :key="tree.id"
+                    :lat-lng="[tree.lat, tree.lon]"
+                    :radius="6"
+                    color="green"
+                  />
+                </l-map>
+              </div>
+
+              <!-- list -->
+              <div class="card-panel">
+                <h3 class="panel-title">Tree Species List</h3>
+                <ul class="species-list">
+                  <li v-for="(count, species) in speciesCount" :key="species">
+                    {{ species }} - {{ count }}
+                  </li>
+                </ul>
+              </div>
             </div>
 
-            <!-- Right: List -->
-            <div class="tree-list">
-              <h3>Tree Species List</h3>
-              <ul>
-                <li v-for="(count, species) in speciesCount" :key="species">
-                  {{ species }} - {{ count }}
-                </li>
-              </ul>
+            <!-- trend -->
+            <div class="card-panel trend-panel">
+              <h3 class="panel-title">Life Expectancy Trends</h3>
+              <LineChart :chart-data="trendChartData" />
             </div>
           </div>
-
-          <!-- Bottom: Trend -->
-          <div class="tree-trend">
-            <h3>Life Expectancy Trends</h3>
-            <LineChart :chart-data="trendChartData" />
-          </div>
-        </section>
+        </div>
+      </section>
 
       <!-- Air Quality Monitoring Trends - Wave Visualization -->
       <section class="air-quality-trends">
@@ -590,6 +593,14 @@ L.Icon.Default.mergeOptions({
 
 
 export default {
+
+  components: {
+    LMap,
+    LTileLayer,
+    LCircleMarker,
+    LineChart
+  },
+
   name: 'EnvironmentPage',
   data() {
     return {
@@ -827,6 +838,53 @@ export default {
 </script>
 
 <style scoped>
+.tree-detail-section {
+  padding: 4rem 0;
+}
+
+.detail-card {
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.card-panel {
+  background: #fff;
+  border-radius: 15px;
+  padding: 1.5rem;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+}
+
+.panel-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: #2c3e50;
+}
+
+.species-list {
+  list-style: none;
+  padding: 0;
+}
+
+.species-list li {
+  padding: 0.4rem 0;
+  font-size: 1rem;
+  border-bottom: 1px solid #eee;
+}
+
+.trend-panel {
+  margin-top: 2rem;
+}
+
 .tree-detail-section {
   margin-top: 3rem;
   padding: 2rem;

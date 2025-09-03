@@ -179,7 +179,7 @@
               <!-- map -->
               <div class="card-panel">
                 <h3 class="panel-title">Tree Distribution Map</h3>
-                <l-map ref="mapRef" style="height: 300px; width: 100%;" :zoom="13" :center="mapCenter">
+                <l-map ref="mapRef" style="height: 300px; width: 100%;" :zoom="17" :center="mapCenter">
                   <l-tile-layer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
                   <l-marker
                     v-for="tree in trees"

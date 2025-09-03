@@ -170,7 +170,7 @@
 
       <!-- Tree Detail Section -->
        <section 
-          v-if="showTreeDetail" 
+          v-show="true" 
           id="tree-detail-section" 
           class="tree-detail-section"
         >
@@ -178,7 +178,7 @@
             <!-- Left: Map -->
             <div class="tree-map">
               <h3>Tree Distribution Map</h3>
-              <l-map style="height: 400px; width: 100%;" :zoom="13" :center="mapCenter">
+              <l-map ref="mapRef" style="height: 400px; width: 100%;" :zoom="13" :center="mapCenter">
                 <l-tile-layer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
                 <l-circle-marker
                   v-for="tree in trees"
@@ -204,7 +204,7 @@
           <!-- Bottom: Trend -->
           <div class="tree-trend">
             <h3>Life Expectancy Trends</h3>
-            <LineChart :chart-data="trendData" />
+            <LineChart :chart-data="trendChartData" />
           </div>
         </section>
 
@@ -609,7 +609,7 @@ export default {
       });
       return counts;
     },
-    trendData() {
+    trendChartData() {
       return {
         labels: this.trees.map((t) => t.name),
         datasets: [
@@ -689,15 +689,13 @@ export default {
   },
   methods: {
     toggleTreeDetail(){
-      this.showTreeDetail = !this.showTreeDetail;
-      if (this.showTreeDetail) {
-        this.$nextTick(() => {
-          document
-            .getElementById("tree-detail-section")
-            ?.scrollIntoView({ behavior: "smooth" });
-        });
-      }
-    },
+      this.$nextTick(() => {
+        document
+          .getElementById("tree-detail-section")
+          ?.scrollIntoView({ behavior: "smooth" });
+      });
+    }
+  },
     async loadEnvironmentalData(suburb) {
       if (!suburb) return;
       

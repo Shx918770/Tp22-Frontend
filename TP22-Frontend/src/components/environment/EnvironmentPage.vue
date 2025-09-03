@@ -181,12 +181,11 @@
                 <h3 class="panel-title">Tree Distribution Map</h3>
                 <l-map ref="mapRef" style="height: 300px; width: 100%;" :zoom="13" :center="mapCenter">
                   <l-tile-layer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-                  <l-circle-marker
+                  <l-marker
                     v-for="tree in trees"
                     :key="tree.id"
-                    :lat-lng="[tree.lat, tree.lon]"
-                    :radius="6"
-                    color="green"
+                    :lat-lng="[tree.lat, tree.lng]"
+                    :icon = "treeIcon"
                   />
                 </l-map>
               </div>
@@ -194,11 +193,13 @@
               <!-- list -->
               <div class="card-panel">
                 <h3 class="panel-title">Tree Species List</h3>
-                <ul class="species-list">
-                  <li v-for="(count, species) in speciesCount" :key="species">
-                    {{ species }} - {{ count }}
-                  </li>
-                </ul>
+                <div class="species-list-container">
+                  <ul class="species-list">
+                    <li v-for="(count, species) in speciesCount" :key="species">
+                      {{ species }} - {{ count }}
+                    </li>
+                  </ul>
+                </div>
               </div>
             </div>
 
@@ -579,10 +580,11 @@
 
 <script>
 import { environmentApi, apiUtils } from '../../services/api.js'
-import { LMap, LTileLayer, LCircleMarker } from "@vue-leaflet/vue-leaflet";
+import { LMap, LTileLayer, LCircleMarker, LMarker } from "@vue-leaflet/vue-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import LineChart from "@/components/environment/LineChart.vue";
+import { icon } from 'leaflet';
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -591,31 +593,63 @@ L.Icon.Default.mergeOptions({
   shadowUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png"
 });
 
-
 export default {
 
   components: {
     LMap,
     LTileLayer,
     LCircleMarker,
-    LineChart
+    LMarker,
+    LineChart 
   },
 
   name: 'EnvironmentPage',
   data() {
     return {
-      trees: [
-        { id: 1, lat: -37.81, lon: 144.96, name: "Eucalyptus", life: 80 },
-        { id: 2, lat: -37.815, lon: 144.97, name: "Plane Tree", life: 60 }
-      ],
+      trees: [],
       mapCenter: [-37.81, 144.96],
-      selectedTimePeriod: '6m',
-      energyTab: 'block',
-      animationStarted: false,
-      environmentalIndicators: [],
-      trendData: [],
-      loading: false,
-      error: null
+      treeIcon: L.divIcon({
+        html:"🌳",
+        className:"tree-emoji-icon",
+        iconSize: [24, 24]
+      })
+      // selectedTimePeriod: '6m',
+      // energyTab: 'block',
+      // animationStarted: false,
+      // environmentalIndicators: [],
+      // trendData: [],
+      // loading: false,
+      // error: null
+    }
+  },
+  methods: {
+    async loadTrees(suburb) {
+      try {
+        const res = await environmentApi.getTreesBySuburb(suburb)
+        const result = apiUtils.extractData(res)
+
+        console.log("Raw response:", res.data)
+        console.log("Extracted result:", result)
+
+        if (result.success && Array.isArray(result.data)) {
+          this.trees = result.data.map(tree => ({
+            id: tree.comId,
+            lat: tree.latitude,
+            lng: tree.longitude,
+            name: tree.commonName,
+            life: tree.usefulLifeExpectencyValue || 0
+          }))
+          console.log("Loaded trees (mapped):", this.trees.slice(0, 5))
+        // set the center of map is the first tree
+        if (this.trees.length > 0) {
+          this.mapCenter = [this.trees[0].lat, this.trees[0].lng]
+        }
+      } else {
+        this.trees=[]
+      }
+    } catch (error) {
+        console.error("fail to get the data of trees:", error)
+      }
     }
   },
   mounted() {
@@ -719,65 +753,36 @@ export default {
     },
     async loadEnvironmentalData(suburb) {
       if (!suburb) return;
-      
       this.loading = true;
       this.error = null;
-      
-      try {
-        // Load latest environmental indicators and trend data in parallel
-        const [indicatorsResponse, trendResponse] = await Promise.allSettled([
-          environmentApi.getLatestIndicators(suburb),
-          environmentApi.getIndicatorTrend(suburb, 'air_quality', this.getMonthsFromPeriod(this.selectedTimePeriod))
-        ]);
 
-        // Handle environmental indicators
-        if (indicatorsResponse.status === 'fulfilled') {
-          const indicatorsResult = apiUtils.extractData(indicatorsResponse.value);
-          if (indicatorsResult.success) {
-            this.environmentalIndicators = apiUtils.formatEnvironmentalIndicators(indicatorsResult.data || []);
-          } else {
-            this.environmentalIndicators = [];
-          }
+      try {
+        const res = await environmentApi.getTreesBySuburb(suburb);  
+        const trees = res.data;
+
+        if (Array.isArray(trees)) {
+          this.trees = trees.map(tree => ({
+            id: tree.comId,
+            lat: tree.latitude,
+            lng: tree.longitude,
+            name: tree.commonName,
+            life: tree.usefulLifeExpectencyValue || 0
+          }));
         } else {
-          this.environmentalIndicators = [];
+          this.trees = [];
         }
 
-        // Handle trend data
-        if (trendResponse.status === 'fulfilled') {
-          const trendResult = apiUtils.extractData(trendResponse.value);
-          if (trendResult.success) {
-            this.trendData = apiUtils.formatEnvironmentalIndicators(trendResult.data || []);
-          } else {
-            this.trendData = [];
-          }
-        } else {
-          this.trendData = [];
+        if (this.trees.length > 0) {
+          this.mapCenter = [this.trees[0].lat, this.trees[0].lng];
         }
 
       } catch (error) {
-        console.error('Error loading environmental data:', error);
-        this.error = `Failed to load environmental data for ${suburb}`;
+        console.error("Failed to get tree data:", error);
+        this.error = `Failed to load tree data for ${suburb}`;
       } finally {
         this.loading = false;
       }
     },
-
-    async loadTrendData(suburb, period) {
-      if (!suburb) return;
-      
-      try {
-        const months = this.getMonthsFromPeriod(period);
-        const response = await environmentApi.getIndicatorTrend(suburb, 'air_quality', months);
-        const result = apiUtils.extractData(response);
-        
-        if (result.success) {
-          this.trendData = result.data || [];
-        }
-      } catch (error) {
-        console.warn('Failed to load trend data:', error);
-      }
-    },
-
     getMonthsFromPeriod(period) {
       switch(period) {
         case '6m': return 6;
@@ -838,6 +843,33 @@ export default {
 </script>
 
 <style scoped>
+
+.tree-emoji-icon {
+  font-size: 20px;
+  line-height: 24px;
+  text-align: center;
+}
+.species-list-container {
+  max-height: 300px;
+  overflow-y: auto;
+  border: 1px solid #eee;
+  padding: 0.5rem;
+  border-radius: 8px;
+}
+
+.species-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.species-list li {
+  padding: 0.4rem 0;
+  font-size: 1rem;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+
 .tree-detail-section {
   padding: 4rem 0;
 }
@@ -868,17 +900,6 @@ export default {
   font-weight: 600;
   margin-bottom: 1rem;
   color: #2c3e50;
-}
-
-.species-list {
-  list-style: none;
-  padding: 0;
-}
-
-.species-list li {
-  padding: 0.4rem 0;
-  font-size: 1rem;
-  border-bottom: 1px solid #eee;
 }
 
 .trend-panel {

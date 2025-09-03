@@ -2,7 +2,7 @@ import axios from 'axios'
 
 // Create axios instance with default configuration
 const api = axios.create({
-  baseURL: 'http://localhost:8080/api',
+  baseURL: 'http://melsustain-backend-env.eba-rutapszq.ap-southeast-2.elasticbeanstalk.com/api',
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
@@ -107,6 +107,11 @@ export const socialApi = {
 
 // Environment API
 export const environmentApi = {
+  //Map
+  getTreesBySuburb(suburb) {
+    return api.get(`/trees?suburb=${encodeURIComponent(suburb)}`)
+  },
+
   // Get latest indicators by suburb name
   getLatestIndicators(suburb) {
     return api.get(`/environment/indicators/latest?suburb=${encodeURIComponent(suburb)}`)
@@ -209,19 +214,31 @@ export const apiUtils = {
         }
       }
 
-      if (response.data.success) {
+      // if return array
+      if (Array.isArray(response.data)) {
         return {
           success: true,
-          message: response.data.message || 'Success',
+          message: 'Success',
+          data: response.data,
+          total: response.data.length,
+        }
+      }
+
+      // if return object
+      if (Object.prototype.hasOwnProperty.call(response.data, 'success')) {
+        return {
+          success: response.data.success,
+          message: response.data.message || (response.data.success ? 'Success' : 'Failed'),
           data: this.validateData(response.data.data),
           total: response.data.total || 0,
         }
-      } else {
-        return {
-          success: false,
-          message: response.data.message || 'Request failed',
-          data: null,
-        }
+      }
+
+      // usual object
+      return {
+        success: true,
+        message: 'Success',
+        data: response.data,
       }
     } catch (error) {
       console.error('Error extracting data:', error)

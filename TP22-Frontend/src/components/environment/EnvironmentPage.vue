@@ -68,7 +68,7 @@
 
           <div class="indicators-grid">
             <!-- Tree Canopy Coverage -->
-            <div class="indicator-card canopy" @click="$router.push({ path: '/environment/trees', query: { suburb: selectedSuburb } })"style="cursor: pointer;">
+            <div class="indicator-card canopy" @click="toggleTreeDetail"style="cursor: pointer;">
               <div class="indicator-content">
                 <div class="indicator-icon">
                   <svg width="40" height="40" viewBox="0 0 24 24" fill="none">
@@ -167,6 +167,46 @@
           </div>
         </div>
       </section>
+
+      <!-- Tree Detail Section -->
+       <section 
+          v-if="showTreeDetail" 
+          id="tree-detail-section" 
+          class="tree-detail-section"
+        >
+          <div class="tree-detail-top">
+            <!-- Left: Map -->
+            <div class="tree-map">
+              <h3>Tree Distribution Map</h3>
+              <l-map style="height: 400px; width: 100%;" :zoom="13" :center="mapCenter">
+                <l-tile-layer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                <l-circle-marker
+                  v-for="tree in trees"
+                  :key="tree.id"
+                  :lat-lng="[tree.lat, tree.lon]"
+                  :radius="6"
+                  color="green"
+                />
+              </l-map>
+            </div>
+
+            <!-- Right: List -->
+            <div class="tree-list">
+              <h3>Tree Species</h3>
+              <ul>
+                <li v-for="(count, species) in speciesCount" :key="species">
+                  {{ species }} - {{ count }}
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Bottom: Trend -->
+          <div class="tree-trend">
+            <h3>Life Expectancy Trends</h3>
+            <LineChart :chart-data="trendData" />
+          </div>
+        </section>
 
       <!-- Air Quality Monitoring Trends - Wave Visualization -->
       <section class="air-quality-trends">
@@ -541,6 +581,12 @@ export default {
   name: 'EnvironmentPage',
   data() {
     return {
+      showTreeDetail: false,
+      trees: [
+        { id: 1, lat: -37.81, lon: 144.96, name: "Eucalyptus", life: 80 },
+        { id: 2, lat: -37.815, lon: 144.97, name: "Plane Tree", life: 60 }
+      ],
+      mapCenter: [-37.81, 144.96],
       selectedTimePeriod: '6m',
       energyTab: 'block',
       animationStarted: false,
@@ -556,6 +602,26 @@ export default {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   },
   computed: {
+    speciesCount() {
+      const counts = {};
+      this.trees.forEach((tree) => {
+        counts[tree.name] = (counts[tree.name] || 0) + 1;
+      });
+      return counts;
+    },
+    trendData() {
+      return {
+        labels: this.trees.map((t) => t.name),
+        datasets: [
+          {
+            label: "Life Expectancy (years)",
+            data: this.trees.map((t) => t.life),
+            borderColor: "green",
+            backgroundColor: "rgba(0,128,0,0.3)"
+          }
+        ]
+      };
+    },
     selectedSuburb() {
       return this.$route?.query?.suburb || '';
     },
@@ -622,6 +688,16 @@ export default {
     }
   },
   methods: {
+    toggleTreeDetail(){
+      this.showTreeDetail = !this.showTreeDetail;
+      if (this.showTreeDetail) {
+        this.$nextTick(() => {
+          document
+            .getElementById("tree-detail-section")
+            ?.scrollIntoView({ behavior: "smooth" });
+        });
+      }
+    },
     async loadEnvironmentalData(suburb) {
       if (!suburb) return;
       
@@ -743,6 +819,37 @@ export default {
 </script>
 
 <style scoped>
+.tree-detail-section {
+  margin-top: 3rem;
+  padding: 2rem;
+  border: 2px solid #eee;
+  border-radius: 15px;
+  background: white;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+}
+
+.tree-detail-top {
+  display: flex;
+  gap: 20px;
+}
+
+.tree-map {
+  flex: 1;
+}
+
+.tree-list {
+  flex: 1;
+  max-height: 400px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  padding: 1rem;
+  border-radius: 8px;
+}
+
+.tree-trend {
+  margin-top: 2rem;
+}
+
 .environment-page {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   line-height: 1.6;
@@ -1880,11 +1987,9 @@ export default {
   text-align: center;
 }
 
-/* 桌面端隐藏切换标签，改为双列并排展示 */
 .energy-tabs { display: none; }
 .energy-projections-content.energy-split { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 1.2rem; align-items: start; }
 
-/* 紧凑图表尺寸 */
 .energy-projection-chart svg { max-width: 100%; }
 .consumption-rings { gap: 1.25rem; }
 .ring-svg { width: 90px; height: 90px; }

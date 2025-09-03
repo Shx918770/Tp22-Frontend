@@ -581,7 +581,6 @@ export default {
   name: 'EnvironmentPage',
   data() {
     return {
-      showTreeDetail: false,
       trees: [
         { id: 1, lat: -37.81, lon: 144.96, name: "Eucalyptus", life: 80 },
         { id: 2, lat: -37.815, lon: 144.97, name: "Plane Tree", life: 60 }

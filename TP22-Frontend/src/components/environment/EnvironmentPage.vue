@@ -192,7 +192,7 @@
 
             <!-- Right: List -->
             <div class="tree-list">
-              <h3>Tree Species</h3>
+              <h3>Tree Species List</h3>
               <ul>
                 <li v-for="(count, species) in speciesCount" :key="species">
                   {{ species }} - {{ count }}

@@ -694,8 +694,7 @@ export default {
           .getElementById("tree-detail-section")
           ?.scrollIntoView({ behavior: "smooth" });
       });
-    }
-  },
+    },
     async loadEnvironmentalData(suburb) {
       if (!suburb) return;
       

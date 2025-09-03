@@ -100,7 +100,7 @@
             </div>
 
             <!-- Air Quality Index -->
-            <div class="indicator-card air-quality">
+            <div class="indicator-card air-quality" @click="toggleAirDetail" style="cursor: pointer;">
               <div class="indicator-content">
                 <div class="indicator-icon">
                   <svg width="40" height="40" viewBox="0 0 24 24" fill="none">

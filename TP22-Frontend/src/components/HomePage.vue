@@ -496,7 +496,7 @@ export default {
     viewSuburbDetails(suburbName) {
       const name = (suburbName || '').toString();
       if (!name) return;
-      this.$router.push({ path: '/social', query: { suburb: name } });
+      this.$router.push({ path: '/environment', query: { suburb: name } });
     },
 
     async searchSuburb() {

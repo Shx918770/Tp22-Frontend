@@ -221,7 +221,7 @@
 
             <div class="detail-grid">
               <!-- Map -->
-              <div class="card-panel">
+              <!-- <div class="card-panel">
                 <h3 class="panel-title">Air Monitoring Stations</h3>
                 <l-map style="height: 300px; width: 100%;" :zoom="mapZoom" :center="mapCenter">
                   <l-tile-layer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
@@ -237,17 +237,17 @@
                     </l-popup>
                   </l-marker>
                 </l-map>
-              </div>
+              </div> -->
 
               <!-- Pollutants List -->
-              <div class="card-panel">
+              <!-- <div class="card-panel">
                 <h3 class="panel-title">Pollutants Today</h3>
                 <ul class="species-list">
                   <li v-for="(val, key) in formattedPollutants" :key="key">
                     <strong>{{ key }}</strong> : {{ val || '' }}
                   </li>
                 </ul>
-              </div>
+              </div> -->
             </div>
 
             <!-- Trend Chart -->
@@ -711,11 +711,17 @@ export default {
 
         const trendRes = await environmentApi.getAirTrend(suburb);
         const trend = trendRes.data?.data || [];
+        const limitedTrend = trend.slice(-15);
         this.airTrendData = {
-          labels: trend.map(d => d.date),
+          labels: limitedTrend.map(d =>{
+            const dt = new Date(d.date);
+            const month = dt.toLocaleString("en-US", { month: "short" }).toUpperCase();
+            const day = String(dt.getDate()).padStart(2, "0");
+            return `${day}-${month}`;
+          }),
           datasets: [{
             label: "PM2.5 (µg/m³)",
-            data: trend.map(d => d.PM25),
+            data: limitedTrend.map(d => d.PM25),
             borderColor: "blue",
             backgroundColor: "rgba(0,0,255,0.3)"
           }]

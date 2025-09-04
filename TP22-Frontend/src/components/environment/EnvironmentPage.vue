@@ -206,7 +206,7 @@
             <!-- trend -->
             <div class="card-panel trend-panel">
               <h3 class="panel-title">Life Expectancy Trends</h3>
-              <LineChart :chart-data="trendChartData" />
+              <LineChart :chart-data="plantedTrendData" />
             </div>
           </div>
         </div>
@@ -681,7 +681,8 @@ export default {
             lat: tree.latitude,
             lng: tree.longitude,
             name: tree.commonName,
-            life: tree.usefulLifeExpectencyValue || 0
+            life: tree.usefulLifeExpectencyValue || 0,
+            year: (tree.yearPlanted && !isNaN(parseInt(tree.yearPlanted))) ? parseInt(tree.yearPlanted) : null
           }))
           if (this.trees.length > 0) {
             this.mapCenter = [this.trees[0].lat, this.trees[0].lng]
@@ -774,6 +775,30 @@ export default {
     
   },
   computed: {
+    plantedTrendData() {
+      const yearCounts = {};
+
+      this.trees.forEach(tree => {
+        if (tree.year) {
+          yearCounts[tree.year] = (yearCounts[tree.year] || 0) + 1;
+        }
+      });
+
+      const sortedYears = Object.keys(yearCounts).sort((a, b) => a - b);
+
+      return {
+        labels: sortedYears,
+        datasets: [
+          {
+            label: "Trees Planted",
+            data: sortedYears.map(year => yearCounts[year]),
+            borderColor: "green",
+            backgroundColor: "rgba(0,128,0,0.3)",
+            fill: true
+          }
+        ]
+      };
+    },
     formattedPollutants() {
       if (!this.latestPollutants) return {};
       return {
@@ -943,10 +968,10 @@ export default {
 .tree-detail-section {
   margin-top: 3rem;
   padding: 2rem;
-  border: 2px solid #eee;
-  border-radius: 15px;
-  background: white;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+  border: none;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
 }
 
 .tree-detail-top {

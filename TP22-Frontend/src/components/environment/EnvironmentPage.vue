@@ -133,32 +133,32 @@
               </div>
             </div>
 
-            <!-- Water Usage -->
-            <div class="indicator-card water-usage">
+            <!-- Energy Usage -->
+            <div class="indicator-card energy-usage" @click="toggleEnergyDetail" style="cursor: pointer;">
               <div class="indicator-content">
                 <div class="indicator-icon">
                   <svg width="40" height="40" viewBox="0 0 24 24" fill="none">
-                    <path d="M12 2.69L17.07 7.76C18.55 9.24 19.35 11.21 19.35 13.26C19.35 17.58 15.92 21 11.6 21C7.28 21 3.85 17.58 3.85 13.26C3.85 11.21 4.65 9.24 6.13 7.76L12 2.69Z" stroke="currentColor" stroke-width="2" fill="currentColor"/>
+                    <path d="M13 2L3 14H12L11 22L21 10H12L13 2Z" stroke="currentColor" stroke-width="2" fill="currentColor"/>
                   </svg>
                 </div>
                 <div class="progress-ring">
                   <svg class="progress-svg" width="120" height="120">
-                    <circle class="progress-track" cx="60" cy="60" r="50" stroke="#e1f5fe" stroke-width="8" fill="none"/>
-                    <circle class="progress-bar water-progress" cx="60" cy="60" r="50" stroke="#00BCD4" stroke-width="8" fill="none" 
+                    <circle class="progress-track" cx="60" cy="60" r="50" stroke="#f3e5f5" stroke-width="8" fill="none"/>
+                    <circle class="progress-bar energy-progress" cx="60" cy="60" r="50" stroke="#9C27B0" stroke-width="8" fill="none" 
                             stroke-dasharray="314" stroke-dashoffset="157" transform="rotate(-90 60 60)"/>
                   </svg>
                   <div class="progress-text">
-                    <div class="progress-value">50%</div>
+                    <div class="progress-value">65%</div>
                     <div class="progress-label">Efficiency</div>
                   </div>
                 </div>
                 <div class="indicator-details">
-                  <h3 class="indicator-title">Water Usage</h3>
-                  <p class="indicator-description">Water consumption efficiency compared to sustainable targets</p>
+                  <h3 class="indicator-title">Energy</h3>
+                  <p class="indicator-description">Energy consumption efficiency compared to targets</p>
                   <div class="indicator-metrics">
                     <div class="metric">
-                      <span class="metric-value">180L</span>
-                      <span class="metric-label">Per Person/Day</span>
+                      <span class="metric-value">↓ 12%</span>
+                      <span class="metric-label">vs Last Year</span>
                     </div>
                   </div>
                 </div>
@@ -205,7 +205,7 @@
 
             <!-- trend -->
             <div class="card-panel trend-panel">
-              <h3 class="panel-title">Life Expectancy Trends</h3>
+              <h3 class="panel-title">Number of trees planted</h3>
               <LineChart :chart-data="plantedTrendData" />
             </div>
           </div>
@@ -255,6 +255,21 @@
               <h3 class="panel-title">Air Quality Trend (PM2.5)</h3>
               <LineChart :chart-data="airTrendData || { labels: [], datasets: [] }" />
             </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Energy Consumption Map -->
+      <section id="energy-map-section" class="energy-map-section">
+        <div class="container">
+          <div class="detail-card">
+            <h2 class="section-title">Block-level Energy Consumption Map (2026)</h2>
+            <p class="section-subtitle">Boundaries colored by total energy consumption</p>
+
+            <l-map style="height: 400px; width: 100%;" :zoom="13" :center="mapCenter">
+              <l-tile-layer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+              <l-geo-json v-if="energyBlocks" :geojson="energyBlocks" :options-style="styleEnergyBlock" />
+            </l-map>
           </div>
         </div>
       </section>
@@ -494,111 +509,36 @@
               </div>
             </div>
 
-                                      <!-- Energy Projections -->
-             <div class="forecast-panel energy-projections">
-               <div class="panel-header">
-                 <div class="panel-icon">
-                   <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
-                     <path d="M12 2L2 7V11C2 16 6 19 12 22C18 19 22 16 22 11V7L12 2Z" stroke="currentColor" stroke-width="2" fill="currentColor"/>
-                   </svg>
-                 </div>
-                 <div class="panel-title">
-                   <h3>Energy Projections</h3>
-                   <p>Block-level & Property-level Energy Consumption (2011–2026)</p>
-                 </div>
-                 <div class="panel-badges">
-                   <span class="badge accent">-25% YoY</span>
-                   <span class="badge soft">Target 2030</span>
-                 </div>
-               </div>
-               <div class="forecast-visualization">
-                <div class="energy-tabs" role="tablist" aria-label="Energy projections tabs">
-                  <button class="tab-btn" :class="{ active: energyTab === 'block' }" role="tab" aria-selected="energyTab === 'block'" @click="energyTab = 'block'">Block-level</button>
-                  <button class="tab-btn" :class="{ active: energyTab === 'property' }" role="tab" aria-selected="energyTab === 'property'" @click="energyTab = 'property'">Property-level</button>
+            <!-- Energy Projections -->
+            <section id="energy-detail-section" class="forecast-panel energy-projections">
+              <div class="projection-grid">
+                <!-- left LineChart -->
+                <div class="projection-left">
+                  <h4 class="projection-subtitle">Block-level Energy Forecast: Total Trend & Sector Allocation (2011-2026)</h4>
+                  <LineChart :chart-data="energyTrendData || { labels: [], datasets: [] }" />
                 </div>
-                <transition name="fade-slide" mode="out-in">
-                  <div class="energy-projections-content energy-split" :key="energyTab">
-                    <!-- Block-level Projections -->
-                    <div class="projection-section">
-                      <h4 class="projection-subtitle">Block-level Energy Consumption Projections (2026)</h4>
-                      <div class="energy-projection-chart">
-                        <div class="projection-timeline">
-                          <div class="timeline-item">
-                            <div class="timeline-year">2011</div>
-                            <div class="timeline-value">Baseline</div>
-                          </div>
-                          <div class="timeline-item">
-                            <div class="timeline-year">2026</div>
-                            <div class="timeline-value">Projected</div>
-                          </div>
-                          <div class="timeline-item">
-                            <div class="timeline-year">2030</div>
-                            <div class="timeline-value">Target</div>
-                          </div>
-                        </div>
-                        <div class="energy-trend">
-                          <svg width="220" height="120" viewBox="0 0 220 120">
-                            <defs>
-                              <linearGradient id="areaGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                                <stop offset="0%" stop-color="#4CAF50" stop-opacity="0.35"/>
-                                <stop offset="100%" stop-color="#4CAF50" stop-opacity="0.05"/>
-                              </linearGradient>
-                              <linearGradient id="lineGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                                <stop offset="0%" stop-color="#2e7d32"/>
-                                <stop offset="100%" stop-color="#66bb6a"/>
-                              </linearGradient>
-                            </defs>
-                            <!-- grid -->
-                            <g opacity="0.25" stroke="#e3f2e6" stroke-width="1">
-                              <line x1="16" y1="95" x2="210" y2="95"/>
-                              <line x1="16" y1="70" x2="210" y2="70"/>
-                              <line x1="16" y1="45" x2="210" y2="45"/>
-                            </g>
-                            <!-- area -->
-                            <path d="M20 95 Q70 70 120 50 T200 35 L200 110 L20 110 Z" fill="url(#areaGradient)"/>
-                            <!-- line -->
-                            <path d="M20 95 Q70 70 120 50 T200 35" stroke="url(#lineGradient)" stroke-width="3" fill="none"/>
-                            <!-- points -->
-                            <circle cx="20" cy="95" r="4" fill="#4CAF50"/>
-                            <circle cx="120" cy="50" r="4" fill="#4CAF50"/>
-                            <circle cx="200" cy="35" r="4" fill="#4CAF50"/>
-                          </svg>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <!-- Property-level Distribution -->
-                    <div class="projection-section">
-                      <h4 class="projection-subtitle">Property-level Energy Consumption (2011–2026)</h4>
-                      <div class="capsule-list">
-                        <div class="capsule-row">
-                          <span class="capsule-label">Residential</span>
-                          <div class="capsule-track">
-                            <div class="capsule-fill residential" style="width: 70%"></div>
-                          </div>
-                          <span class="capsule-value">70%</span>
-                        </div>
-                        <div class="capsule-row">
-                          <span class="capsule-label">Commercial</span>
-                          <div class="capsule-track">
-                            <div class="capsule-fill commercial" style="width: 85%"></div>
-                          </div>
-                          <span class="capsule-value">85%</span>
-                        </div>
-                        <div class="capsule-row">
-                          <span class="capsule-label">Industrial</span>
-                          <div class="capsule-track">
-                            <div class="capsule-fill industrial" style="width: 60%"></div>
-                          </div>
-                          <span class="capsule-value">60%</span>
-                        </div>
-                      </div>
-                    </div>
+
+                <!-- right two Doughnut -->
+                <div class="projection-right">
+                  <div class="gauge">
+                    <h4>Residential</h4>
+                    <DoughnutChart :chart-data="residentialGauge" :options="gaugeOptions" />
                   </div>
-                </transition>
-                
+                  <div class="gauge">
+                    <h4>Commercial</h4>
+                    <DoughnutChart :chart-data="commercialGauge" :options="gaugeOptions" />
+                  </div>
+                </div>
               </div>
-            </div>
+
+              <!-- improve summary -->
+              <div class="projection-section growth-summary">
+                <p>2011 → 2016: <strong>+23.0% growth</strong></p>
+                <p>2016 → 2021: <strong>+8.7% growth</strong></p>
+                <p>2021 → 2026: <strong>-12.4% decline</strong></p>
+                <p>Peak consumption around 2021, then projected to dip slightly.</p>
+              </div>
+            </section>
           </div>
 
           
@@ -627,10 +567,11 @@
 
 <script>
 import { environmentApi, apiUtils } from '../../services/api.js'
-import { LMap, LTileLayer, LCircleMarker, LMarker } from "@vue-leaflet/vue-leaflet";
+import { LMap, LTileLayer, LCircleMarker, LMarker, LGeoJson} from "@vue-leaflet/vue-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import LineChart from "@/components/environment/LineChart.vue";
+import DoughnutChart from "@/components/environment/DoughnutChart.vue";
 import { icon } from 'leaflet';
 
 delete L.Icon.Default.prototype._getIconUrl;
@@ -647,7 +588,9 @@ export default {
     LTileLayer,
     LCircleMarker,
     LMarker,
-    LineChart 
+    LineChart,
+    LGeoJson,
+    DoughnutChart
   },
 
   name: 'EnvironmentPage',
@@ -661,9 +604,20 @@ export default {
         className:"tree-emoji-icon",
         iconSize: [24, 24]
       }),
-      airStations: [],        // for map
-      latestPollutants: {},   // for list
-      airTrendData: null,     // for trend
+      airStations: [],
+      latestPollutants: {},
+      airTrendData: { labels: [], datasets: [] }, 
+      energyTrendData: { labels: [], datasets: [] },
+      residentialGauge: {               
+        labels: ["Usage", "Remaining"],
+        datasets: [{ data: [0, 100], backgroundColor: ["#4CAF50", "#e0e0e0"] }]
+      },
+      commercialGauge: {
+        labels: ["Usage", "Remaining"],
+        datasets: [{ data: [0, 100], backgroundColor: ["#2196F3", "#e0e0e0"] }]
+      },
+      gaugeOptions: { cutout: "70%" },
+      energyBlocks: null,
       loading: false,
       error: null
     }
@@ -731,6 +685,107 @@ export default {
       }
     },
 
+    async loadEnergyTrend(suburb) {
+      try {
+        const res = await environmentApi.getEnergyTrend(suburb);
+        const allData = res.data?.data || [];
+
+        //avg
+        const avg = (arr) => arr.reduce((a, b) => a + b, 0) / arr.length;
+
+        const totals2011 = allData.map(d => d.total_2011 || 0);
+        const totals2016 = allData.map(d => d.total_2016 || 0);
+        const totals2021 = allData.map(d => d.total_2021 || 0);
+        const totals2026 = allData.map(d => d.total_2026 || 0);
+
+        this.energyTrendData = {
+          labels: ["2011", "2016", "2021", "2026"],
+          datasets: [{
+            label: "Energy Consumption(Average)",
+            data: [
+              avg(totals2011),
+              avg(totals2016),
+              avg(totals2021),
+              avg(totals2026)
+            ],
+            borderColor: "#4CAF50",
+            backgroundColor: "rgba(76, 175, 80, 0.2)",
+            fill: true
+          }]
+        };
+        this.residentialGauge = {
+          labels: ["Usage", "Remaining"],
+          datasets: [{
+            data: [47, 53],
+            backgroundColor: ["#4CAF50", "#e0e0e0"]
+          }]
+        };
+        this.commercialGauge = {
+          labels: ["Usage", "Remaining"],
+          datasets: [{
+            data: [47, 53],
+            backgroundColor: ["#2196F3", "#e0e0e0"]
+          }]
+        };
+        console.log("EnergyTrend Response", res.data);
+      } catch (e) {
+        console.error("Failed to load energy trend", e);
+      }
+    },
+
+    async loadEnergyBlocks(suburb) {
+      try {
+        const res = await environmentApi.getEnergyMap(suburb);
+        const blocks = res.data?.data || [];
+
+        const geojson = {
+          type: "FeatureCollection",
+          features: blocks.map((row, idx) => ({
+            type: "Feature",
+            id: idx,
+            properties: {
+              suburb: row.suburb,
+              total_2026: Number(row.total)
+            },
+            geometry: JSON.parse(row.geo_shape)
+          }))
+        };
+
+        this.energyBlocks = geojson;
+      } catch (e) {
+        console.error("Failed to load energy blocks", e);
+      }
+    },
+
+    styleEnergyBlock(feature) {
+      const value = feature.properties.total_2026 || 0;
+      return {
+        color: this.getEnergyColor(value),
+        weight: 1,
+        opacity: 1,
+        fillOpacity: 0.7
+      };
+    },
+
+    getEnergyColor(value) {
+      if (!value || isNaN(value)) return "#FFFFFF";
+
+      // color
+      const colors = ["#FFEDA0", "#FEB24C", "#FD8D3C", "#FC4E2A", "#BD0026", "#800026"];
+
+      // range 0 ~ 7000
+      const min = 0;
+      const max = 7000;
+
+      const step = (max - min) / (colors.length - 1);
+      const idx = Math.min(
+        colors.length - 1,
+        Math.floor((value - min) / step)
+      );
+
+      return colors[idx];
+    },
+
     // one in
     async loadEnvironmentalData(suburb) {
       if (!suburb) return;
@@ -740,6 +795,8 @@ export default {
       try {
         await this.loadTrees(suburb);
         await this.loadAirData(suburb);
+        await this.loadEnergyTrend(suburb);
+        await this.loadEnergyBlocks(suburb);
       } catch (e) {
         console.error("Failed to load environmental data", e);
         this.error = `Failed to load data for ${suburb}`;
@@ -760,6 +817,13 @@ export default {
       this.$nextTick(() => {
         document
           .getElementById("air-detail-section")
+          ?.scrollIntoView({ behavior: "smooth" });
+      });
+    },
+    toggleEnergyDetail() {
+      this.$nextTick(() => {
+        document
+          .getElementById("energy-detail-section")
           ?.scrollIntoView({ behavior: "smooth" });
       });
     }
@@ -908,6 +972,37 @@ export default {
 </script>
 
 <style scoped>
+  /* energy style */
+.projection-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 2rem;
+  align-items: start;
+}
+
+.projection-left {
+  background: #fff;
+  padding: 1rem;
+  border-radius: 12px;
+}
+
+.projection-right {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.projection-right .gauge {
+  flex: 1;
+  text-align: center;
+}
+
+.projection-right canvas {
+  max-width: 120px !important;
+  max-height: 80px !important;
+}
 
 .tree-emoji-icon {
   font-size: 20px;

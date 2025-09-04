@@ -118,6 +118,19 @@ export const environmentApi = {
   getAirTrend: (suburb) =>
     api.get(`/environment/air/trend`, { params: { suburb } }),
 
+  getEnergyMap(suburb) {
+    return api.get(`/environment/energy/map`, { params: { suburb } })
+  },
+  getEnergyList(suburb) {
+    return api.get(`/environment/energy/list`, { params: { suburb } })
+  },
+  getEnergyTrend(suburb) {
+    return api.get(`/environment/energy/trend`, { params: { suburb } })
+  },
+  getEnergyBlocks(suburb) {
+    return api.get(`/environment/energy/map`, { params: { suburb } });
+  },
+
   // Get latest indicators by suburb name
   getLatestIndicators(suburb) {
     return api.get(`/environment/indicators/latest?suburb=${encodeURIComponent(suburb)}`)

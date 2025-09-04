@@ -2,7 +2,6 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomePage from '../components/HomePage.vue'
 import SocialPage from '../components/social/SocialPage.vue'
 import EnvironmentPage from '../components/environment/EnvironmentPage.vue'
-import TestPage from '@/components/TestPage.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),

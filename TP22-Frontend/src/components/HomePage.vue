@@ -184,11 +184,11 @@
               </div>
               <div class="card-content">
                 <div class="card-text-content">
-                  <h3 class="suburb-name">Fitzroy</h3>
+                  <h3 class="suburb-name">Carlton</h3>
                   <p class="suburb-description">A trendy and artistic suburb with strong community engagement and green initiatives.</p>
                 </div>
                 <div class="card-button-container">
-                  <button class="view-details-btn" @click="viewSuburbDetails('Fitzroy')">
+                  <button class="view-details-btn" @click="viewSuburbDetails('Carlton')">
                     <span>View Details</span>
                     <svg class="btn-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
                       <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -209,11 +209,11 @@
               </div>
               <div class="card-content">
                 <div class="card-text-content">
-                  <h3 class="suburb-name">Richmond</h3>
+                  <h3 class="suburb-name">Carlton</h3>
                   <p class="suburb-description">A dynamic suburb with excellent transport links and growing sustainability infrastructure.</p>
                 </div>
                 <div class="card-button-container">
-                  <button class="view-details-btn" @click="viewSuburbDetails('Richmond')">
+                  <button class="view-details-btn" @click="viewSuburbDetails('Carlton')">
                     <span>View Details</span>
                     <svg class="btn-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
                       <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -230,7 +230,7 @@
     <!-- Compare Suburbs Section -->
     <section id="compare-section" class="compare-section">
       <div class="container">
-        <h2 class="section-title">Compare Suburbs Side-by-Side</h2>
+        <h2 class="section-title">Compare Suburbs Side-by-Side(Coming soon)</h2>
         <p class="section-description">
           Make confident housing decisions by comparing sustainability metrics between different Melbourne suburbs.
         </p>

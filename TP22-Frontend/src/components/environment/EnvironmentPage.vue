@@ -28,8 +28,9 @@
         </div>
         
         <div class="nav-tabs">
-          <router-link :to="{ path: '/', query: $route.query }" class="nav-tab">Overview</router-link>
-          <router-link :to="{ path: '/social', query: $route.query }" class="nav-tab">Social</router-link>
+          <router-link :to="{ path: '/', query: $route.query }" class="nav-tab">HomePage</router-link>
+          <!-- <router-link :to="{ path: '/social', query: $route.query }" class="nav-tab">Social</router-link> -->
+          <div class="nav-tab">Social</div>
           <div class="nav-tab">Economic</div>
           <div class="nav-tab">Infrastructure</div>
           <div class="nav-tab active">Environment</div>
@@ -52,7 +53,7 @@
               </h1>
             </div>
             <p class="page-description">
-              Explore suburb-level environmental data including tree canopy, air quality, and water usage to understand ecological health and predict future sustainability challenges.
+              Explore suburb-level environmental data including tree canopy, air quality, and energy to understand ecological health and predict future sustainability challenges.
             </p>
           </div>
         </div>

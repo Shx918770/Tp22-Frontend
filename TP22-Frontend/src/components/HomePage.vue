@@ -12,7 +12,7 @@
                <path d="M20 16C17.79 16 16 17.79 16 20C16 22.21 17.79 24 20 24C22.21 24 24 22.21 24 20C24 17.79 22.21 16 20 16Z" fill="white"/>
              </svg>
            </div>
-           <span class="logo-text">MelSustain</span>
+           <span class="logo-text">MelSustain(iteration1)</span>
          </div>
         <h1 class="hero-title">
           Discover Melbourne's Most 

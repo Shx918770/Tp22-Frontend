@@ -32,7 +32,7 @@ body {
   min-height: 100vh;
 }
 
-/* 自定义滚动条 */
+/*  */
 ::-webkit-scrollbar {
   width: 8px;
 }
@@ -50,7 +50,7 @@ body {
   background: #a8a8a8;
 }
 
-/* 平滑滚动 */
+/* smooth roll */
 html {
   scroll-behavior: smooth;
 }

@@ -13,153 +13,168 @@
 
     <!-- Header Navigation -->
     <nav class="nav-bar">
-      <div class="nav-container">
-        <div class="logo">
-          <div class="logo-icon">
-            <svg width="32" height="32" viewBox="0 0 40 40" fill="none">
-              <rect width="40" height="40" rx="8" fill="#4CAF50"/>
-              <path d="M20 8C13.37 8 8 13.37 8 20C8 26.63 13.37 32 20 32C26.63 32 32 26.63 32 20C32 13.37 26.63 8 20 8ZM20 30C14.48 30 10 25.52 10 20C10 14.48 14.48 10 20 10C25.52 10 30 14.48 30 20C30 25.52 25.52 30 20 30Z" fill="white"/>
-              <path d="M20 12C15.58 12 12 15.58 12 20C12 24.42 15.58 28 20 28C24.42 28 28 24.42 28 20C28 15.58 24.42 12 20 12ZM20 26C16.69 26 14 23.31 14 20C14 16.69 16.69 14 20 14C23.31 14 26 16.69 26 20C26 23.31 23.31 26 20 26Z" fill="white"/>
-              <path d="M20 16C17.79 16 16 17.79 16 20C16 22.21 17.79 24 20 24C22.21 24 24 22.21 24 20C24 17.79 22.21 16 20 16Z" fill="white"/>
-            </svg>
+      <div class="nav-container" ref="navContainer">
+        <!-- first line logo + suburb -->
+        <div class="nav-top">
+          <div class="logo">
+            <div class="logo-icon">
+              <svg width="32" height="32" viewBox="0 0 40 40" fill="none">
+                <rect width="40" height="40" rx="8" fill="#4CAF50"/>
+                <path d="M20 8C13.37 8 8 13.37 8 20C8 26.63 13.37 32 20 32C26.63 32 32 26.63 32 20C32 13.37 26.63 8 20 8ZM20 30C14.48 30 10 25.52 10 20C10 14.48 14.48 10 20 10C25.52 10 30 14.48 30 20C30 25.52 25.52 30 20 30Z" fill="white"/>
+                <path d="M20 12C15.58 12 12 15.58 12 20C12 24.42 15.58 28 20 28C24.42 28 28 24.42 28 20C28 15.58 24.42 12 20 12ZM20 26C16.69 26 14 23.31 14 20C14 16.69 16.69 14 20 14C23.31 14 26 16.69 26 20C26 23.31 23.31 26 20 26Z" fill="white"/>
+                <path d="M20 16C17.79 16 16 17.79 16 20C16 22.21 17.79 24 20 24C22.21 24 24 22.21 24 20C24 17.79 22.21 16 20 16Z" fill="white"/>
+              </svg>
+            </div>
+            <span class="logo-text">MelSustain</span>
           </div>
-          <span class="logo-text">MelSustain</span>
-          <span v-if="selectedSuburb" class="suburb-display"><span class="pin">📍</span>{{ selectedSuburb }}</span>
+          <span v-if="selectedSuburb" class="suburb-display">
+            <span class="pin">📍</span>{{ selectedSuburb }}
+          </span>
         </div>
         
-        <div class="nav-tabs">
-          <router-link :to="{ path: '/', query: $route.query }" class="nav-tab">HomePage</router-link>
-          <!-- <router-link :to="{ path: '/social', query: $route.query }" class="nav-tab">Social</router-link> -->
-          <div class="nav-tab">Social</div>
-          <div class="nav-tab">Economic</div>
-          <div class="nav-tab">Infrastructure</div>
-          <div class="nav-tab active">Environment</div>
-          <router-link :to="{ path: '/', hash: '#compare-section', query: $route.query }" class="nav-tab">Compare</router-link>
+        <!-- second line Navigation -->
+        <div class="nav-bottom">
+          <div class="nav-tabs" ref="navTabs">
+            <template v-for="tab in visibleTabs" :key="tab.label">
+              <router-link
+                v-if="tab.path.startsWith('/')"
+                :to="{ path: tab.path, query: $route.query }"
+                class="nav-tab"
+                :class="{ active: $route.path === tab.path || ($route.hash && tab.path.includes($route.hash)) }"
+              >
+                {{ tab.label }}
+              </router-link>
+              <div v-else class="nav-tab">{{ tab.label }}</div>
+            </template>
+          </div>
+
+          <!-- ☰list, only show when some navigation hide -->
+          <div v-if="hiddenTabs.length" class="more-menu">
+            <button class="menu-toggle" @click="isMenuOpen = !isMenuOpen">☰</button>
+            <transition name="fade-slide">
+              <div v-if="isMenuOpen" class="dropdown">
+                <div v-for="tab in hiddenTabs" :key="tab.label" class="nav-tab" @click="goTo(tab)">
+                  {{ tab.label }}
+                </div>
+              </div>
+            </transition>
+          </div>
         </div>
       </div>
     </nav>
 
     <!-- Main Content -->
     <main class="main-content">
-      <!-- Environment Insights Header -->
-      <section class="insights-header">
-        <div class="container">
-          <div class="header-content">
-            <div class="title-animation">
-              <h1 class="page-title">
-                <span class="title-word">Environmental</span>
-                <span class="title-word">Sustainability</span>
-                <span class="title-word">Insights</span>
-              </h1>
-            </div>
+      <!-- Hero Section -->
+      <section class="hero-section">
+        <div class="container hero-container">
+          <!-- Environment Insights Header -->
+          <div class="hero-header">
+            <h1 class="page-title">
+              <span>Environmental</span>
+              <span>Sustainability</span>
+              <span>Insights</span>
+            </h1>
             <p class="page-description">
               Explore suburb-level environmental data including tree canopy, air quality, and energy to understand ecological health and predict future sustainability challenges.
             </p>
           </div>
-        </div>
-      </section>
-
-      <!-- Environmental Indicators - Circular Progress Design -->
-      <section class="environmental-indicators">
-        <div class="container">
-          <div class="indicators-header">
-            <h2 class="section-title">Key Environmental Indicators</h2>
-            <p class="section-subtitle">Current ecological health metrics for your suburb</p>
-          </div>
-
-          <div class="indicators-grid">
-            <!-- Tree Canopy Coverage -->
-            <div class="indicator-card canopy" @click="toggleTreeDetail"style="cursor: pointer;">
-              <div class="indicator-content">
-                <div class="indicator-icon">
-                  <svg width="40" height="40" viewBox="0 0 24 24" fill="none">
-                    <path d="M17 8C8 10 5.9 16.17 3.82 21.34L5.71 22L6.66 19.7C7.14 19.87 7.64 20 8 20C19 20 22 3 22 3C21 5 14 5.25 9 6.25C4 7.25 2 11.5 2 13.5C2 15.5 3.75 17.25 3.75 17.25C7.5 13 17 8 17 8Z" stroke="currentColor" stroke-width="2" fill="currentColor"/>
-                  </svg>
-                </div>
-                <div class="progress-ring">
-                  <svg class="progress-svg" width="120" height="120">
-                    <circle class="progress-track" cx="60" cy="60" r="50" stroke="#e0f7e9" stroke-width="8" fill="none"/>
-                    <circle class="progress-bar canopy-progress" cx="60" cy="60" r="50" stroke="#4CAF50" stroke-width="8" fill="none" 
-                            stroke-dasharray="314" stroke-dashoffset="94.2" transform="rotate(-90 60 60)"/>
-                  </svg>
-                  <div class="progress-text">
-                    <div class="progress-value">70%</div>
-                    <div class="progress-label">Coverage</div>
+          <!-- Key Environmental Indicators -->
+          <div class="indicators">
+            <div class="indicators-grid">
+              <!-- Tree Canopy Coverage -->
+              <div class="indicator-card canopy" @click="toggleTreeDetail"style="cursor: pointer;">
+                <div class="indicator-content">
+                  <div class="indicator-icon">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none">
+                      <path d="M17 8C8 10 5.9 16.17 3.82 21.34L5.71 22L6.66 19.7C7.14 19.87 7.64 20 8 20C19 20 22 3 22 3C21 5 14 5.25 9 6.25C4 7.25 2 11.5 2 13.5C2 15.5 3.75 17.25 3.75 17.25C7.5 13 17 8 17 8Z" stroke="currentColor" stroke-width="2" fill="currentColor"/>
+                    </svg>
                   </div>
-                </div>
-                <div class="indicator-details">
-                  <h3 class="indicator-title">Tree Canopy</h3>
-                  <p class="indicator-description">Urban forest coverage providing natural cooling and air purification</p>
-                  <div class="indicator-metrics">
-                    <div class="metric">
-                      <span class="metric-value">+5.2%</span>
-                      <span class="metric-label">vs Last Year</span>
+                  <div class="progress-ring">
+                    <svg class="progress-svg" width="120" height="120">
+                      <circle class="progress-track" cx="60" cy="60" r="50" stroke="#e0f7e9" stroke-width="8" fill="none"/>
+                      <circle class="progress-bar canopy-progress" cx="60" cy="60" r="50" stroke="#4CAF50" stroke-width="8" fill="none" 
+                              stroke-dasharray="314" stroke-dashoffset="94.2" transform="rotate(-90 60 60)"/>
+                    </svg>
+                    <div class="progress-text">
+                      <div class="progress-value">70%</div>
+                      <div class="progress-label">Coverage</div>
+                    </div>
+                  </div>
+                  <div class="indicator-details">
+                    <h3 class="indicator-title">Tree Canopy</h3>
+                    <p class="indicator-description">Urban forest coverage providing natural cooling and air purification</p>
+                    <div class="indicator-metrics">
+                      <div class="metric">
+                        <span class="metric-value">+5.2%</span>
+                        <span class="metric-label">vs Last Year</span>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            <!-- Air Quality Index -->
-            <div class="indicator-card air-quality" @click="toggleAirDetail" style="cursor: pointer;">
-              <div class="indicator-content">
-                <div class="indicator-icon">
-                  <svg width="40" height="40" viewBox="0 0 24 24" fill="none">
-                    <path d="M14.828 14.828C15.607 14.049 16.049 12.993 16.049 11.892C16.049 10.791 15.607 9.735 14.828 8.956C14.049 8.177 12.993 7.735 11.892 7.735C10.791 7.735 9.735 8.177 8.956 8.956" stroke="currentColor" stroke-width="2"/>
-                    <path d="M17.657 17.657C19.781 15.533 19.781 12.075 17.657 9.951C15.533 7.827 12.075 7.827 9.951 9.951" stroke="currentColor" stroke-width="2"/>
-                    <path d="M6.343 6.343C3.219 9.467 3.219 14.533 6.343 17.657C9.467 20.781 14.533 20.781 17.657 17.657" stroke="currentColor" stroke-width="2"/>
-                  </svg>
-                </div>
-                <div class="progress-ring">
-                  <svg class="progress-svg" width="120" height="120">
-                    <circle class="progress-track" cx="60" cy="60" r="50" stroke="#e3f2fd" stroke-width="8" fill="none"/>
-                    <circle class="progress-bar air-progress" cx="60" cy="60" r="50" stroke="#2196F3" stroke-width="8" fill="none" 
-                            stroke-dasharray="314" stroke-dashoffset="125.6" transform="rotate(-90 60 60)"/>
-                  </svg>
-                  <div class="progress-text">
-                    <div class="progress-value">60</div>
-                    <div class="progress-label">AQI</div>
+              <!-- Air Quality Index -->
+              <div class="indicator-card air-quality" @click="toggleAirDetail" style="cursor: pointer;">
+                <div class="indicator-content">
+                  <div class="indicator-icon">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none">
+                      <path d="M14.828 14.828C15.607 14.049 16.049 12.993 16.049 11.892C16.049 10.791 15.607 9.735 14.828 8.956C14.049 8.177 12.993 7.735 11.892 7.735C10.791 7.735 9.735 8.177 8.956 8.956" stroke="currentColor" stroke-width="2"/>
+                      <path d="M17.657 17.657C19.781 15.533 19.781 12.075 17.657 9.951C15.533 7.827 12.075 7.827 9.951 9.951" stroke="currentColor" stroke-width="2"/>
+                      <path d="M6.343 6.343C3.219 9.467 3.219 14.533 6.343 17.657C9.467 20.781 14.533 20.781 17.657 17.657" stroke="currentColor" stroke-width="2"/>
+                    </svg>
                   </div>
-                </div>
-                <div class="indicator-details">
-                  <h3 class="indicator-title">Air Quality</h3>
-                  <p class="indicator-description">Current air quality index indicating moderate air pollution levels</p>
-                  <div class="indicator-metrics">
-                    <div class="metric">
-                      <span class="metric-value moderate">Moderate</span>
-                      <span class="metric-label">Status</span>
+                  <div class="progress-ring">
+                    <svg class="progress-svg" width="120" height="120">
+                      <circle class="progress-track" cx="60" cy="60" r="50" stroke="#e3f2fd" stroke-width="8" fill="none"/>
+                      <circle class="progress-bar air-progress" cx="60" cy="60" r="50" stroke="#2196F3" stroke-width="8" fill="none" 
+                              stroke-dasharray="314" stroke-dashoffset="125.6" transform="rotate(-90 60 60)"/>
+                    </svg>
+                    <div class="progress-text">
+                      <div class="progress-value">60</div>
+                      <div class="progress-label">AQI</div>
+                    </div>
+                  </div>
+                  <div class="indicator-details">
+                    <h3 class="indicator-title">Air Quality</h3>
+                    <p class="indicator-description">Current air quality index indicating moderate air pollution levels</p>
+                    <div class="indicator-metrics">
+                      <div class="metric">
+                        <span class="metric-value moderate">Moderate</span>
+                        <span class="metric-label">Status</span>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            <!-- Energy Usage -->
-            <div class="indicator-card energy-usage" @click="toggleEnergyDetail" style="cursor: pointer;">
-              <div class="indicator-content">
-                <div class="indicator-icon">
-                  <svg width="40" height="40" viewBox="0 0 24 24" fill="none">
-                    <path d="M13 2L3 14H12L11 22L21 10H12L13 2Z" stroke="currentColor" stroke-width="2" fill="currentColor"/>
-                  </svg>
-                </div>
-                <div class="progress-ring">
-                  <svg class="progress-svg" width="120" height="120">
-                    <circle class="progress-track" cx="60" cy="60" r="50" stroke="#f3e5f5" stroke-width="8" fill="none"/>
-                    <circle class="progress-bar energy-progress" cx="60" cy="60" r="50" stroke="#9C27B0" stroke-width="8" fill="none" 
-                            stroke-dasharray="314" stroke-dashoffset="157" transform="rotate(-90 60 60)"/>
-                  </svg>
-                  <div class="progress-text">
-                    <div class="progress-value">65%</div>
-                    <div class="progress-label">Efficiency</div>
+              <!-- Energy Usage -->
+              <div class="indicator-card energy-usage" @click="toggleEnergyDetail" style="cursor: pointer;">
+                <div class="indicator-content">
+                  <div class="indicator-icon">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none">
+                      <path d="M13 2L3 14H12L11 22L21 10H12L13 2Z" stroke="currentColor" stroke-width="2" fill="currentColor"/>
+                    </svg>
                   </div>
-                </div>
-                <div class="indicator-details">
-                  <h3 class="indicator-title">Energy</h3>
-                  <p class="indicator-description">Energy consumption efficiency compared to targets</p>
-                  <div class="indicator-metrics">
-                    <div class="metric">
-                      <span class="metric-value">↓ 12%</span>
-                      <span class="metric-label">vs Last Year</span>
+                  <div class="progress-ring">
+                    <svg class="progress-svg" width="120" height="120">
+                      <circle class="progress-track" cx="60" cy="60" r="50" stroke="#f3e5f5" stroke-width="8" fill="none"/>
+                      <circle class="progress-bar energy-progress" cx="60" cy="60" r="50" stroke="#9C27B0" stroke-width="8" fill="none" 
+                              stroke-dasharray="314" stroke-dashoffset="157" transform="rotate(-90 60 60)"/>
+                    </svg>
+                    <div class="progress-text">
+                      <div class="progress-value">65%</div>
+                      <div class="progress-label">Efficiency</div>
+                    </div>
+                  </div>
+                  <div class="indicator-details">
+                    <h3 class="indicator-title">Energy</h3>
+                    <p class="indicator-description">Energy consumption efficiency compared to targets</p>
+                    <div class="indicator-metrics">
+                      <div class="metric">
+                        <span class="metric-value">↓ 12%</span>
+                        <span class="metric-label">vs Last Year</span>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -182,11 +197,14 @@
                 <h3 class="panel-title">Tree Distribution Map</h3>
                 <l-map ref="mapRef" style="height: 300px; width: 100%;" :zoom="17" :center="mapCenter">
                   <l-tile-layer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-                  <l-marker
+                  <l-circle-marker
                     v-for="tree in trees"
                     :key="tree.id"
                     :lat-lng="[tree.lat, tree.lng]"
-                    :icon = "treeIcon"
+                    :radius="6"
+                    color="green"
+                    fillColor="white"
+                    fillOpacity="1"
                   />
                 </l-map>
               </div>
@@ -194,10 +212,24 @@
               <!-- list -->
               <div class="card-panel">
                 <h3 class="panel-title">Tree Species List</h3>
+                <!-- order icon -->
+                <div class="sort-buttons">
+                  <button 
+                    :class="{ active: speciesSort === 'alphabetical' }"
+                    @click="speciesSort = 'alphabetical'">
+                    order by a-z
+                  </button>
+                  <button 
+                    :class="{ active: speciesSort === 'count' }"
+                    @click="speciesSort = 'count'">
+                    order by count
+                  </button>
+                </div>
+
                 <div class="species-list-container">
                   <ul class="species-list">
-                    <li v-for="(count, species) in speciesCount" :key="species">
-                      {{ species }} - {{ count }}
+                    <li v-for="item in speciesList" :key="item.species">
+                      {{ item.species }} - {{ item.count }}
                     </li>
                   </ul>
                 </div>
@@ -219,38 +251,6 @@
           <div class="detail-card">
             <h2 class="section-title">Air Quality Insights</h2>
             <p class="section-subtitle">Pollutant distribution, daily levels, and long-term trends</p>
-
-            <div class="detail-grid">
-              <!-- Map -->
-              <!-- <div class="card-panel">
-                <h3 class="panel-title">Air Monitoring Stations</h3>
-                <l-map style="height: 300px; width: 100%;" :zoom="mapZoom" :center="mapCenter">
-                  <l-tile-layer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-                  <l-marker
-                    v-for="(station, idx) in airStations"
-                    :key="idx"
-                    :lat-lng="[station.lat, station.lng]"
-                  >
-                    <l-popup>
-                      {{ station.name }} <br/>
-                      PM2.5: {{ station.pm25 }} µg/m³ <br/>
-                      O3: {{ station.o3 }} ppb
-                    </l-popup>
-                  </l-marker>
-                </l-map>
-              </div> -->
-
-              <!-- Pollutants List -->
-              <!-- <div class="card-panel">
-                <h3 class="panel-title">Pollutants Today</h3>
-                <ul class="species-list">
-                  <li v-for="(val, key) in formattedPollutants" :key="key">
-                    <strong>{{ key }}</strong> : {{ val || '' }}
-                  </li>
-                </ul>
-              </div> -->
-            </div>
-
             <!-- Trend Chart -->
             <div class="card-panel trend-panel">
               <h3 class="panel-title">Air Quality Trend (PM2.5)</h3>
@@ -269,7 +269,21 @@
 
             <l-map style="height: 400px; width: 100%;" :zoom="13" :center="mapCenter">
               <l-tile-layer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-              <l-geo-json v-if="energyBlocks" :geojson="energyBlocks" :options-style="styleEnergyBlock" />
+              <l-geo-json
+                v-if="energyBlocks"
+                :geojson="energyBlocks"
+                @ready="onGeoJsonReady"
+              />
+              <!-- Legend -->
+              <div class="legend">
+                <h4>Total Energy (2026)</h4>
+                <div><span style="background:#800026"></span> > 70,000</div>
+                <div><span style="background:#BD0026"></span> 30,001 – 70,000</div>
+                <div><span style="background:#FC4E2A"></span> 15,001 – 30,000</div>
+                <div><span style="background:#FD8D3C"></span> 5,001 – 15,000</div>
+                <div><span style="background:#FEB24C"></span> 1,001 – 5,000</div>
+                <div><span style="background:#FFEDA0"></span> 0 – 1,000</div>
+              </div>
             </l-map>
           </div>
         </div>
@@ -402,147 +416,37 @@
           </div>
 
           <div class="forecasting-dashboard">
-                         <!-- Greenhouse Gas Emissions Projection -->
-             <div class="forecast-panel emissions">
-               <div class="panel-header">
-                 <div class="panel-icon">
-                   <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
-                     <path d="M12 2L13.09 8.26L19 7L17.74 13.09L22 14L15.74 15.91L14 22L8.26 20.91L7 15L13.09 15.91L12 2Z" stroke="currentColor" stroke-width="2" fill="currentColor"/>
-                   </svg>
-                 </div>
-                 <div class="panel-title">
-                   <h3>GHG Emissions</h3>
-                   <p>City of Melbourne Municipal GHG Emissions 2013–2020</p>
-                 </div>
-               </div>
-               <div class="forecast-visualization">
-                 <div class="emissions-chart">
-                   <div class="projection-bars">
-                     <div class="bar-group">
-                       <div class="bar current" style="height: 80%;">
-                         <div class="bar-value">2020</div>
-                         <div class="bar-label">Current</div>
-                       </div>
-                     </div>
-                     <div class="bar-group">
-                       <div class="bar projected" style="height: 65%;">
-                         <div class="bar-value">2026</div>
-                         <div class="bar-label">-15%</div>
-                       </div>
-                     </div>
-                     <div class="bar-group">
-                       <div class="bar projected" style="height: 50%;">
-                         <div class="bar-value">2028</div>
-                         <div class="bar-label">-30%</div>
-                       </div>
-                     </div>
-                     <div class="bar-group">
-                       <div class="bar target" style="height: 35%;">
-                         <div class="bar-value">2030</div>
-                         <div class="bar-label">Target</div>
-                       </div>
-                     </div>
-                   </div>
-                 </div>
-                 <div class="forecast-metrics">
-                   <div class="metric">
-                     <span class="metric-value">-45%</span>
-                     <span class="metric-label">Reduction Target</span>
-                   </div>
-                   <div class="metric">
-                     <span class="metric-value">2030</span>
-                     <span class="metric-label">Target Year</span>
-                   </div>
-                 </div>
-               </div>
-             </div>
+          <!-- Energy Projections -->
+          <section id="energy-detail-section" class="forecast-panel energy-projections">
+            <div class="projection-grid">
+              <!-- left LineChart -->
+              <div class="projection-left">
+                <h4 class="projection-subtitle">Block-level Energy Forecast: Total Trend & Sector Allocation (2011-2026)</h4>
+                <LineChart :chart-data="energyTrendData || { labels: [], datasets: [] }" />
+              </div>
 
-                         <!-- Residential & Business Emissions -->
-             <div class="forecast-panel energy">
-               <div class="panel-header">
-                 <div class="panel-icon">
-                   <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
-                     <path d="M13 2L3 14H12L11 22L21 10H12L13 2Z" stroke="currentColor" stroke-width="2" fill="currentColor"/>
-                   </svg>
-                 </div>
-                 <div class="panel-title">
-                   <h3>Residential & Business</h3>
-                   <p>Summary Residential & Business Community Emissions</p>
-                 </div>
-               </div>
-              <div class="forecast-visualization">
-                <div class="energy-chart">
-                  <div class="consumption-rings">
-                    <div class="ring-container">
-                      <svg class="ring-svg" width="100" height="100">
-                        <circle class="ring-track" cx="50" cy="50" r="35" stroke="#e8f5e8" stroke-width="8" fill="none"/>
-                        <circle class="ring-progress renewable" cx="50" cy="50" r="35" stroke="#4CAF50" stroke-width="8" fill="none" 
-                                stroke-dasharray="220" stroke-dashoffset="66" transform="rotate(-90 50 50)"/>
-                      </svg>
-                      <div class="ring-label">
-                        <div class="ring-value">70%</div>
-                        <div class="ring-text">Renewable</div>
-                      </div>
-                    </div>
-                    <div class="ring-container">
-                      <svg class="ring-svg" width="100" height="100">
-                        <circle class="ring-track" cx="50" cy="50" r="35" stroke="#fff3e0" stroke-width="8" fill="none"/>
-                        <circle class="ring-progress efficiency" cx="50" cy="50" r="35" stroke="#FF9800" stroke-width="8" fill="none" 
-                                stroke-dasharray="220" stroke-dashoffset="88" transform="rotate(-90 50 50)"/>
-                      </svg>
-                      <div class="ring-label">
-                        <div class="ring-value">60%</div>
-                        <div class="ring-text">Efficiency</div>
-                      </div>
-                    </div>
-                  </div>
+              <!-- right two Doughnut -->
+              <div class="projection-right">
+                <div class="gauge">
+                  <h4>Residential</h4>
+                  <DoughnutChart :chart-data="residentialGauge" :options="gaugeOptions" />
                 </div>
-                <div class="forecast-metrics">
-                  <div class="metric">
-                    <span class="metric-value">+25%</span>
-                    <span class="metric-label">Efficiency Gain</span>
-                  </div>
-                  <div class="metric">
-                    <span class="metric-value">2026</span>
-                    <span class="metric-label">Target Year</span>
-                  </div>
+                <div class="gauge">
+                  <h4>Commercial</h4>
+                  <DoughnutChart :chart-data="commercialGauge" :options="gaugeOptions" />
                 </div>
               </div>
             </div>
 
-            <!-- Energy Projections -->
-            <section id="energy-detail-section" class="forecast-panel energy-projections">
-              <div class="projection-grid">
-                <!-- left LineChart -->
-                <div class="projection-left">
-                  <h4 class="projection-subtitle">Block-level Energy Forecast: Total Trend & Sector Allocation (2011-2026)</h4>
-                  <LineChart :chart-data="energyTrendData || { labels: [], datasets: [] }" />
-                </div>
-
-                <!-- right two Doughnut -->
-                <div class="projection-right">
-                  <div class="gauge">
-                    <h4>Residential</h4>
-                    <DoughnutChart :chart-data="residentialGauge" :options="gaugeOptions" />
-                  </div>
-                  <div class="gauge">
-                    <h4>Commercial</h4>
-                    <DoughnutChart :chart-data="commercialGauge" :options="gaugeOptions" />
-                  </div>
-                </div>
-              </div>
-
-              <!-- improve summary -->
-              <div class="projection-section growth-summary">
-                <p>2011 → 2016: <strong>+23.0% growth</strong></p>
-                <p>2016 → 2021: <strong>+8.7% growth</strong></p>
-                <p>2021 → 2026: <strong>-12.4% decline</strong></p>
-                <p>Peak consumption around 2021, then projected to dip slightly.</p>
-              </div>
-            </section>
+            <!-- improve summary -->
+            <div class="projection-section growth-summary">
+              <p>2011 → 2016: <strong>+23.0% growth</strong></p>
+              <p>2016 → 2021: <strong>+8.7% growth</strong></p>
+              <p>2021 → 2026: <strong>-12.4% decline</strong></p>
+              <p>Peak consumption around 2021, then projected to dip slightly.</p>
+            </div>
+          </section>
           </div>
-
-          
         </div>
       </section>
 
@@ -563,17 +467,27 @@
         </div>
       </div>
     </main>
+    <!-- back to top -->
+    <button 
+      v-show="showBackToTop" 
+      class="back-to-top" 
+      @click="scrollToTop">
+      ⬆
+    </button>
   </div>
 </template>
 
 <script>
 import { environmentApi, apiUtils } from '../../services/api.js'
-import { LMap, LTileLayer, LCircleMarker, LMarker, LGeoJson} from "@vue-leaflet/vue-leaflet";
+import { LMap, LTileLayer, LCircleMarker, LMarker, LGeoJson, LPopup} from "@vue-leaflet/vue-leaflet";
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import LineChart from "@/components/environment/LineChart.vue";
 import DoughnutChart from "@/components/environment/DoughnutChart.vue";
 import { icon } from 'leaflet';
+
+ChartJS.register(ArcElement, Tooltip, Legend);
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -582,6 +496,42 @@ L.Icon.Default.mergeOptions({
   shadowUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png"
 });
 
+const centerTextPlugin = {
+  id: "centerText",
+  beforeDraw(chart) {
+    if (chart.config.type !== "doughnut") return;
+
+    const { width, height } = chart;
+    const ctx = chart.ctx;
+
+    // check dataset exsist
+    if (!chart.config || !chart.config.data || !chart.config.data.datasets.length) {
+      return;
+    }
+
+    const dataset = chart.config.data.datasets[0];
+    if (!dataset.data || dataset.data.length === 0) {
+      return;
+    }
+
+    const value = dataset.data[0]; // usage value
+    const text = `${value}%`;
+
+    ctx.restore();
+    const fontSize = (height / 100).toFixed(2);
+    ctx.font = `${fontSize}em sans-serif`;
+    ctx.textBaseline = "middle";
+
+    const textX = Math.round((width - ctx.measureText(text).width) / 2);
+    const textY = height / 1.8;
+
+    ctx.fillText(text, textX, textY);
+    ctx.save();
+  }
+};
+
+ChartJS.register(centerTextPlugin);
+
 export default {
 
   components: {
@@ -589,22 +539,40 @@ export default {
     LTileLayer,
     LCircleMarker,
     LMarker,
+    LGeoJson, 
+    LPopup,
     LineChart,
-    LGeoJson,
     DoughnutChart
   },
 
   name: 'EnvironmentPage',
   data() {
     return {
+      isMenuOpen: false,
+      allTabs: [
+        { label: "HomePage", path: "/" },
+        { label: "Social", path: "/social" },
+        { label: "Economic", path: "/economic" },
+        { label: "Infrastructure", path: "/infrastructure" },
+        { label: "Environment", path: "/environment" },
+        { label: "Compare", path: "/#compare-section" }
+      ],
+      visibleTabs: [],
+      hiddenTabs: [],
+      //for button which back to top
+      showBackToTop: false,
+      //for tree part
       trees: [],
       mapCenter: [-37.81, 144.96],
       mapZoom: 11,
       treeIcon: L.divIcon({
-        html:"🌳",
-        className:"tree-emoji-icon",
-        iconSize: [24, 24]
+        className: "tree-circle-icon",
+        html: '<div class="circle"></div>',
+        iconSize: [24, 24],
+        iconAnchor: [12, 12]
       }),
+      // record the order of the tree list
+      speciesSort: 'alphabetical',
       airStations: [],
       latestPollutants: {},
       airTrendData: { labels: [], datasets: [] }, 
@@ -617,13 +585,89 @@ export default {
         labels: ["Usage", "Remaining"],
         datasets: [{ data: [0, 100], backgroundColor: ["#2196F3", "#e0e0e0"] }]
       },
-      gaugeOptions: { cutout: "70%" },
+      gaugeOptions: {
+        cutout: "70%",
+        plugins: {
+          legend: { display: false },
+          centerText: true
+        }
+      },
       energyBlocks: null,
       loading: false,
       error: null
     }
   },
+
+  mounted() {
+    this.updateTabs();
+    window.addEventListener("resize", this.updateTabs);
+
+    this.$nextTick(() => {
+      const navHeight = this.$el.querySelector(".nav-bar").offsetHeight;
+      document.documentElement.style.setProperty("--nav-height", navHeight + "px");
+    });
+
+    // initializeAnimations();
+    // setupTimeSelector();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    window.addEventListener("scroll", this.checkScroll);
+  },
+  beforeUnmount() {
+    window.removeEventListener("resize", this.updateTabs);
+    window.removeEventListener("scroll", this.checkScroll);
+  },
   methods: {
+    updateTabs() {
+      const containerWidth = this.$refs.navContainer?.offsetWidth || 0;
+
+      let totalWidth = 0;
+      this.visibleTabs = [];
+      this.hiddenTabs = [];
+
+      //  logo + suburb width
+      const logoWidth = this.$el.querySelector(".nav-top")?.offsetWidth || 0;
+      // ☰ width
+      const moreMenuWidth = 60;
+      // true width
+      const availableWidth = containerWidth - logoWidth - moreMenuWidth;
+
+      const hiddenMeasure = document.createElement("div");
+      hiddenMeasure.style.visibility = "hidden";
+      hiddenMeasure.style.position = "absolute";
+      hiddenMeasure.style.whiteSpace = "nowrap";
+      document.body.appendChild(hiddenMeasure);
+
+      this.allTabs.forEach((tab, index) => {
+        const tabEl = document.createElement("span");
+        tabEl.className = "nav-tab";
+        tabEl.innerText = tab.label;
+        hiddenMeasure.appendChild(tabEl);
+
+        const tabWidth = tabEl.offsetWidth + 24; // margin/padding
+
+        if (totalWidth + tabWidth <= availableWidth) {
+          this.visibleTabs.push(tab);
+          totalWidth += tabWidth;
+        } else {
+          this.hiddenTabs.push(tab);
+        }
+      });
+
+      document.body.removeChild(hiddenMeasure);
+    },
+    goTo(tab) {
+      this.$router.push(tab.path);
+      this.isMenuOpen = false;
+    },
+
+    //button for back top
+    checkScroll() {
+      this.showBackToTop = window.scrollY > 200;
+    },
+    scrollToTop() {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    },
     // data of tree
     async loadTrees(suburb) {
       try {
@@ -686,6 +730,80 @@ export default {
       }
     },
 
+    onGeoJsonReady(layer) {
+      layer.eachLayer(l => {
+        const feature = l.feature;
+
+        // set style (color by total)
+        l.setStyle(this.styleEnergyBlock(feature));
+
+        // bind popup
+        l.bindPopup(`
+          <div>
+            <h3>Block Details</h3>
+            <p><strong>Commercial:</strong> ${feature.properties.comm}</p>
+            <p><strong>Residential:</strong> ${feature.properties.resi}</p>
+            <p><strong>Properties:</strong> ${feature.properties.num_b_prop}</p>
+            <p><strong>Total:</strong> ${feature.properties.total}</p>
+          </div>
+        `);
+      });
+    },
+    getEnergyColor(value) {
+      if (value > 70000) return "#800026";
+      if (value > 30000) return "#BD0026";
+      if (value > 15000) return "#FC4E2A";
+      if (value > 5000)  return "#FD8D3C";
+      if (value > 1000)  return "#FEB24C";
+      return "#FFEDA0";
+    },
+
+    geoJsonOptions() {
+      return {
+        style: (feature) => this.styleEnergyBlock(feature),
+        onEachFeature: (feature, layer) => this.onEachBlock(feature, layer)
+      }
+    },
+    async loadEnergyBlocks(suburb) {
+      try {
+        const res = await environmentApi.getEnergyMap(suburb);
+        const blocks = res.data?.data || [];
+
+        blocks.forEach((row, idx) => {
+          console.log(`Block ${idx}: total=${row.total}, comm=${row.comm}, resi=${row.resi}`);
+        });
+
+        const geojson = {
+          type: "FeatureCollection",
+          features: blocks.map((row, idx) => {
+            let geometry = null;
+            try {
+              geometry = JSON.parse(row.geo_shape);
+            } catch (e) {
+              console.error("Failed to parse geo_shape for row", row, e);
+            }
+
+            return {
+              type: "Feature",
+              id: idx,
+              properties: {
+                suburb: row.suburb,
+                comm: Number(row.comm),
+                resi: Number(row.resi),
+                num_b_prop: Number(row.num_b_prop),
+                total: Number(row.total)
+              },
+              geometry
+            };
+          })
+        };
+
+        this.energyBlocks = geojson;
+      } catch (e) {
+        console.error("Failed to load energy blocks", e);
+      }
+    },
+
     async loadEnergyTrend(suburb) {
       try {
         const res = await environmentApi.getEnergyTrend(suburb);
@@ -734,57 +852,26 @@ export default {
       }
     },
 
-    async loadEnergyBlocks(suburb) {
-      try {
-        const res = await environmentApi.getEnergyMap(suburb);
-        const blocks = res.data?.data || [];
-
-        const geojson = {
-          type: "FeatureCollection",
-          features: blocks.map((row, idx) => ({
-            type: "Feature",
-            id: idx,
-            properties: {
-              suburb: row.suburb,
-              total_2026: Number(row.total)
-            },
-            geometry: JSON.parse(row.geo_shape)
-          }))
-        };
-
-        this.energyBlocks = geojson;
-      } catch (e) {
-        console.error("Failed to load energy blocks", e);
-      }
-    },
-
-    styleEnergyBlock(feature) {
-      const value = feature.properties.total_2026 || 0;
+    styleEnergyBlock(feature){
+      const total = Number(feature.properties.total) || 0;
       return {
-        color: this.getEnergyColor(value),
+        color: "#555",
         weight: 1,
-        opacity: 1,
-        fillOpacity: 0.7
+        fillOpacity: 0.7,
+        fillColor: this.getEnergyColor(total)
       };
     },
 
-    getEnergyColor(value) {
-      if (!value || isNaN(value)) return "#FFFFFF";
-
-      // color
-      const colors = ["#FFEDA0", "#FEB24C", "#FD8D3C", "#FC4E2A", "#BD0026", "#800026"];
-
-      // range 0 ~ 7000
-      const min = 0;
-      const max = 7000;
-
-      const step = (max - min) / (colors.length - 1);
-      const idx = Math.min(
-        colors.length - 1,
-        Math.floor((value - min) / step)
-      );
-
-      return colors[idx];
+    onEachBlock(feature, layer) {
+      layer.bindPopup(`
+        <div>
+          <h3>Block Details</h3>
+          <p><strong>Commercial:</strong> ${feature.properties.comm}</p>
+          <p><strong>Residential:</strong> ${feature.properties.resi}</p>
+          <p><strong>Properties:</strong> ${feature.properties.num_b_prop}</p>
+          <p><strong>Total:</strong> ${feature.properties.total}</p>
+        </div>
+      `);
     },
 
     // one in
@@ -824,7 +911,7 @@ export default {
     toggleEnergyDetail() {
       this.$nextTick(() => {
         document
-          .getElementById("energy-detail-section")
+          .getElementById("energy-map-section")
           ?.scrollIntoView({ behavior: "smooth" });
       });
     }
@@ -838,12 +925,6 @@ export default {
         }
       }
     }
-  },
-  mounted() {
-    // initializeAnimations();
-    // setupTimeSelector();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    
   },
   computed: {
     plantedTrendData() {
@@ -870,6 +951,25 @@ export default {
         ]
       };
     },
+    speciesList() {
+    const counts = {};
+    this.trees.forEach((tree) => {
+      counts[tree.name] = (counts[tree.name] || 0) + 1;
+    });
+
+    let list = Object.entries(counts).map(([species, count]) => ({
+      species,
+      count
+    }));
+
+    if (this.speciesSort === 'alphabetical') {
+      list.sort((a, b) => a.species.localeCompare(b.species));
+    } else if (this.speciesSort === 'count') {
+      list.sort((a, b) => b.count - a.count);
+    }
+
+    return list;
+  },
     formattedPollutants() {
       if (!this.latestPollutants) return {};
       return {
@@ -973,6 +1073,138 @@ export default {
 </script>
 
 <style scoped>
+/* fixed on top */
+.nav-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  background: white;
+  border-bottom: 1px solid #eee;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+.nav-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0.5rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+/* first line */
+.nav-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* second line */
+.nav-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* tabs */
+.nav-tabs {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow: hidden;
+  gap: 0.5rem;
+  flex: 1;
+}
+
+.nav-tab {
+  padding: 0.6rem 1.2rem;
+  border-radius: 20px;
+  font-weight: 500;
+  color: #666;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.3s ease;
+}
+
+.nav-tab.active {
+  background: #4CAF50;
+  color: white;
+}
+
+/* ☰list + pull down */
+.more-menu {
+  position: relative;
+  margin-left: 0.5rem;
+  flex-shrink: 0;
+}
+
+.menu-toggle {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.dropdown {
+  position: absolute;
+  right: 0;
+  top: 2.5rem;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  z-index: 2000;
+}
+
+/* cartoon */
+.fade-slide-enter-active,
+.fade-slide-leave-active {
+  transition: all 0.3s ease;
+}
+.fade-slide-enter-from {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+.fade-slide-leave-to {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+/* button for back top */
+.back-to-top {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: none;
+  background: linear-gradient(135deg, #4CAF50, #45a049);
+  color: white;
+  font-size: 1.5rem;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  transition: transform 0.2s ease, opacity 0.3s ease;
+  z-index: 1200;
+}
+
+.back-to-top:hover {
+  transform: scale(1.1);
+  background: linear-gradient(135deg, #45a049, #4CAF50);
+}
+
+.hero-section {
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
   /* energy style */
 .projection-grid {
   display: grid;
@@ -1005,10 +1237,18 @@ export default {
   max-height: 80px !important;
 }
 
-.tree-emoji-icon {
-  font-size: 20px;
-  line-height: 24px;
-  text-align: center;
+:deep(.tree-circle-icon) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+:deep(.tree-circle-icon .circle) {
+  width: 14px;
+  height: 14px;
+  border: 2px solid #4CAF50;
+  background-color: transparent;
+  border-radius: 50%;
 }
 .species-list-container {
   max-height: 300px;
@@ -1028,11 +1268,6 @@ export default {
   padding: 0.4rem 0;
   font-size: 1rem;
   border-bottom: 1px solid #f0f0f0;
-}
-
-
-.tree-detail-section {
-  padding: 4rem 0;
 }
 
 .detail-card {
@@ -1067,6 +1302,27 @@ export default {
   margin-top: 2rem;
 }
 
+.sort-buttons {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.sort-buttons button {
+  padding: 0.4rem 0.8rem;
+  border-radius: 8px;
+  border: 1px solid #4CAF50;
+  background: white;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.sort-buttons button.active {
+  background: #4CAF50;
+  color: white;
+}
+
 .tree-detail-section {
   margin-top: 3rem;
   padding: 2rem;
@@ -1074,6 +1330,7 @@ export default {
   border-radius: 0;
   background: none;
   box-shadow: none;
+  scroll-margin-top: var(--nav-height, 120px);
 }
 
 .tree-detail-top {
@@ -1235,13 +1492,15 @@ export default {
 
 /* Navigation Bar */
 .nav-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.95));
   backdrop-filter: blur(20px);
   border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 30px rgba(0,0,0,0.1);
 }
 
 .nav-container {
@@ -1268,6 +1527,9 @@ export default {
 
 .nav-tabs {
   display: flex;
+  flex-wrap: nowrap;
+  overflow: hidden;
+  flex: 1;
   gap: 0.5rem;
   background: rgba(255, 255, 255, 0.3);
   backdrop-filter: blur(10px);
@@ -1301,12 +1563,14 @@ export default {
 .main-content {
   position: relative;
   z-index: 1;
+  padding-top: calc(var(--nav-height, 120px) + 20px);
 }
 
 .container {
-  max-width: 1200px;
+  width: 80%;
+  max-width: none; 
   margin: 0 auto;
-  padding: 0 2rem;
+  padding: 0;
 }
 
 /* Insights Header */
@@ -1339,7 +1603,7 @@ export default {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  animation: titleGlow 3s ease-in-out infinite;
+  /* animation: titleGlow 3s ease-in-out infinite; */
 }
 
 .title-word:nth-child(2) {
@@ -1558,6 +1822,10 @@ export default {
   font-weight: 500;
 }
 
+.air-detail-section {
+  scroll-margin-top: var(--nav-height, 120px);
+}
+
 /* Air Quality Trends */
 .air-quality-trends {
   padding: 6rem 0;
@@ -1757,6 +2025,14 @@ export default {
   color: #666;
   font-size: 0.95rem;
   line-height: 1.5;
+}
+
+.energy-detail-section {
+  scroll-margin-top: var(--nav-height, 120px);
+}
+
+.energy-map-section {
+  scroll-margin-top: var(--nav-height, 120px);
 }
 
 /* Environmental Forecasting */
@@ -2151,6 +2427,40 @@ export default {
   max-width: 200px;
 }
 
+.legend {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  padding: 10px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  font-size: 12px;
+  line-height: 18px;
+  color: #333;
+  z-index: 1000;
+}
+
+.legend h4 {
+  margin: 0 0 5px;
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.legend div {
+  display: flex;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.legend span {
+  display: inline-block;
+  width: 20px;
+  height: 12px;
+  margin-right: 8px;
+  border: 1px solid #999;
+}
+
 /* Property Energy Chart */
 .property-energy-chart {
   display: flex;
@@ -2253,8 +2563,8 @@ export default {
   }
   
   .nav-tabs {
-    flex-wrap: wrap;
-    justify-content: center;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
   }
   
   .page-title {

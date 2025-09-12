@@ -1,9 +1,9 @@
 <template>
   <div class="homepage">
     <!-- Header/Hero Section -->
-    <header class="hero-section">
+    <header class="hero-section full-height">
       <div class="hero-content">
-                 <div class="logo">
+          <div class="logo">
            <div class="logo-icon">
              <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
                <rect width="40" height="40" rx="8" fill="#4CAF50"/>
@@ -21,211 +21,29 @@
         <p class="hero-subtitle">
           Make informed housing decisions with comprehensive sustainability profiles and side-by-side suburb comparisons for Melbourne families.
         </p>
-                 <div class="hero-buttons">
-                       <button class="btn btn-primary" @click="scrollToSection('explore-section')">
-              <svg class="btn-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
-                <path d="M21 21L16.514 16.506L21 21ZM19 10.5C19 15.194 15.194 19 10.5 19C5.806 19 2 15.194 2 10.5C2 5.806 5.806 2 10.5 2C15.194 2 19 5.806 19 10.5Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-              Explore Suburbs
-            </button>
-            <button class="btn btn-secondary" @click="scrollToSection('compare-section')">
-              <svg class="btn-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
-                <path d="M8 3V5M16 3V5M3 8H5M19 8H21M3 12H21M3 16H5M19 16H21M8 19V21M16 19V21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M12 8V16M8 12H16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-              Compare Now
-            </button>
-         </div>
+
+        <!-- Ten suburb's button -->
+        <div class="suburb-buttons">
+          <button v-for="suburb in suburbs" 
+                  :key="suburb" 
+                  class="suburb-btn" 
+                  @click="viewSuburbDetails(suburb)">
+            {{ suburb }}
+          </button>
+        </div>
+
+        <!-- Compare Now button -->
+        <div class="hero-buttons">
+          <button class="btn btn-secondary" @click="scrollToSection('compare-section')">
+            <svg class="btn-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
+              <path d="M8 3V5M16 3V5M3 8H5M19 8H21M3 12H21M3 16H5M19 16H21M8 19V21M16 19V21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M12 8V16M8 12H16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Compare Now
+          </button>
+        </div>
       </div>
     </header>
-
-    <!-- Explore Sustainable Living Section -->
-    <section id="explore-section" class="explore-section">
-      <div class="container">
-        <h2 class="section-title">Explore Sustainable Living</h2>
-        <p class="section-description">
-          Discover Melbourne's most sustainable suburbs through our comprehensive sustainability categories.
-        </p>
-        
-        <div class="search-container">
-          <div class="search-bar">
-            <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
-              <path d="M21 21L16.514 16.506L21 21ZM19 10.5C19 15.194 15.194 19 10.5 19C5.806 19 2 15.194 2 10.5C2 5.806 5.806 2 10.5 2C15.194 2 19 5.806 19 10.5Z" stroke="#666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-            <input 
-              type="text" 
-              placeholder="Enter a suburb name or sustainability feature..."
-              class="search-input"
-              v-model="suburbInput"
-              @keyup.enter="searchSuburb"
-            >
-            <button class="search-button" @click="searchSuburb">
-              <svg class="arrow-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
-                <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-            </button>
-          </div>
-        </div>
-
-                  <div class="category-filters">
-            <button class="category-btn social">
-              <svg class="category-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
-                <path d="M17 21V19C17 17.9391 16.5786 16.9217 15.8284 16.1716C15.0783 15.4214 14.0609 15 13 15H5C3.93913 15 2.92172 15.4214 2.17157 16.1716C1.42143 16.9217 1 17.9391 1 19V21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                <circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="2"/>
-                <path d="M23 21V19C22.9993 18.1137 22.7044 17.2528 22.1614 16.5523C21.6184 15.8519 20.8581 15.3516 20 15.13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M16 3.13C16.8604 3.35031 17.623 3.85071 18.1676 4.55232C18.7122 5.25392 19.0078 6.11683 19.0078 7.005C19.0078 7.89317 18.7122 8.75608 18.1676 9.45768C17.623 10.1593 16.8604 10.6597 16 10.88" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-              Social
-            </button>
-            <button class="category-btn environment">
-              <svg class="category-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
-                <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-              Environment
-            </button>
-            <button class="category-btn economic">
-              <svg class="category-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
-                <path d="M3 3V21H21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M9 9L12 6L16 10L21 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M21 5V9H17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-              Economic
-            </button>
-            <button class="category-btn infrastructure">
-              <svg class="category-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
-                <path d="M3 9L12 2L21 9V20C21 20.5304 20.7893 21.0391 20.4142 21.4142C20.0391 21.7893 19.5304 22 19 22H5C4.46957 22 3.96086 21.7893 3.58579 21.4142C3.21071 21.0391 3 20.5304 3 20V9Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M9 22V12H15V22" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-              Infrastructure
-            </button>
-          </div>
-
-        <!-- Loading state -->
-        <div v-if="loading" class="loading-container">
-          <div class="loading-spinner"></div>
-          <p>Loading suburbs data...</p>
-        </div>
-
-        <!-- Error state -->
-        <div v-else-if="error" class="error-container">
-          <div class="error-icon">⚠️</div>
-          <p>{{ error }}</p>
-          <button class="retry-btn" @click="loadInitialData">Retry</button>
-        </div>
-
-        <!-- Suburb cards -->
-        <div v-else class="suburb-cards force-horizontal">
-          <div 
-            v-for="suburb in recommendedSuburbs" 
-            :key="suburb.id" 
-            class="suburb-card"
-          >
-            <div class="card-image" :style="{ backgroundImage: `url(${suburb.imageUrl})` }">
-              <div class="rating">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
-                </svg>
-                {{ suburb.rating }}
-              </div>
-            </div>
-            <div class="card-content">
-              <div class="card-text-content">
-                <h3 class="suburb-name">{{ suburb.name }}</h3>
-                <p class="suburb-description">{{ suburb.description }}</p>
-              </div>
-              <div class="card-button-container">
-                <button class="view-details-btn" @click="viewSuburbDetails(suburb.name)">
-                  <span>View Details</span>
-                  <svg class="btn-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
-                    <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                  </svg>
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <!-- Fallback cards if no data from API -->
-          <div v-if="recommendedSuburbs.length === 0" class="fallback-cards force-horizontal">
-            <div class="suburb-card">
-              <div class="card-image carlton-image">
-                <div class="rating">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
-                  </svg>
-                  4.8
-                </div>
-              </div>
-              <div class="card-content">
-                <div class="card-text-content">
-                  <h3 class="suburb-name">Carlton</h3>
-                  <p class="suburb-description">A vibrant inner-city suburb known for its cultural diversity and excellent sustainability practices.</p>
-                </div>
-                <div class="card-button-container">
-                  <button class="view-details-btn" @click="viewSuburbDetails('Carlton')">
-                    <span>View Details</span>
-                    <svg class="btn-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
-                      <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                  </button>
-                </div>
-              </div>
-            </div>
-            
-            <div class="suburb-card">
-              <div class="card-image fitzroy-image">
-                <div class="rating">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
-                  </svg>
-                  4.7
-                </div>
-              </div>
-              <div class="card-content">
-                <div class="card-text-content">
-                  <h3 class="suburb-name">Carlton</h3>
-                  <p class="suburb-description">A trendy and artistic suburb with strong community engagement and green initiatives.</p>
-                </div>
-                <div class="card-button-container">
-                  <button class="view-details-btn" @click="viewSuburbDetails('Carlton')">
-                    <span>View Details</span>
-                    <svg class="btn-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
-                      <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <div class="suburb-card">
-              <div class="card-image richmond-image">
-                <div class="rating">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
-                  </svg>
-                  4.6
-                </div>
-              </div>
-              <div class="card-content">
-                <div class="card-text-content">
-                  <h3 class="suburb-name">Carlton</h3>
-                  <p class="suburb-description">A dynamic suburb with excellent transport links and growing sustainability infrastructure.</p>
-                </div>
-                <div class="card-button-container">
-                  <button class="view-details-btn" @click="viewSuburbDetails('Carlton')">
-                    <span>View Details</span>
-                    <svg class="btn-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
-                      <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
 
     <!-- Compare Suburbs Section -->
     <section id="compare-section" class="compare-section">
@@ -363,11 +181,11 @@
             <p class="footer-mission">
               Empowering Melbourne families with sustainability insights for better housing decisions.
             </p>
-            <div class="social-icons">
+            <!-- <div class="social-icons">
               <a href="#" class="social-icon">🐦</a>
               <a href="#" class="social-icon">📘</a>
               <a href="#" class="social-icon">💼</a>
-            </div>
+            </div> -->
           </div>
 
           <!-- Middle Columns - Navigation -->
@@ -429,7 +247,19 @@ export default {
       secondSuburb: '',
       availableSuburbs: [],
       comparisonData: null,
-      comparing: false
+      comparing: false,
+      suburbs: [
+        "Carlton",
+        "CBD",
+        "Docklands",
+        "East Melbourne",
+        "Kensington",
+        "North Melbourne",
+        "Parkville",
+        "Southbank",
+        "South Yarra",
+        "West Melbourne"
+      ]
     }
   },
   async mounted() {
@@ -738,6 +568,40 @@ export default {
   50% {
     background-position: 100% 50%;
   }
+}
+
+.full-height {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.suburb-buttons {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  margin: 2rem auto;
+  max-width: 1000px;
+  justify-content: center;
+}
+
+.suburb-btn {
+  background: linear-gradient(135deg, #ffffffcc, #ffffffee);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 25px;
+  padding: 1rem 1.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.suburb-btn:hover {
+  background: linear-gradient(135deg, #4CAF50, #45a049);
+  color: white;
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(76,175,80,0.4);
 }
 
 .hero-subtitle {
@@ -1628,6 +1492,10 @@ export default {
   animation: gradientShift 15s ease infinite reverse;
   position: relative;
   overflow: hidden;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .compare-section::before {
@@ -1883,6 +1751,10 @@ export default {
   color: white;
   position: relative;
   overflow: hidden;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .why-section::after {
@@ -1950,7 +1822,7 @@ export default {
   font-size: 3.5rem;
   margin-bottom: 1.5rem;
   filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
-  animation: float 3s ease-in-out infinite;
+  animation: none !important
 }
 
 .feature-card h3 {

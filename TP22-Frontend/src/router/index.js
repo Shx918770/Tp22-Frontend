@@ -3,6 +3,7 @@ import HomePage from '../components/HomePage.vue'
 import SocialPage from '../components/social/SocialPage.vue'
 import EnvironmentPage from '../components/environment/EnvironmentPage.vue'
 import PasswordGate from '../components/PasswordGate.vue'
+import InfrastructurePage from '@/components/infrastructure/InfrastructurePage.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -26,6 +27,11 @@ const router = createRouter({
       path: '/environment',
       name: 'environment',
       component: EnvironmentPage
+    },
+    {
+      path: '/infrastructure',
+      name: 'infrastructure',
+      component: InfrastructurePage
     }
   ],
 })

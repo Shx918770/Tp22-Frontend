@@ -167,43 +167,62 @@
         <div class="container">
           <div class="map-container">
             <div class="map-area">
-              <div class="map-placeholder">
-                <h3>Interactive Map</h3>
-                <p>Map will display social facilities</p>
-              </div>
+              <SocialMap 
+                :schools="schools" 
+                :childCares="childCares" 
+                :selectedSuburb="selectedSuburb"
+                :showSchools="mapLegendState.schools"
+                :showChildCares="mapLegendState.childcare"
+              />
             </div>
             <div class="map-legend">
               <h4>Facility Legend</h4>
               <div class="legend-items">
-                <div class="legend-item">
+                <div class="legend-item" 
+                     :class="{ 'inactive': !mapLegendState.schools }"
+                     @click="toggleLegendItem('schools')">
                   <div class="legend-marker school"></div>
                   <span>Schools</span>
                 </div>
-                <div class="legend-item">
+                <div class="legend-item" 
+                     :class="{ 'inactive': !mapLegendState.hospitals }"
+                     @click="toggleLegendItem('hospitals')">
                   <div class="legend-marker hospital"></div>
                   <span>Hospitals</span>
                 </div>
-                <div class="legend-item">
+                <div class="legend-item" 
+                     :class="{ 'inactive': !mapLegendState.playgrounds }"
+                     @click="toggleLegendItem('playgrounds')">
                   <div class="legend-marker playground"></div>
                   <span>Playgrounds</span>
                 </div>
-                <div class="legend-item">
+                <div class="legend-item" 
+                     :class="{ 'inactive': !mapLegendState.communityCenter }"
+                     @click="toggleLegendItem('communityCenter')">
                   <div class="legend-marker community"></div>
                   <span>Community Centers</span>
                 </div>
-                <div class="legend-item">
+                <div class="legend-item" 
+                     :class="{ 'inactive': !mapLegendState.cafes }"
+                     @click="toggleLegendItem('cafes')">
                   <div class="legend-marker cafe"></div>
                   <span>Cafes</span>
                 </div>
-                <div class="legend-item">
+                <div class="legend-item" 
+                     :class="{ 'inactive': !mapLegendState.bars }"
+                     @click="toggleLegendItem('bars')">
                   <div class="legend-marker bar"></div>
                   <span>Bars</span>
                 </div>
-                <div class="legend-item">
+                <div class="legend-item" 
+                     :class="{ 'inactive': !mapLegendState.childcare }"
+                     @click="toggleLegendItem('childcare')">
                   <div class="legend-marker childcare"></div>
                   <span>Childcare</span>
                 </div>
-                <div class="legend-item">
+                <div class="legend-item" 
+                     :class="{ 'inactive': !mapLegendState.practitioners }"
+                     @click="toggleLegendItem('practitioners')">
                   <div class="legend-marker practitioners"></div>
                   <span>Practitioners</span>
                 </div>
@@ -553,16 +572,21 @@
 </template>
 
 <script>
-import { socialApi, schoolApi, apiUtils } from '../../services/api.js'
+import { socialApi, schoolApi, childCareApi, apiUtils } from '../../services/api.js'
+import SocialMap from './SocialMap.vue'
 
 export default {
   name: 'SocialPage',
+  components: {
+    SocialMap
+  },
   data() {
     return {
       facilityStats: null,
       facilities: [],
       accessibilityData: [],
       schools: [],
+      childCares: [],
       schoolStats: {
         totalSchools: 0,
         totalChildcare: 0,
@@ -573,7 +597,17 @@ export default {
       showEducationDetail: false,
       selectedSchool: null,
       sortSchoolsAlphabetically: false,
-      showBackToTop: false
+      showBackToTop: false,
+      mapLegendState: {
+        schools: true,
+        hospitals: true,
+        playgrounds: true,
+        communityCenter: true,
+        cafes: true,
+        bars: true,
+        childcare: true,
+        practitioners: true
+      }
     }
   },
   computed: {
@@ -617,11 +651,13 @@ export default {
       
       try {
         // Load all social data in parallel
-        const [statsResponse, facilitiesResponse, accessibilityResponse, schoolsResponse] = await Promise.allSettled([
+        const [statsResponse, facilitiesResponse, accessibilityResponse, schoolsResponse, childCareResponse, educationStatsResponse] = await Promise.allSettled([
           socialApi.getFacilityStats(suburb),
           socialApi.getFacilities(suburb),
           socialApi.getFacilityAccessibility(suburb),
-          schoolApi.getSchoolsBySuburb(suburb)
+          schoolApi.getSchoolsBySuburb(suburb),
+          childCareApi.getChildCareBySuburb(suburb),
+          schoolApi.getEducationStatsBySuburb(suburb)
         ])
 
         // Handle facility stats
@@ -657,8 +693,29 @@ export default {
           const schoolsResult = apiUtils.extractData(schoolsResponse.value)
           if (schoolsResult.success) {
             this.schools = schoolsResult.data || []
-            this.calculateSchoolStats()
           }
+        }
+
+        // Handle childcare
+        if (childCareResponse.status === 'fulfilled') {
+          const childCareResult = apiUtils.extractData(childCareResponse.value)
+          if (childCareResult.success) {
+            this.childCares = childCareResult.data || []
+          }
+        }
+
+        // Handle education statistics
+        if (educationStatsResponse.status === 'fulfilled') {
+          const educationStatsResult = apiUtils.extractData(educationStatsResponse.value)
+          if (educationStatsResult.success) {
+            this.schoolStats = educationStatsResult.data || {
+              totalSchools: 0,
+              totalChildcare: 0,
+              schoolTypes: {}
+            }
+          }
+        } else {
+          this.calculateSchoolStats() // Fallback to manual calculation
         }
 
       } catch (error) {
@@ -722,9 +779,20 @@ export default {
       this.sortSchoolsAlphabetically = !this.sortSchoolsAlphabetically
     },
 
-    onSchoolChange() {
-      // Handle school selection change if needed
-      console.log('Selected school:', this.selectedSchool)
+    async onSchoolChange() {
+      if (this.selectedSchool && this.selectedSchool.schoolNo) {
+        console.log('Selected school:', this.selectedSchool)
+        try {
+          const response = await schoolApi.getSchoolWithStudentData(this.selectedSchool.schoolNo)
+          const result = apiUtils.extractData(response)
+          if (result.success) {
+            // Update the selected school with student data
+            this.selectedSchool = result.data
+          }
+        } catch (error) {
+          console.error('Error loading student data:', error)
+        }
+      }
     },
 
     getPrimaryPercentage() {
@@ -751,10 +819,21 @@ export default {
     },
 
     getStudentCountHeight(year) {
-      // Mock data for student count visualization
-      const mockData = [150, 180, 200, 170, 190, 160, 140, 175, 185, 195, 165, 155]
-      const maxCount = Math.max(...mockData)
-      return (mockData[year - 1] / maxCount) * 100
+      if (!this.selectedSchool) return 0
+      
+      // Get student count for the specific year
+      const yearField = `year${year}`
+      const studentCount = this.selectedSchool[yearField] || 0
+      
+      // Calculate all year counts to find maximum for scaling
+      const allCounts = []
+      for (let i = 1; i <= 12; i++) {
+        const count = this.selectedSchool[`year${i}`] || 0
+        allCounts.push(count)
+      }
+      
+      const maxCount = Math.max(...allCounts, 1) // Avoid division by zero
+      return (studentCount / maxCount) * 100
     },
 
     handleScroll() {
@@ -763,6 +842,10 @@ export default {
 
     scrollToTop() {
       window.scrollTo({ top: 0, behavior: 'smooth' })
+    },
+
+    toggleLegendItem(itemKey) {
+      this.mapLegendState[itemKey] = !this.mapLegendState[itemKey]
     }
   }
 }
@@ -2143,6 +2226,7 @@ export default {
   border: 2px solid rgba(255, 255, 255, 0.3);
 }
 
+/* Map placeholder styles (now unused but kept for fallback) */
 .map-placeholder {
   height: 400px;
   display: flex;
@@ -2200,6 +2284,21 @@ export default {
 .legend-item:hover {
   background: rgba(255, 255, 255, 0.8);
   transform: translateX(5px);
+}
+
+.legend-item.inactive {
+  opacity: 0.4;
+  background: rgba(200, 200, 200, 0.3);
+}
+
+.legend-item.inactive:hover {
+  opacity: 0.6;
+  background: rgba(200, 200, 200, 0.5);
+}
+
+.legend-item {
+  cursor: pointer;
+  user-select: none;
 }
 
 .legend-marker {

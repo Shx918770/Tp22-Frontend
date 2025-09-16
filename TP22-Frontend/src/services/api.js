@@ -113,9 +113,47 @@ export const schoolApi = {
     return api.get(`/schools/suburb/${encodeURIComponent(suburb)}`)
   },
 
+  // Get school with student data by school number
+  getSchoolWithStudentData(schoolNo) {
+    return api.get(`/schools/${schoolNo}/students`)
+  },
+
+  // Get education statistics by suburb (schools + childcare)
+  getEducationStatsBySuburb(suburb) {
+    return api.get(`/education/stats/${encodeURIComponent(suburb)}`)
+  },
+
+  // Get all schools
+  getAllSchools() {
+    return api.get('/schools/all')
+  },
+
   // Health check
   healthCheck() {
     return api.get('/schools/health')
+  },
+}
+
+// ChildCare API
+export const childCareApi = {
+  // Get childcare centers by suburb
+  getChildCareBySuburb(suburb) {
+    return api.get(`/childcare/suburb/${encodeURIComponent(suburb)}`)
+  },
+
+  // Get childcare count by suburb
+  getChildCareCountBySuburb(suburb) {
+    return api.get(`/childcare/count/${encodeURIComponent(suburb)}`)
+  },
+
+  // Get all childcare centers
+  getAllChildCare() {
+    return api.get('/childcare/all')
+  },
+
+  // Health check
+  healthCheck() {
+    return api.get('/childcare/health')
   },
 }
 

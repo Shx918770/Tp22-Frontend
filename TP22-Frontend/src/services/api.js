@@ -106,6 +106,19 @@ export const socialApi = {
   },
 }
 
+// School API
+export const schoolApi = {
+  // Get schools by suburb
+  getSchoolsBySuburb(suburb) {
+    return api.get(`/schools/suburb/${encodeURIComponent(suburb)}`)
+  },
+
+  // Health check
+  healthCheck() {
+    return api.get('/schools/health')
+  },
+}
+
 // Environment API
 export const environmentApi = {
   //Map

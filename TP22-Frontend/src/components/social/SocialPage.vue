@@ -24,7 +24,7 @@
             </svg>
           </div>
           <span class="logo-text">MelSustain</span>
-          <span v-if="selectedSuburb" class="suburb-display"><span class="pin">📍</span>{{ selectedSuburb }}</span>
+          <span v-if="selectedSuburb" class="suburb-display"><span class="pin">&#x1F4CD;</span>{{ selectedSuburb }}</span>
         </div>
         
         <div class="nav-tabs">
@@ -81,7 +81,7 @@
 
           <!-- Error state -->
           <div v-else-if="error" class="error-container">
-            <div class="error-icon">⚠️</div>
+            <div class="error-icon">&#x26A0;&#xFE0F;</div>
             <p>{{ error }}</p>
             <button class="retry-btn" @click="retryLoading">Retry</button>
           </div>
@@ -89,19 +89,17 @@
           <!-- Compact Facility Grid -->
           <div v-else class="facilities-grid">
             <!-- Education Bubble -->
-            <div class="facility-bubble education">
+            <div class="facility-bubble education" @click="scrollToEducationDetail">
               <div class="bubble-icon">
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
                   <path d="M22 10V6C22 4.89543 21.1046 4 20 4H4C2.89543 4 2 4.89543 2 6V10M22 10L12 15L2 10M22 10V18C22 19.1046 21.1046 20 20 20H4C2.89543 20 2 19.1046 2 18V10" stroke="currentColor" stroke-width="2"/>
                 </svg>
               </div>
               <div class="bubble-content">
-                <div class="bubble-number">{{ facilityStats?.facilityCounts?.EDUCATION || 15 }}</div>
                 <div class="bubble-label">Education</div>
                 <div class="bubble-details">
-                  <span class="detail-pill">{{ facilityStats?.detailedCounts?.EDUCATION?.Primary || 9 }} Primary</span>
-                  <span class="detail-pill">{{ facilityStats?.detailedCounts?.EDUCATION?.Secondary || 4 }} Secondary</span>
-                  <span class="detail-pill">{{ facilityStats?.detailedCounts?.EDUCATION?.Library || 1 }} Library</span>
+                  <span class="detail-pill">{{ schoolStats.totalSchools }} Schools</span>
+                  <span class="detail-pill">{{ schoolStats.totalChildcare }} Childcare</span>
                 </div>
               </div>
               <div class="bubble-glow"></div>
@@ -115,12 +113,10 @@
                 </svg>
               </div>
               <div class="bubble-content">
-                <div class="bubble-number">{{ facilityStats?.facilityCounts?.HEALTHCARE || 4 }}</div>
                 <div class="bubble-label">Healthcare</div>
                 <div class="bubble-details">
-                  <span class="detail-pill">{{ facilityStats?.detailedCounts?.HEALTHCARE?.Clinic || 1 }} Clinic</span>
-                  <span class="detail-pill">{{ facilityStats?.detailedCounts?.HEALTHCARE?.Pharmacy || 1 }} Pharmacy</span>
-                  <span class="detail-pill">Emergency</span>
+                  <span class="detail-pill">{{ facilityStats?.detailedCounts?.HEALTHCARE?.Hospital || 2 }} Hospitals</span>
+                  <span class="detail-pill">{{ facilityStats?.detailedCounts?.HEALTHCARE?.Practitioners || 12 }} Practitioners</span>
                 </div>
               </div>
               <div class="bubble-glow"></div>
@@ -136,34 +132,161 @@
                 </svg>
               </div>
               <div class="bubble-content">
-                <div class="bubble-number">{{ facilityStats?.facilityCounts?.RECREATION || 22 }}</div>
                 <div class="bubble-label">Recreation</div>
                 <div class="bubble-details">
-                  <span class="detail-pill">{{ facilityStats?.detailedCounts?.RECREATION?.Park || 11 }} Parks</span>
-                  <span class="detail-pill">{{ facilityStats?.detailedCounts?.RECREATION?.Community || 6 }} Community</span>
-                  <span class="detail-pill">{{ facilityStats?.detailedCounts?.RECREATION?.Sports || 4 }} Sports</span>
+                  <span class="detail-pill">{{ facilityStats?.detailedCounts?.RECREATION?.Playgrounds || 8 }} Playgrounds</span>
+                  <span class="detail-pill">{{ facilityStats?.detailedCounts?.RECREATION?.CommunityCenter || 4 }} Community Centers</span>
                 </div>
               </div>
               <div class="bubble-glow"></div>
             </div>
 
-            <!-- Shopping Bubble -->
-            <div class="facility-bubble shopping">
+            <!-- Restaurant Bubble -->
+            <div class="facility-bubble restaurant">
               <div class="bubble-icon">
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
-                  <path d="M3 7V5C3 3.89543 3.89543 3 5 3H19C20.1046 3 21 3.89543 21 5V7M3 7L5 19C5 20.1046 5.89543 21 7 21H17C18.1046 21 19 20.1046 19 19L21 7M3 7H21M9 11V17M15 11V17" stroke="currentColor" stroke-width="2"/>
+                  <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12V7a1 1 0 0 0-2 0v5a.5.5 0 0 1-1 0V7a1 1 0 0 0-2 0v5a.5.5 0 0 1-1 0V7a1 1 0 0 0-2 0v5a2.5 2.5 0 0 0 2.5 2.5V20a1 1 0 0 0 2 0v-5.5Z" stroke="currentColor" stroke-width="2"/>
+                  <path d="m15.5 7.5.5-.5a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.5.5V20a1 1 0 0 1-2 0V10.5Z" stroke="currentColor" stroke-width="2"/>
                 </svg>
               </div>
               <div class="bubble-content">
-                <div class="bubble-number">{{ facilityStats?.facilityCounts?.SHOPPING || 145 }}</div>
-                <div class="bubble-label">Shopping</div>
+                <div class="bubble-label">Restaurant</div>
                 <div class="bubble-details">
-                  <span class="detail-pill">{{ facilityStats?.detailedCounts?.SHOPPING?.Mall || 87 }} Mall</span>
-                  <span class="detail-pill">{{ facilityStats?.detailedCounts?.SHOPPING?.Supermarket || 29 }} Supermarket</span>
-                  <span class="detail-pill">Other</span>
+                  <span class="detail-pill">{{ facilityStats?.detailedCounts?.RESTAURANT?.Cafe || 15 }} Cafes</span>
+                  <span class="detail-pill">{{ facilityStats?.detailedCounts?.RESTAURANT?.Bar || 8 }} Bars</span>
                 </div>
               </div>
               <div class="bubble-glow"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Map Section -->
+      <section class="map-section">
+        <div class="container">
+          <div class="map-container">
+            <div class="map-area">
+              <div class="map-placeholder">
+                <h3>Interactive Map</h3>
+                <p>Map will display social facilities</p>
+              </div>
+            </div>
+            <div class="map-legend">
+              <h4>Facility Legend</h4>
+              <div class="legend-items">
+                <div class="legend-item">
+                  <div class="legend-marker school"></div>
+                  <span>Schools</span>
+                </div>
+                <div class="legend-item">
+                  <div class="legend-marker hospital"></div>
+                  <span>Hospitals</span>
+                </div>
+                <div class="legend-item">
+                  <div class="legend-marker playground"></div>
+                  <span>Playgrounds</span>
+                </div>
+                <div class="legend-item">
+                  <div class="legend-marker community"></div>
+                  <span>Community Centers</span>
+                </div>
+                <div class="legend-item">
+                  <div class="legend-marker cafe"></div>
+                  <span>Cafes</span>
+                </div>
+                <div class="legend-item">
+                  <div class="legend-marker bar"></div>
+                  <span>Bars</span>
+                </div>
+                <div class="legend-item">
+                  <div class="legend-marker childcare"></div>
+                  <span>Childcare</span>
+                </div>
+                <div class="legend-item">
+                  <div class="legend-marker practitioners"></div>
+                  <span>Practitioners</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Education Detail Section -->
+      <section id="education-detail" class="education-detail" v-show="showEducationDetail">
+        <div class="container">
+          <div class="detail-header">
+            <h2>Education Facilities</h2>
+            <p>Comprehensive overview of educational institutions and childcare services</p>
+          </div>
+          
+          <div class="education-content">
+            <!-- Top Row: Pie Chart and School List -->
+            <div class="education-top-row">
+              <!-- School Type Distribution Chart -->
+              <div class="pie-chart-section">
+                <h3>School Type Distribution</h3>
+                <div class="pie-chart-placeholder">
+                  <div class="chart-segments">
+                    <div class="segment primary" :style="{ '--percentage': getPrimaryPercentage() + '%' }">
+                      <span>Primary</span>
+                    </div>
+                    <div class="segment secondary" :style="{ '--percentage': getSecondaryPercentage() + '%' }">
+                      <span>Secondary</span>
+                    </div>
+                    <div class="segment childcare" :style="{ '--percentage': getChildcarePercentage() + '%' }">
+                      <span>Childcare</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="chart-legend">
+                  <div class="legend-item"><div class="color primary"></div> Primary Schools</div>
+                  <div class="legend-item"><div class="color secondary"></div> Secondary Schools</div>
+                  <div class="legend-item"><div class="color childcare"></div> Childcare Centers</div>
+                </div>
+              </div>
+
+              <!-- School List -->
+              <div class="school-list-section">
+                <div class="list-header">
+                  <h3>List of School</h3>
+                  <button class="sort-btn" @click="toggleSort">
+                    {{ sortSchoolsAlphabetically ? 'Original Order' : 'Sort A-Z' }}
+                  </button>
+                </div>
+                <div class="school-list">
+                  <div v-for="school in sortedSchools" :key="school.schoolNo" class="school-item">
+                    <div class="school-name">{{ school.schoolName }}</div>
+                    <div class="school-type">{{ school.schoolType }}</div>
+                    <div class="school-suburb">{{ school.suburb }}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Bottom Row: School Selection and Student Chart -->
+            <div class="education-bottom-row">
+              <div class="school-selector">
+                <label for="school-select">School</label>
+                <select id="school-select" v-model="selectedSchool" @change="onSchoolChange">
+                  <option value="">Choose a school...</option>
+                  <option v-for="school in schools" :key="school.schoolNo" :value="school">
+                    {{ school.schoolName }}
+                  </option>
+                </select>
+              </div>
+              
+              <div v-if="selectedSchool" class="student-count-chart">
+                <h3>Number of Student</h3>
+                <div class="bar-chart">
+                  <div v-for="year in 12" :key="year" class="bar-item">
+                    <div class="bar" :style="{ height: getStudentCountHeight(year) + '%' }"></div>
+                    <div class="year-label">{{ year }}</div>
+                  </div>
+                </div>
+                <div class="year-axis-label">Year</div>
+              </div>
             </div>
           </div>
         </div>
@@ -419,11 +542,18 @@
         </div>
       </section>
     </main>
+
+    <!-- Back to Top Button -->
+    <button class="back-to-top" @click="scrollToTop" :class="{ 'visible': showBackToTop }">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+        <path d="M7 14L12 9L17 14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
   </div>
 </template>
 
 <script>
-import { socialApi, apiUtils } from '../../services/api.js'
+import { socialApi, schoolApi, apiUtils } from '../../services/api.js'
 
 export default {
   name: 'SocialPage',
@@ -432,13 +562,32 @@ export default {
       facilityStats: null,
       facilities: [],
       accessibilityData: [],
+      schools: [],
+      schoolStats: {
+        totalSchools: 0,
+        totalChildcare: 0,
+        schoolTypes: {}
+      },
       loading: false,
-      error: null
+      error: null,
+      showEducationDetail: false,
+      selectedSchool: null,
+      sortSchoolsAlphabetically: false,
+      showBackToTop: false
     }
   },
   computed: {
     selectedSuburb() {
       return this.$route?.query?.suburb || '';
+    },
+    
+    sortedSchools() {
+      if (!this.schools || this.schools.length === 0) return [];
+      
+      if (this.sortSchoolsAlphabetically) {
+        return [...this.schools].sort((a, b) => a.schoolName.localeCompare(b.schoolName));
+      }
+      return this.schools;
     }
   },
   watch: {
@@ -453,6 +602,11 @@ export default {
   },
   mounted() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.addEventListener('scroll', this.handleScroll);
+  },
+  
+  beforeUnmount() {
+    window.removeEventListener('scroll', this.handleScroll);
   },
   methods: {
     async loadSuburbData(suburb) {
@@ -463,10 +617,11 @@ export default {
       
       try {
         // Load all social data in parallel
-        const [statsResponse, facilitiesResponse, accessibilityResponse] = await Promise.allSettled([
+        const [statsResponse, facilitiesResponse, accessibilityResponse, schoolsResponse] = await Promise.allSettled([
           socialApi.getFacilityStats(suburb),
           socialApi.getFacilities(suburb),
-          socialApi.getFacilityAccessibility(suburb)
+          socialApi.getFacilityAccessibility(suburb),
+          schoolApi.getSchoolsBySuburb(suburb)
         ])
 
         // Handle facility stats
@@ -497,6 +652,15 @@ export default {
           }
         }
 
+        // Handle schools
+        if (schoolsResponse.status === 'fulfilled') {
+          const schoolsResult = apiUtils.extractData(schoolsResponse.value)
+          if (schoolsResult.success) {
+            this.schools = schoolsResult.data || []
+            this.calculateSchoolStats()
+          }
+        }
+
       } catch (error) {
         console.error('Error loading suburb data:', error)
         this.error = `Failed to load data for ${suburb}`
@@ -511,6 +675,94 @@ export default {
       } else {
         this.error = null
       }
+    },
+
+    calculateSchoolStats() {
+      if (!this.schools || this.schools.length === 0) {
+        this.schoolStats = {
+          totalSchools: 0,
+          totalChildcare: 0,
+          schoolTypes: {}
+        }
+        return
+      }
+
+      const stats = {
+        totalSchools: 0,
+        totalChildcare: 0,
+        schoolTypes: {}
+      }
+
+      this.schools.forEach(school => {
+        const type = school.schoolType || 'Unknown'
+        
+        if (type.toLowerCase().includes('childcare') || type.toLowerCase().includes('kindergarten')) {
+          stats.totalChildcare++
+        } else {
+          stats.totalSchools++
+        }
+
+        stats.schoolTypes[type] = (stats.schoolTypes[type] || 0) + 1
+      })
+
+      this.schoolStats = stats
+    },
+
+    scrollToEducationDetail() {
+      this.showEducationDetail = true
+      this.$nextTick(() => {
+        const element = document.getElementById('education-detail')
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        }
+      })
+    },
+
+    toggleSort() {
+      this.sortSchoolsAlphabetically = !this.sortSchoolsAlphabetically
+    },
+
+    onSchoolChange() {
+      // Handle school selection change if needed
+      console.log('Selected school:', this.selectedSchool)
+    },
+
+    getPrimaryPercentage() {
+      if (!this.schoolStats.schoolTypes) return 0
+      const primary = Object.keys(this.schoolStats.schoolTypes)
+        .filter(type => type.toLowerCase().includes('primary'))
+        .reduce((sum, type) => sum + this.schoolStats.schoolTypes[type], 0)
+      const total = this.schoolStats.totalSchools + this.schoolStats.totalChildcare
+      return total > 0 ? Math.round((primary / total) * 100) : 0
+    },
+
+    getSecondaryPercentage() {
+      if (!this.schoolStats.schoolTypes) return 0
+      const secondary = Object.keys(this.schoolStats.schoolTypes)
+        .filter(type => type.toLowerCase().includes('secondary'))
+        .reduce((sum, type) => sum + this.schoolStats.schoolTypes[type], 0)
+      const total = this.schoolStats.totalSchools + this.schoolStats.totalChildcare
+      return total > 0 ? Math.round((secondary / total) * 100) : 0
+    },
+
+    getChildcarePercentage() {
+      const total = this.schoolStats.totalSchools + this.schoolStats.totalChildcare
+      return total > 0 ? Math.round((this.schoolStats.totalChildcare / total) * 100) : 0
+    },
+
+    getStudentCountHeight(year) {
+      // Mock data for student count visualization
+      const mockData = [150, 180, 200, 170, 190, 160, 140, 175, 185, 195, 165, 155]
+      const maxCount = Math.max(...mockData)
+      return (mockData[year - 1] / maxCount) * 100
+    },
+
+    handleScroll() {
+      this.showBackToTop = window.scrollY > 300
+    },
+
+    scrollToTop() {
+      window.scrollTo({ top: 0, behavior: 'smooth' })
     }
   }
 }
@@ -964,6 +1216,11 @@ export default {
   color: #FF9800;
 }
 
+.facility-bubble.restaurant .bubble-icon {
+  background: linear-gradient(135deg, rgba(156, 39, 176, 0.2), rgba(156, 39, 176, 0.3));
+  color: #9C27B0;
+}
+
 .facility-bubble:hover .bubble-icon {
   transform: scale(1.1) rotate(360deg);
   border-color: rgba(255, 255, 255, 0.6);
@@ -1009,6 +1266,10 @@ export default {
 
 .facility-bubble.shopping .bubble-number {
   color: #FF9800;
+}
+
+.facility-bubble.restaurant .bubble-number {
+  color: #9C27B0;
 }
 
 .bubble-label {
@@ -1858,5 +2119,538 @@ export default {
   background: linear-gradient(135deg, #45a049, #4CAF50);
   transform: translateY(-2px);
   box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4);
+}
+
+/* Map Section */
+.map-section {
+  padding: 4rem 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.95));
+}
+
+.map-container {
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+}
+
+.map-area {
+  flex: 4;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 20px;
+  padding: 2rem;
+  backdrop-filter: blur(20px);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.map-placeholder {
+  height: 400px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+  border-radius: 15px;
+  border: 2px dashed #dee2e6;
+}
+
+.map-placeholder h3 {
+  color: #6c757d;
+  margin-bottom: 0.5rem;
+  font-size: 1.5rem;
+}
+
+.map-placeholder p {
+  color: #adb5bd;
+  font-size: 1rem;
+}
+
+.map-legend {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 20px;
+  padding: 1.5rem;
+  backdrop-filter: blur(20px);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.map-legend h4 {
+  margin-bottom: 1.5rem;
+  color: #2c3e50;
+  font-weight: 600;
+}
+
+.legend-items {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 10px;
+  transition: all 0.3s ease;
+}
+
+.legend-item:hover {
+  background: rgba(255, 255, 255, 0.8);
+  transform: translateX(5px);
+}
+
+.legend-marker {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.legend-marker.school { background: #e74c3c; }
+.legend-marker.hospital { background: #3498db; }
+.legend-marker.playground { background: #2ecc71; }
+.legend-marker.community { background: #f39c12; }
+.legend-marker.cafe { background: #9b59b6; }
+.legend-marker.bar { background: #34495e; }
+.legend-marker.childcare { background: #e67e22; }
+.legend-marker.practitioners { background: #1abc9c; }
+
+/* Education Detail Section */
+.education-detail {
+  padding: 4rem 0;
+  background: linear-gradient(135deg, rgba(240, 248, 255, 0.9), rgba(230, 247, 255, 0.95));
+}
+
+.detail-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.detail-header h2 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 1rem;
+  background: linear-gradient(135deg, #2c3e50, #2196F3);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.detail-header p {
+  color: rgba(44, 62, 80, 0.7);
+  font-size: 1.2rem;
+}
+
+.education-content {
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 20px;
+  padding: 2rem;
+  backdrop-filter: blur(20px);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.education-top-row {
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+}
+
+.pie-chart-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.school-list-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.education-bottom-row {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.pie-chart-section h3 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: #2c3e50;
+  font-weight: 600;
+  font-size: 1.2rem;
+}
+
+.pie-chart-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 250px;
+  margin-bottom: 1.5rem;
+}
+
+.chart-segments {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: center;
+}
+
+.segment {
+  padding: 1rem 2rem;
+  border-radius: 10px;
+  color: white;
+  font-weight: 600;
+  min-width: 120px;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.segment:hover {
+  transform: scale(1.05);
+}
+
+.segment.primary {
+  background: linear-gradient(135deg, #3498db, #2980b9);
+}
+
+.segment.secondary {
+  background: linear-gradient(135deg, #e74c3c, #c0392b);
+}
+
+.segment.childcare {
+  background: linear-gradient(135deg, #f39c12, #e67e22);
+}
+
+.chart-legend {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.chart-legend .legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: none;
+  padding: 0.5rem;
+}
+
+.chart-legend .color {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+}
+
+.chart-legend .color.primary { background: #3498db; }
+.chart-legend .color.secondary { background: #e74c3c; }
+.chart-legend .color.childcare { background: #f39c12; }
+
+.school-list-section {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.list-header h3 {
+  color: #2c3e50;
+  font-weight: 600;
+  font-size: 1.2rem;
+}
+
+.sort-btn {
+  background: linear-gradient(135deg, #2196F3, #1976D2);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 10px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(33, 150, 243, 0.3);
+}
+
+.sort-btn:hover {
+  background: linear-gradient(135deg, #1976D2, #2196F3);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(33, 150, 243, 0.4);
+}
+
+.school-list {
+  flex: 1;
+  max-height: 350px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  background: rgba(240, 248, 255, 0.3);
+  border-radius: 10px;
+  padding: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.school-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.75rem;
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.school-item:hover {
+  background: rgba(255, 255, 255, 0.8);
+  transform: translateX(5px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.school-name {
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.school-type {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.school-suburb {
+  color: #999;
+  font-size: 0.8rem;
+}
+
+.school-selector {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.school-selector label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.school-selector select {
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.8);
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.school-selector select:focus {
+  outline: none;
+  border-color: #2196F3;
+  box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1);
+}
+
+.student-count-chart {
+  margin-top: 1rem;
+}
+
+.student-count-chart h3 {
+  margin-bottom: 1rem;
+  color: #2c3e50;
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.bar-chart {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 0.5rem;
+  height: 250px;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 15px;
+  position: relative;
+}
+
+.year-axis-label {
+  text-align: center;
+  margin-top: 0.5rem;
+  color: #666;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.bar-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  justify-content: flex-end;
+}
+
+.bar {
+  width: 100%;
+  max-width: 40px;
+  background: linear-gradient(135deg, #2196F3, #1976D2);
+  border-radius: 4px 4px 0 0;
+  transition: all 0.3s ease;
+  margin-bottom: 0.5rem;
+}
+
+.bar:hover {
+  background: linear-gradient(135deg, #1976D2, #2196F3);
+  transform: scaleY(1.05);
+}
+
+.year-label {
+  font-size: 0.8rem;
+  color: #666;
+  font-weight: 500;
+  text-align: center;
+}
+
+/* Back to Top Button */
+.back-to-top {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, #4CAF50, #45a049);
+  border: none;
+  border-radius: 50%;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 20px rgba(76, 175, 80, 0.3);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(20px);
+  z-index: 1000;
+}
+
+.back-to-top.visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.back-to-top:hover {
+  background: linear-gradient(135deg, #45a049, #4CAF50);
+  transform: translateY(-5px) scale(1.1);
+  box-shadow: 0 8px 30px rgba(76, 175, 80, 0.4);
+}
+
+.back-to-top svg {
+  transition: transform 0.3s ease;
+}
+
+.back-to-top:hover svg {
+  transform: translateY(-2px);
+}
+
+/* Restaurant hover effects */
+.facility-bubble.restaurant:hover {
+  box-shadow: 0 25px 60px rgba(156, 39, 176, 0.3);
+}
+
+.facility-bubble.restaurant .bubble-glow {
+  background: radial-gradient(circle, rgba(156, 39, 176, 0.1) 0%, transparent 70%);
+}
+
+/* Responsive Design Updates */
+@media (max-width: 768px) {
+  .map-container {
+    flex-direction: column;
+  }
+  
+  .education-content {
+    padding: 1.5rem;
+    gap: 1.5rem;
+  }
+  
+  .education-top-row {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  
+  .pie-chart-placeholder {
+    height: 200px;
+  }
+  
+  .school-list {
+    max-height: 250px;
+  }
+  
+  .bar-chart {
+    height: 200px;
+    gap: 0.25rem;
+  }
+  
+  .back-to-top {
+    width: 50px;
+    height: 50px;
+    bottom: 1rem;
+    right: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .detail-header h2 {
+    font-size: 2rem;
+  }
+  
+  .education-content {
+    padding: 1rem;
+    gap: 1rem;
+  }
+  
+  .list-header {
+    flex-direction: column;
+    gap: 0.75rem;
+    align-items: stretch;
+  }
+  
+  .chart-legend {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  
+  .segment {
+    padding: 0.75rem 1.5rem;
+    min-width: 100px;
+  }
+  
+  .pie-chart-placeholder {
+    height: 180px;
+  }
+  
+  .school-list {
+    max-height: 200px;
+  }
+  
+  .sort-btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+  }
 }
 </style>

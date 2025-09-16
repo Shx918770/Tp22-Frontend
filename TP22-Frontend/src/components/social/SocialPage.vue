@@ -14,26 +14,34 @@
     <!-- Header Navigation -->
     <nav class="nav-bar">
       <div class="nav-container">
-        <div class="logo">
-          <div class="logo-icon">
-            <svg width="32" height="32" viewBox="0 0 40 40" fill="none">
-              <rect width="40" height="40" rx="8" fill="#4CAF50"/>
-              <path d="M20 8C13.37 8 8 13.37 8 20C8 26.63 13.37 32 20 32C26.63 32 32 26.63 32 20C32 13.37 26.63 8 20 8ZM20 30C14.48 30 10 25.52 10 20C10 14.48 14.48 10 20 10C25.52 10 30 14.48 30 20C30 25.52 25.52 30 20 30Z" fill="white"/>
-              <path d="M20 12C15.58 12 12 15.58 12 20C12 24.42 15.58 28 20 28C24.42 28 28 24.42 28 20C28 15.58 24.42 12 20 12ZM20 26C16.69 26 14 23.31 14 20C14 16.69 16.69 14 20 14C23.31 14 26 16.69 26 20C26 23.31 23.31 26 20 26Z" fill="white"/>
-              <path d="M20 16C17.79 16 16 17.79 16 20C16 22.21 17.79 24 20 24C22.21 24 24 22.21 24 20C24 17.79 22.21 16 20 16Z" fill="white"/>
-            </svg>
+        <!-- first line logo + suburb -->
+        <div class="nav-top">
+          <div class="logo">
+            <div class="logo-icon">
+              <svg width="32" height="32" viewBox="0 0 40 40" fill="none">
+                <rect width="40" height="40" rx="8" fill="#4CAF50"/>
+                <path d="M20 8C13.37 8 8 13.37 8 20C8 26.63 13.37 32 20 32C26.63 32 32 26.63 32 20C32 13.37 26.63 8 20 8ZM20 30C14.48 30 10 25.52 10 20C10 14.48 14.48 10 20 10C25.52 10 30 14.48 30 20C30 25.52 25.52 30 20 30Z" fill="white"/>
+                <path d="M20 12C15.58 12 12 15.58 12 20C12 24.42 15.58 28 20 28C24.42 28 28 24.42 28 20C28 15.58 24.42 12 20 12ZM20 26C16.69 26 14 23.31 14 20C14 16.69 16.69 14 20 14C23.31 14 26 16.69 26 20C26 23.31 23.31 26 20 26Z" fill="white"/>
+                <path d="M20 16C17.79 16 16 17.79 16 20C16 22.21 17.79 24 20 24C22.21 24 24 22.21 24 20C24 17.79 22.21 16 20 16Z" fill="white"/>
+              </svg>
+            </div>
+            <span class="logo-text">MelSustain</span>
           </div>
-          <span class="logo-text">MelSustain</span>
-          <span v-if="selectedSuburb" class="suburb-display"><span class="pin">&#x1F4CD;</span>{{ selectedSuburb }}</span>
+          <span v-if="selectedSuburb" class="suburb-display">
+            <span class="pin">&#x1F4CD;</span>{{ selectedSuburb }}
+          </span>
         </div>
         
-        <div class="nav-tabs">
-          <router-link :to="{ path: '/', query: $route.query }" class="nav-tab">Overview</router-link>
-          <div class="nav-tab active">Social</div>
-          <div class="nav-tab">Economic</div>
-          <div class="nav-tab">Infrastructure</div>
-          <router-link :to="{ path: '/environment', query: $route.query }" class="nav-tab">Environment</router-link>
-          <router-link :to="{ path: '/', hash: '#compare-section', query: $route.query }" class="nav-tab">Compare</router-link>
+        <!-- second line Navigation -->
+        <div class="nav-bottom">
+          <div class="nav-tabs">
+            <router-link :to="{ path: '/', query: $route.query }" class="nav-tab">Overview</router-link>
+            <div class="nav-tab active">Social</div>
+            <div class="nav-tab">Economic</div>
+            <div class="nav-tab">Infrastructure</div>
+            <router-link :to="{ path: '/environment', query: $route.query }" class="nav-tab">Environment</router-link>
+            <router-link :to="{ path: '/', hash: '#compare-section', query: $route.query }" class="nav-tab">Compare</router-link>
+          </div>
         </div>
       </div>
     </nav>
@@ -234,19 +242,28 @@
       </section>
 
       <!-- Education Detail Section -->
-      <section id="education-detail" class="education-detail" v-show="showEducationDetail">
+      <section id="education-detail" class="education-detail">
         <div class="container">
           <div class="detail-header">
             <h2>Education Facilities</h2>
             <p>Comprehensive overview of educational institutions and childcare services</p>
           </div>
           
-          <div class="education-content">
-            <!-- Top Row: Pie Chart and School List -->
-            <div class="education-top-row">
-              <!-- School Type Distribution Chart -->
-              <div class="pie-chart-section">
+          <!-- Three separate sections layout -->
+          <div class="education-grid">
+            <!-- Section 1: School Type Distribution -->
+            <div class="education-section pie-chart-section">
+              <div class="section-header">
+                <div class="section-icon">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </div>
                 <h3>School Type Distribution</h3>
+              </div>
+              <div class="section-content">
                 <div class="pie-chart-container">
                   <svg class="pie-chart-svg" viewBox="0 0 200 200">
                     <!-- Primary Schools Segment -->
@@ -286,7 +303,7 @@
                       transform="rotate(-90 100 100)"
                     />
                     
-                    <!-- Percentage Labels -->
+                    <!-- Percentage Labels with improved font -->
                     <text v-if="getPrimaryPercentage() > 5" 
                           :x="getPrimaryLabelPosition().x" 
                           :y="getPrimaryLabelPosition().y" 
@@ -320,15 +337,26 @@
                   <div class="legend-item"><div class="color childcare"></div> Childcare Centers</div>
                 </div>
               </div>
+            </div>
 
-              <!-- School List -->
-              <div class="school-list-section">
-                <div class="list-header">
-                  <h3>List of School</h3>
-                  <button class="sort-btn" @click="toggleSort">
-                    {{ sortSchoolsAlphabetically ? 'Original Order' : 'Sort A-Z' }}
-                  </button>
+            <!-- Section 2: School List -->
+            <div class="education-section school-list-section">
+              <div class="section-header">
+                <div class="section-icon">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <polyline points="14,2 14,8 20,8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <line x1="16" y1="13" x2="8" y2="13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <line x1="16" y1="17" x2="8" y2="17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <polyline points="10,9 9,9 8,9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
                 </div>
+                <h3>List of School</h3>
+                <button class="sort-btn" @click="toggleSort">
+                  {{ sortSchoolsAlphabetically ? 'Original Order' : 'Sort A-Z' }}
+                </button>
+              </div>
+              <div class="section-content">
                 <div class="school-list">
                   <div v-for="school in sortedSchools" :key="school.schoolNo" class="school-item">
                     <div class="school-name">{{ school.schoolName }}</div>
@@ -339,34 +367,49 @@
               </div>
             </div>
 
-            <!-- Bottom Row: School Selection and Student Chart -->
-            <div class="education-bottom-row">
-              <div class="school-selector">
-                <label for="school-select">School</label>
-                <select id="school-select" v-model="selectedSchool" @change="onSchoolChange">
-                  <option value="">Choose a school...</option>
-                  <option v-for="school in schools" :key="school.schoolNo" :value="school">
-                    {{ school.schoolName }}
-                  </option>
-                </select>
+            <!-- Section 3: Student Chart -->
+            <div class="education-section student-chart-section">
+              <div class="section-header">
+                <div class="section-icon">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <path d="M3 3v18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M18.7 8l-5-5L9 7.5l-4.7-2L2 13.5l2.3-1.5L9 16l4.7-4.5z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </div>
+                <h3>Student Statistics</h3>
               </div>
-              
-              <div v-if="selectedSchool" class="student-count-chart">
-                <h3>Number of Student</h3>
-                <div class="bar-chart">
-                  <div v-for="year in 12" :key="year" class="bar-item">
-                    <div class="bar" 
-                         :class="{ 'bar-zero': getStudentCount(year) === 0 }" 
-                         :style="{ height: getStudentCountHeight(year) + '%' }">
-                      <div class="bar-value" 
-                           :class="{ 'bar-value-zero': getStudentCount(year) === 0 }">
-                        {{ getStudentCount(year) }}
+              <div class="section-content">
+                <div class="school-selector">
+                  <label for="school-select">School</label>
+                  <select id="school-select" v-model="selectedSchool" @change="onSchoolChange">
+                    <option value="">Choose a school...</option>
+                    <option v-for="school in schools" :key="school.schoolNo" :value="school">
+                      {{ school.schoolName }}
+                    </option>
+                  </select>
+                </div>
+                
+                <div v-if="selectedSchool" class="student-count-chart">
+                  <div class="chart-container">
+                    <div class="chart-with-labels">
+                      <div class="y-axis-label">Number of Students</div>
+                      <div class="bar-chart">
+                        <div v-for="year in 12" :key="year" class="bar-item">
+                          <div class="bar" 
+                               :class="{ 'bar-zero': getStudentCount(year) === 0 }" 
+                               :style="{ height: getStudentCountHeight(year) + '%' }">
+                            <div class="bar-value" 
+                                 :class="{ 'bar-value-zero': getStudentCount(year) === 0 }">
+                              {{ getStudentCount(year) }}
+                            </div>
+                          </div>
+                          <div class="year-label">{{ year }}</div>
+                        </div>
                       </div>
                     </div>
-                    <div class="year-label">{{ year }}</div>
+                    <div class="x-axis-label">Year</div>
                   </div>
                 </div>
-                <div class="year-axis-label">Year</div>
               </div>
             </div>
           </div>
@@ -656,7 +699,6 @@ export default {
       },
       loading: false,
       error: null,
-      showEducationDetail: false,
       selectedSchool: null,
       sortSchoolsAlphabetically: false,
       showBackToTop: false,
@@ -828,13 +870,10 @@ export default {
     },
 
     scrollToEducationDetail() {
-      this.showEducationDetail = true
-      this.$nextTick(() => {
-        const element = document.getElementById('education-detail')
-        if (element) {
-          element.scrollIntoView({ behavior: 'smooth', block: 'start' })
-        }
-      })
+      const element = document.getElementById('education-detail')
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      }
     },
 
     toggleSort() {
@@ -1107,8 +1146,21 @@ export default {
   margin: 0 auto;
   padding: 1rem 2rem;
   display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.nav-top {
+  display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
+  gap: 2rem;
+}
+
+.nav-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .logo {
@@ -1235,6 +1287,7 @@ export default {
 /* Social Facilities - Compact Inline Layout */
 .social-facilities {
   padding: 2.5rem 0;
+  position: relative;
 }
 
 .facilities-header {
@@ -2311,7 +2364,7 @@ export default {
 /* Map Section */
 .map-section {
   padding: 4rem 0;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.95));
+  position: relative;
 }
 
 .map-container {
@@ -2322,12 +2375,12 @@ export default {
 
 .map-area {
   flex: 4;
-  background: rgba(255, 255, 255, 0.8);
+  background: linear-gradient(135deg, rgba(248, 250, 252, 0.95), rgba(241, 245, 249, 0.9));
   border-radius: 20px;
   padding: 1.5rem;
   backdrop-filter: blur(20px);
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-  border: 2px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(226, 232, 240, 0.6);
   height: 500px;
   display: flex;
   flex-direction: column;
@@ -2365,12 +2418,12 @@ export default {
 
 .map-legend {
   flex: 1;
-  background: rgba(255, 255, 255, 0.8);
+  background: linear-gradient(135deg, rgba(248, 250, 252, 0.95), rgba(241, 245, 249, 0.9));
   border-radius: 20px;
   padding: 1.5rem;
   backdrop-filter: blur(20px);
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-  border: 2px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(226, 232, 240, 0.6);
   height: 500px;
   display: flex;
   flex-direction: column;
@@ -2444,22 +2497,18 @@ export default {
 /* Education Detail Section */
 .education-detail {
   padding: 4rem 0;
-  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 50%, #e2e8f0 100%);
   position: relative;
 }
 
-.education-detail::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: 
-    radial-gradient(circle at 20% 30%, rgba(59, 130, 246, 0.08) 0%, transparent 40%),
-    radial-gradient(circle at 80% 70%, rgba(239, 68, 68, 0.06) 0%, transparent 40%),
-    radial-gradient(circle at 50% 20%, rgba(245, 158, 11, 0.07) 0%, transparent 40%);
-  pointer-events: none;
+/* Education Grid Layout */
+.education-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto auto;
+  gap: 2rem;
+  grid-template-areas: 
+    "pie-chart school-list"
+    "student-chart student-chart";
 }
 
 .detail-header {
@@ -2503,31 +2552,119 @@ export default {
   line-height: 1.6;
 }
 
-.education-content {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.9));
+/* Education Sections Styling */
+.education-section {
+  background: rgba(255, 255, 255, 0.95);
   border-radius: 24px;
-  padding: 3rem;
+  padding: 2rem;
   backdrop-filter: blur(30px);
   box-shadow: 
     0 20px 60px rgba(0, 0, 0, 0.08),
     0 8px 25px rgba(0, 0, 0, 0.05),
     inset 0 1px 0 rgba(255, 255, 255, 0.8);
   border: 2px solid rgba(255, 255, 255, 0.4);
-  display: flex;
-  flex-direction: column;
-  gap: 3rem;
   position: relative;
   overflow: hidden;
+  transition: all 0.3s ease;
 }
 
-.education-content::before {
+.education-section:hover {
+  transform: translateY(-5px);
+  box-shadow: 
+    0 30px 80px rgba(0, 0, 0, 0.12),
+    0 12px 35px rgba(0, 0, 0, 0.08);
+}
+
+/* Unified background color for all sections */
+.education-section.pie-chart-section {
+  grid-area: pie-chart;
+  background: linear-gradient(135deg, rgba(248, 250, 252, 0.95), rgba(241, 245, 249, 0.9));
+  border: 1px solid rgba(226, 232, 240, 0.6);
+}
+
+.education-section.school-list-section {
+  grid-area: school-list;
+  background: linear-gradient(135deg, rgba(248, 250, 252, 0.95), rgba(241, 245, 249, 0.9));
+  border: 1px solid rgba(226, 232, 240, 0.6);
+}
+
+.education-section.student-chart-section {
+  grid-area: student-chart;
+  background: linear-gradient(135deg, rgba(248, 250, 252, 0.95), rgba(241, 245, 249, 0.9));
+  border: 1px solid rgba(226, 232, 240, 0.6);
+}
+
+/* Section Headers - Clean Design */
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  padding: 0;
+  border-bottom: 2px solid rgba(148, 163, 184, 0.2);
+  padding-bottom: 1rem;
+}
+
+.section-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.pie-chart-section .section-icon {
+  color: #3b82f6;
+}
+
+.school-list-section .section-icon {
+  color: #ef4444;
+}
+
+.student-chart-section .section-icon {
+  color: #f59e0b;
+}
+
+.section-header h3 {
+  flex: 1;
+  color: #1e293b;
+  font-weight: 700;
+  font-size: 1.4rem;
+  font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+  letter-spacing: -0.02em;
+  margin: 0;
+  position: relative;
+}
+
+.section-header h3::after {
   content: '';
   position: absolute;
-  top: 0;
+  bottom: -8px;
   left: 0;
-  right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(52, 152, 219, 0.3), transparent);
+  width: 40px;
+  height: 3px;
+  border-radius: 2px;
+  transition: all 0.3s ease;
+}
+
+.pie-chart-section .section-header h3::after {
+  background: linear-gradient(90deg, #3b82f6, #6366f1);
+}
+
+.school-list-section .section-header h3::after {
+  background: linear-gradient(90deg, #ef4444, #f43f5e);
+}
+
+.student-chart-section .section-header h3::after {
+  background: linear-gradient(90deg, #f59e0b, #fb923c);
+}
+
+.section-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .education-top-row {
@@ -2605,22 +2742,31 @@ export default {
 }
 
 .pie-percentage-label {
-  font-size: 14px;
-  font-weight: 700;
-  font-family: 'Inter', sans-serif;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  font-size: 20px;
+  font-weight: 900;
+  font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+  text-shadow: 
+    0 2px 6px rgba(0, 0, 0, 0.8),
+    0 1px 3px rgba(255, 255, 255, 0.9),
+    0 0 10px rgba(255, 255, 255, 0.5);
+  letter-spacing: -0.02em;
+  stroke: rgba(255, 255, 255, 0.8);
+  stroke-width: 0.5px;
 }
 
 .pie-percentage-label.primary {
-  fill: #52a3f0;
+  fill: #ffffff;
+  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.6));
 }
 
 .pie-percentage-label.secondary {
-  fill: #e74c3c;
+  fill: #ffffff;
+  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.6));
 }
 
 .pie-percentage-label.childcare {
-  fill: #f39c12;
+  fill: #ffffff;
+  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.6));
 }
 
 .pie-chart-placeholder {
@@ -2794,84 +2940,109 @@ export default {
 .school-selector {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
 }
 
 .school-selector label {
-  display: block;
+  color: #475569;
+  font-weight: 600;
+  font-size: 0.95rem;
+  font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+  letter-spacing: -0.01em;
   margin-bottom: 0.5rem;
-  font-weight: 700;
-  color: #1e293b;
-  background: rgba(255, 255, 255, 0.8);
-  padding: 0.75rem 1.25rem;
-  border-radius: 10px;
-  border: 2px solid rgba(245, 158, 11, 0.2);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  backdrop-filter: blur(10px);
-  font-size: 1.1rem;
 }
 
 .school-selector select {
   width: 100%;
-  padding: 1rem 1.25rem;
-  border: 2px solid rgba(245, 158, 11, 0.3);
-  border-radius: 12px;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.9));
+  padding: 0.875rem 1rem;
+  border: none;
+  border-bottom: 2px solid rgba(148, 163, 184, 0.3);
+  background: transparent;
   font-size: 1rem;
   font-weight: 500;
   color: #1e293b;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
-  backdrop-filter: blur(15px);
+  font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 0.5rem center;
+  background-repeat: no-repeat;
+  background-size: 1.5em 1.5em;
+  padding-right: 2.5rem;
 }
 
 .school-selector select:focus {
   outline: none;
-  border-color: #f59e0b;
-  box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.15);
-  transform: translateY(-2px);
+  border-bottom-color: #f59e0b;
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.school-selector select option {
+  background: white;
+  color: #1e293b;
+  padding: 0.5rem;
 }
 
 .student-count-chart {
   margin-top: 1rem;
 }
 
-.student-count-chart h3 {
-  margin-bottom: 1rem;
-  color: #1e293b;
-  font-weight: 700;
-  font-size: 1.4rem;
+/* Chart Container with optimized layout */
+.chart-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.chart-with-labels {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+}
+
+.y-axis-label {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  color: #475569;
+  font-weight: 600;
+  font-size: 0.95rem;
   font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
   letter-spacing: -0.01em;
-  background: rgba(255, 255, 255, 0.8);
-  padding: 1rem 1.5rem;
-  border-radius: 12px;
-  border: 2px solid rgba(245, 158, 11, 0.2);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  backdrop-filter: blur(10px);
+  white-space: nowrap;
   text-align: center;
+  min-width: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem 0;
 }
 
 .bar-chart {
   display: flex;
   align-items: end;
-  justify-content: space-between;
-  gap: 0.5rem;
-  height: 250px;
-  padding: 1rem;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.8), rgba(248, 250, 252, 0.6));
-  border-radius: 18px;
+  justify-content: space-around;
+  gap: 0.3rem;
+  height: 280px;
+  padding: 1.5rem 1rem 1rem 1rem;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.6), rgba(248, 250, 252, 0.4));
+  border-radius: 12px;
   position: relative;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  flex: 1;
+  width: 100%;
+  max-width: none;
 }
 
-.year-axis-label {
+.x-axis-label {
   text-align: center;
-  margin-top: 0.5rem;
-  color: #666;
-  font-weight: 500;
-  font-size: 0.9rem;
+  margin-top: 0.8rem;
+  color: #475569;
+  font-weight: 600;
+  font-size: 0.95rem;
+  font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+  letter-spacing: -0.01em;
 }
 
 .bar-item {
@@ -2986,24 +3157,129 @@ export default {
   background: radial-gradient(circle, rgba(156, 39, 176, 0.1) 0%, transparent 70%);
 }
 
+/* Additional UI Improvements */
+.pie-chart-container {
+  position: relative;
+}
+
+.pie-chart-container::before {
+  content: '';
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  right: -10px;
+  bottom: -10px;
+  background: radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, transparent 70%);
+  border-radius: 50%;
+  z-index: -1;
+  animation: pulseChart 3s ease-in-out infinite;
+}
+
+@keyframes pulseChart {
+  0%, 100% { transform: scale(1); opacity: 0.5; }
+  50% { transform: scale(1.05); opacity: 0.8; }
+}
+
+.school-list {
+  position: relative;
+}
+
+.school-list::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(239, 68, 68, 0.3), transparent);
+}
+
+.bar-chart::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(245, 158, 11, 0.3), transparent);
+}
+
+/* Enhanced Section Hover Effects */
+.education-section:hover .section-icon {
+  transform: scale(1.1);
+}
+
+.education-section:hover .section-header h3::after {
+  width: 60px;
+}
+
+/* Sort Button Enhancement */
+.sort-btn {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.sort-btn:hover {
+  background: linear-gradient(135deg, #dc2626, #b91c1c);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(239, 68, 68, 0.4);
+}
+
 /* Responsive Design Updates */
 @media (max-width: 768px) {
   .map-container {
     flex-direction: column;
   }
   
-  .education-content {
+  .education-grid {
+    grid-template-columns: 1fr;
+    grid-template-areas: 
+      "pie-chart"
+      "school-list"
+      "student-chart";
+    gap: 1.5rem;
+  }
+  
+  .education-section {
     padding: 1.5rem;
-    gap: 1.5rem;
   }
   
-  .education-top-row {
+  .section-header {
     flex-direction: column;
-    gap: 1.5rem;
+    gap: 0.8rem;
+    text-align: center;
+    margin-bottom: 1.5rem;
   }
   
-  .pie-chart-placeholder {
-    height: 200px;
+  .section-header h3 {
+    font-size: 1.3rem;
+  }
+  
+  .chart-with-labels {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .y-axis-label {
+    writing-mode: initial;
+    text-orientation: initial;
+    transform: none;
+    min-width: auto;
+    padding: 0.5rem;
+  }
+  
+  .pie-chart-svg {
+    width: 180px;
+    height: 180px;
   }
   
   .school-list {
@@ -3011,8 +3287,9 @@ export default {
   }
   
   .bar-chart {
-    height: 200px;
+    height: 220px;
     gap: 0.25rem;
+    padding: 1.5rem 0.8rem 1rem 0.8rem;
   }
   
   .back-to-top {
@@ -3028,15 +3305,22 @@ export default {
     font-size: 2rem;
   }
   
-  .education-content {
+  .education-section {
     padding: 1rem;
-    gap: 1rem;
   }
   
-  .list-header {
-    flex-direction: column;
-    gap: 0.75rem;
-    align-items: stretch;
+  .section-header {
+    gap: 0.6rem;
+    margin-bottom: 1rem;
+  }
+  
+  .section-header h3 {
+    font-size: 1.1rem;
+  }
+  
+  .section-icon {
+    width: 28px;
+    height: 28px;
   }
   
   .chart-legend {
@@ -3044,22 +3328,28 @@ export default {
     gap: 0.75rem;
   }
   
-  .segment {
-    padding: 0.75rem 1.5rem;
-    min-width: 100px;
+  .pie-chart-svg {
+    width: 160px;
+    height: 160px;
   }
   
-  .pie-chart-placeholder {
-    height: 180px;
+  .pie-percentage-label {
+    font-size: 16px;
   }
   
   .school-list {
     max-height: 200px;
+    padding: 1rem;
+  }
+  
+  .bar-chart {
+    height: 200px;
+    padding: 1rem 0.5rem 1rem 0.5rem;
   }
   
   .sort-btn {
     padding: 0.5rem 1rem;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
   }
 }
 </style>

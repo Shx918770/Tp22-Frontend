@@ -250,7 +250,6 @@ export default {
       comparing: false,
       suburbs: [
         "Carlton",
-        "CBD",
         "Docklands",
         "East Melbourne",
         "Kensington",
@@ -578,15 +577,17 @@ export default {
 }
 
 .suburb-buttons {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 1rem;
   margin: 2rem auto;
+  width: 100%;
   max-width: 1000px;
-  justify-content: center;
 }
-
 .suburb-btn {
+  flex: 0 1 180px;
+  text-align: center;
   background: linear-gradient(135deg, #ffffffcc, #ffffffee);
   border: 2px solid rgba(255, 255, 255, 0.3);
   border-radius: 25px;

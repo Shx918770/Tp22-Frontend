@@ -173,6 +173,7 @@
                 :selectedSuburb="selectedSuburb"
                 :showSchools="mapLegendState.schools"
                 :showChildCares="mapLegendState.childcare"
+                class="social-map-full"
               />
             </div>
             <div class="map-legend">
@@ -181,49 +182,49 @@
                 <div class="legend-item" 
                      :class="{ 'inactive': !mapLegendState.schools }"
                      @click="toggleLegendItem('schools')">
-                  <div class="legend-marker school"></div>
+                  <div class="facility-legend-icon facility-legend-schools"></div>
                   <span>Schools</span>
                 </div>
                 <div class="legend-item" 
                      :class="{ 'inactive': !mapLegendState.hospitals }"
                      @click="toggleLegendItem('hospitals')">
-                  <div class="legend-marker hospital"></div>
+                  <div class="facility-legend-icon facility-legend-hospitals"></div>
                   <span>Hospitals</span>
                 </div>
                 <div class="legend-item" 
                      :class="{ 'inactive': !mapLegendState.playgrounds }"
                      @click="toggleLegendItem('playgrounds')">
-                  <div class="legend-marker playground"></div>
+                  <div class="facility-legend-icon facility-legend-playgrounds"></div>
                   <span>Playgrounds</span>
                 </div>
                 <div class="legend-item" 
                      :class="{ 'inactive': !mapLegendState.communityCenter }"
                      @click="toggleLegendItem('communityCenter')">
-                  <div class="legend-marker community"></div>
+                  <div class="facility-legend-icon facility-legend-community"></div>
                   <span>Community Centers</span>
                 </div>
                 <div class="legend-item" 
                      :class="{ 'inactive': !mapLegendState.cafes }"
                      @click="toggleLegendItem('cafes')">
-                  <div class="legend-marker cafe"></div>
+                  <div class="facility-legend-icon facility-legend-cafes"></div>
                   <span>Cafes</span>
                 </div>
                 <div class="legend-item" 
                      :class="{ 'inactive': !mapLegendState.bars }"
                      @click="toggleLegendItem('bars')">
-                  <div class="legend-marker bar"></div>
+                  <div class="facility-legend-icon facility-legend-bars"></div>
                   <span>Bars</span>
                 </div>
                 <div class="legend-item" 
                      :class="{ 'inactive': !mapLegendState.childcare }"
                      @click="toggleLegendItem('childcare')">
-                  <div class="legend-marker childcare"></div>
+                  <div class="facility-legend-icon facility-legend-childcare"></div>
                   <span>Childcare</span>
                 </div>
                 <div class="legend-item" 
                      :class="{ 'inactive': !mapLegendState.practitioners }"
                      @click="toggleLegendItem('practitioners')">
-                  <div class="legend-marker practitioners"></div>
+                  <div class="facility-legend-icon facility-legend-practitioners"></div>
                   <span>Practitioners</span>
                 </div>
               </div>
@@ -248,6 +249,7 @@
                 <h3>School Type Distribution</h3>
                 <div class="pie-chart-container">
                   <svg class="pie-chart-svg" viewBox="0 0 200 200">
+                    <!-- Primary Schools Segment -->
                     <circle
                       cx="100"
                       cy="100"
@@ -259,6 +261,7 @@
                       stroke-dashoffset="0"
                       transform="rotate(-90 100 100)"
                     />
+                    <!-- Secondary Schools Segment -->
                     <circle
                       cx="100"
                       cy="100"
@@ -270,6 +273,7 @@
                       :stroke-dashoffset="`-${getPrimaryPercentage() * 5.02}`"
                       transform="rotate(-90 100 100)"
                     />
+                    <!-- Childcare Segment -->
                     <circle
                       cx="100"
                       cy="100"
@@ -281,6 +285,31 @@
                       :stroke-dashoffset="`-${(getPrimaryPercentage() + getSecondaryPercentage()) * 5.02}`"
                       transform="rotate(-90 100 100)"
                     />
+                    
+                    <!-- Percentage Labels -->
+                    <text v-if="getPrimaryPercentage() > 5" 
+                          :x="getPrimaryLabelPosition().x" 
+                          :y="getPrimaryLabelPosition().y" 
+                          text-anchor="middle" 
+                          class="pie-percentage-label primary">
+                      {{ getPrimaryPercentage() }}%
+                    </text>
+                    <text v-if="getSecondaryPercentage() > 5" 
+                          :x="getSecondaryLabelPosition().x" 
+                          :y="getSecondaryLabelPosition().y" 
+                          text-anchor="middle" 
+                          class="pie-percentage-label secondary">
+                      {{ getSecondaryPercentage() }}%
+                    </text>
+                    <text v-if="getChildcarePercentage() > 5" 
+                          :x="getChildcareLabelPosition().x" 
+                          :y="getChildcareLabelPosition().y" 
+                          text-anchor="middle" 
+                          class="pie-percentage-label childcare">
+                      {{ getChildcarePercentage() }}%
+                    </text>
+                    
+                    <!-- Center Text -->
                     <text x="100" y="95" text-anchor="middle" class="pie-center-text-title">Education</text>
                     <text x="100" y="110" text-anchor="middle" class="pie-center-text-subtitle">Facilities</text>
                   </svg>
@@ -326,8 +355,11 @@
                 <h3>Number of Student</h3>
                 <div class="bar-chart">
                   <div v-for="year in 12" :key="year" class="bar-item">
-                    <div class="bar" :style="{ height: getStudentCountHeight(year) + '%' }">
-                      <div class="bar-value" v-if="getStudentCount(year) > 0">
+                    <div class="bar" 
+                         :class="{ 'bar-zero': getStudentCount(year) === 0 }" 
+                         :style="{ height: getStudentCountHeight(year) + '%' }">
+                      <div class="bar-value" 
+                           :class="{ 'bar-value-zero': getStudentCount(year) === 0 }">
                         {{ getStudentCount(year) }}
                       </div>
                     </div>
@@ -855,7 +887,7 @@ export default {
     },
 
     getStudentCountHeight(year) {
-      if (!this.selectedSchool) return 0
+      if (!this.selectedSchool) return 15 // Show minimum height when no school selected
       
       // Get student count for the specific year
       const studentCount = this.getStudentCount(year)
@@ -868,7 +900,13 @@ export default {
       }
       
       const maxCount = Math.max(...allCounts, 1) // Avoid division by zero
-      return studentCount > 0 ? Math.max((studentCount / maxCount) * 100, 10) : 0
+      
+      // Always show at least 15% height for visibility, even with 0 students
+      if (studentCount === 0) {
+        return 15
+      }
+      
+      return Math.max((studentCount / maxCount) * 100, 20)
     },
 
     handleScroll() {
@@ -881,6 +919,37 @@ export default {
 
     toggleLegendItem(itemKey) {
       this.mapLegendState[itemKey] = !this.mapLegendState[itemKey]
+    },
+
+    // Calculate label positions for pie chart percentages
+    getPrimaryLabelPosition() {
+      const angle = (this.getPrimaryPercentage() / 100) * Math.PI // Half of the segment angle
+      const radius = 65 // Position labels closer to the ring
+      return {
+        x: 100 + radius * Math.cos(angle - Math.PI/2),
+        y: 100 + radius * Math.sin(angle - Math.PI/2)
+      }
+    },
+
+    getSecondaryLabelPosition() {
+      const primaryAngle = (this.getPrimaryPercentage() / 100) * 2 * Math.PI
+      const secondaryAngle = primaryAngle + (this.getSecondaryPercentage() / 100) * Math.PI
+      const radius = 65
+      return {
+        x: 100 + radius * Math.cos(secondaryAngle - Math.PI/2),
+        y: 100 + radius * Math.sin(secondaryAngle - Math.PI/2)
+      }
+    },
+
+    getChildcareLabelPosition() {
+      const primaryAngle = (this.getPrimaryPercentage() / 100) * 2 * Math.PI
+      const secondaryAngle = (this.getSecondaryPercentage() / 100) * 2 * Math.PI
+      const childcareAngle = primaryAngle + secondaryAngle + (this.getChildcarePercentage() / 100) * Math.PI
+      const radius = 65
+      return {
+        x: 100 + radius * Math.cos(childcareAngle - Math.PI/2),
+        y: 100 + radius * Math.sin(childcareAngle - Math.PI/2)
+      }
     }
   }
 }
@@ -2252,14 +2321,23 @@ export default {
 }
 
 .map-area {
-  flex: 5.5;
+  flex: 4;
   background: rgba(255, 255, 255, 0.8);
   border-radius: 20px;
-  padding: 2rem;
+  padding: 1.5rem;
   backdrop-filter: blur(20px);
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
   border: 2px solid rgba(255, 255, 255, 0.3);
-  min-height: 500px;
+  height: 500px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Social Map Full Size */
+.social-map-full {
+  width: 100%;
+  height: 100%;
+  flex: 1;
 }
 
 /* Map placeholder styles (now unused but kept for fallback) */
@@ -2286,13 +2364,16 @@ export default {
 }
 
 .map-legend {
-  flex: 1.5;
+  flex: 1;
   background: rgba(255, 255, 255, 0.8);
   border-radius: 20px;
   padding: 1.5rem;
   backdrop-filter: blur(20px);
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
   border: 2px solid rgba(255, 255, 255, 0.3);
+  height: 500px;
+  display: flex;
+  flex-direction: column;
 }
 
 .map-legend h4 {
@@ -2304,17 +2385,20 @@ export default {
 .legend-items {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 0.8rem;
+  flex: 1;
+  justify-content: space-evenly;
 }
 
 .legend-item {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  padding: 0.75rem;
+  gap: 0.75rem;
+  padding: 0.5rem 0.75rem;
   background: rgba(255, 255, 255, 0.5);
-  border-radius: 10px;
+  border-radius: 8px;
   transition: all 0.3s ease;
+  font-size: 0.9rem;
 }
 
 .legend-item:hover {
@@ -2337,45 +2421,30 @@ export default {
   user-select: none;
 }
 
-.legend-marker {
-  width: 16px;
-  height: 16px;
+/* New Unified Facility Legend Icons */
+.facility-legend-icon {
+  width: 14px;
+  height: 14px;
   border-radius: 50%;
   border: 2px solid white;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  flex-shrink: 0;
+  display: block;
 }
 
-.legend-marker.school { background: #e74c3c; }
-.legend-marker.hospital { background: #3498db; }
-.legend-marker.playground { background: #27ae60; }
-.legend-marker.community { background: #f39c12; }
-.legend-marker.cafe { background: #8e44ad; }
-.legend-marker.bar { 
-  background: #2c3e50; 
-  border-radius: 2px;
-  position: relative;
-}
-.legend-marker.bar::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 6px;
-  height: 6px;
-  background: #2c3e50;
-  border-radius: 50%;
-  box-shadow: 
-    -3px 0 0 #2c3e50,
-    3px 0 0 #2c3e50;
-}
-.legend-marker.childcare { background: #ff6b35; }
-.legend-marker.practitioners { background: #16a085; }
+.facility-legend-schools { background: #e74c3c; }
+.facility-legend-hospitals { background: #3498db; }
+.facility-legend-playgrounds { background: #27ae60; }
+.facility-legend-community { background: #f39c12; }
+.facility-legend-cafes { background: #8e44ad; }
+.facility-legend-bars { background: #2c3e50; }
+.facility-legend-childcare { background: #ff6b35; }
+.facility-legend-practitioners { background: #16a085; }
 
 /* Education Detail Section */
 .education-detail {
   padding: 4rem 0;
-  background: linear-gradient(135deg, rgba(240, 248, 255, 0.9), rgba(230, 247, 255, 0.95));
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 50%, #e2e8f0 100%);
   position: relative;
 }
 
@@ -2387,9 +2456,9 @@ export default {
   right: 0;
   bottom: 0;
   background: 
-    radial-gradient(circle at 25% 25%, rgba(52, 152, 219, 0.05) 0%, transparent 50%),
-    radial-gradient(circle at 75% 75%, rgba(231, 76, 60, 0.03) 0%, transparent 50%),
-    radial-gradient(circle at 50% 50%, rgba(243, 156, 18, 0.04) 0%, transparent 50%);
+    radial-gradient(circle at 20% 30%, rgba(59, 130, 246, 0.08) 0%, transparent 40%),
+    radial-gradient(circle at 80% 70%, rgba(239, 68, 68, 0.06) 0%, transparent 40%),
+    radial-gradient(circle at 50% 20%, rgba(245, 158, 11, 0.07) 0%, transparent 40%);
   pointer-events: none;
 }
 
@@ -2399,22 +2468,39 @@ export default {
 }
 
 .detail-header h2 {
-  font-size: 2.8rem;
-  font-weight: 800;
-  color: #2c3e50;
-  margin-bottom: 1rem;
-  background: linear-gradient(135deg, #2c3e50, #3498db, #e74c3c);
+  font-size: 3rem;
+  font-weight: 900;
+  color: #1e293b;
+  margin-bottom: 1.5rem;
+  background: linear-gradient(135deg, #1e293b 0%, #3b82f6 30%, #ef4444 60%, #f59e0b 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
-  letter-spacing: -0.02em;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  letter-spacing: -0.03em;
+  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  position: relative;
+}
+
+.detail-header h2::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 4px;
+  background: linear-gradient(90deg, #3b82f6, #ef4444, #f59e0b);
+  border-radius: 2px;
 }
 
 .detail-header p {
-  color: rgba(44, 62, 80, 0.7);
-  font-size: 1.2rem;
+  color: #475569;
+  font-size: 1.3rem;
+  font-weight: 500;
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.6;
 }
 
 .education-content {
@@ -2471,11 +2557,17 @@ export default {
 .pie-chart-section h3 {
   text-align: center;
   margin-bottom: 1.5rem;
-  color: #2c3e50;
+  color: #1e293b;
   font-weight: 700;
-  font-size: 1.4rem;
+  font-size: 1.5rem;
   font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
   letter-spacing: -0.01em;
+  background: rgba(255, 255, 255, 0.8);
+  padding: 1rem 1.5rem;
+  border-radius: 12px;
+  border: 2px solid rgba(59, 130, 246, 0.2);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  backdrop-filter: blur(10px);
 }
 
 /* New Pie Chart Styles */
@@ -2484,11 +2576,12 @@ export default {
   align-items: center;
   justify-content: center;
   margin-bottom: 1.5rem;
-  padding: 2rem;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.8), rgba(248, 250, 252, 0.6));
+  padding: 2.5rem;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.9));
   border-radius: 20px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.08);
+  border: 2px solid rgba(59, 130, 246, 0.15);
+  backdrop-filter: blur(20px);
 }
 
 .pie-chart-svg {
@@ -2509,6 +2602,25 @@ export default {
   font-weight: 500;
   fill: #666;
   font-family: 'Inter', sans-serif;
+}
+
+.pie-percentage-label {
+  font-size: 14px;
+  font-weight: 700;
+  font-family: 'Inter', sans-serif;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.pie-percentage-label.primary {
+  fill: #52a3f0;
+}
+
+.pie-percentage-label.secondary {
+  fill: #e74c3c;
+}
+
+.pie-percentage-label.childcare {
+  fill: #f39c12;
 }
 
 .pie-chart-placeholder {
@@ -2600,11 +2712,18 @@ export default {
 }
 
 .list-header h3 {
-  color: #2c3e50;
+  color: #1e293b;
   font-weight: 700;
-  font-size: 1.4rem;
+  font-size: 1.5rem;
   font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
   letter-spacing: -0.01em;
+  background: rgba(255, 255, 255, 0.8);
+  padding: 1rem 1.5rem;
+  border-radius: 12px;
+  border: 2px solid rgba(239, 68, 68, 0.2);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  backdrop-filter: blur(10px);
+  margin: 0;
 }
 
 .sort-btn {
@@ -2632,10 +2751,12 @@ export default {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-  background: rgba(240, 248, 255, 0.3);
-  border-radius: 10px;
-  padding: 1rem;
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(248, 250, 252, 0.8));
+  border-radius: 15px;
+  padding: 1.5rem;
+  border: 2px solid rgba(239, 68, 68, 0.15);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
+  backdrop-filter: blur(15px);
 }
 
 .school-item {
@@ -2679,24 +2800,36 @@ export default {
 .school-selector label {
   display: block;
   margin-bottom: 0.5rem;
-  font-weight: 600;
-  color: #2c3e50;
+  font-weight: 700;
+  color: #1e293b;
+  background: rgba(255, 255, 255, 0.8);
+  padding: 0.75rem 1.25rem;
+  border-radius: 10px;
+  border: 2px solid rgba(245, 158, 11, 0.2);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  backdrop-filter: blur(10px);
+  font-size: 1.1rem;
 }
 
 .school-selector select {
   width: 100%;
-  padding: 0.75rem;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.8);
+  padding: 1rem 1.25rem;
+  border: 2px solid rgba(245, 158, 11, 0.3);
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.9));
   font-size: 1rem;
+  font-weight: 500;
+  color: #1e293b;
   transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+  backdrop-filter: blur(15px);
 }
 
 .school-selector select:focus {
   outline: none;
-  border-color: #2196F3;
-  box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1);
+  border-color: #f59e0b;
+  box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.15);
+  transform: translateY(-2px);
 }
 
 .student-count-chart {
@@ -2705,11 +2838,18 @@ export default {
 
 .student-count-chart h3 {
   margin-bottom: 1rem;
-  color: #2c3e50;
+  color: #1e293b;
   font-weight: 700;
-  font-size: 1.3rem;
+  font-size: 1.4rem;
   font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
   letter-spacing: -0.01em;
+  background: rgba(255, 255, 255, 0.8);
+  padding: 1rem 1.5rem;
+  border-radius: 12px;
+  border: 2px solid rgba(245, 158, 11, 0.2);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  backdrop-filter: blur(10px);
+  text-align: center;
 }
 
 .bar-chart {
@@ -2772,6 +2912,22 @@ export default {
 .bar:hover {
   background: linear-gradient(135deg, #1976D2, #2196F3);
   transform: scaleY(1.05);
+}
+
+.bar-zero {
+  background: linear-gradient(135deg, #e2e8f0, #cbd5e1) !important;
+  border: 2px dashed #94a3b8;
+  opacity: 0.7;
+}
+
+.bar-zero:hover {
+  background: linear-gradient(135deg, #cbd5e1, #94a3b8) !important;
+  opacity: 0.9;
+}
+
+.bar-value-zero {
+  color: #64748b !important;
+  font-style: italic;
 }
 
 .year-label {

@@ -246,18 +246,44 @@
               <!-- School Type Distribution Chart -->
               <div class="pie-chart-section">
                 <h3>School Type Distribution</h3>
-                <div class="pie-chart-placeholder">
-                  <div class="chart-segments">
-                    <div class="segment primary" :style="{ '--percentage': getPrimaryPercentage() + '%' }">
-                      <span>Primary</span>
-                    </div>
-                    <div class="segment secondary" :style="{ '--percentage': getSecondaryPercentage() + '%' }">
-                      <span>Secondary</span>
-                    </div>
-                    <div class="segment childcare" :style="{ '--percentage': getChildcarePercentage() + '%' }">
-                      <span>Childcare</span>
-                    </div>
-                  </div>
+                <div class="pie-chart-container">
+                  <svg class="pie-chart-svg" viewBox="0 0 200 200">
+                    <circle
+                      cx="100"
+                      cy="100"
+                      r="80"
+                      fill="none"
+                      stroke="#52a3f0"
+                      :stroke-width="40"
+                      :stroke-dasharray="`${getPrimaryPercentage() * 5.02} 502`"
+                      stroke-dashoffset="0"
+                      transform="rotate(-90 100 100)"
+                    />
+                    <circle
+                      cx="100"
+                      cy="100"
+                      r="80"
+                      fill="none"
+                      stroke="#e74c3c"
+                      :stroke-width="40"
+                      :stroke-dasharray="`${getSecondaryPercentage() * 5.02} 502`"
+                      :stroke-dashoffset="`-${getPrimaryPercentage() * 5.02}`"
+                      transform="rotate(-90 100 100)"
+                    />
+                    <circle
+                      cx="100"
+                      cy="100"
+                      r="80"
+                      fill="none"
+                      stroke="#f39c12"
+                      :stroke-width="40"
+                      :stroke-dasharray="`${getChildcarePercentage() * 5.02} 502`"
+                      :stroke-dashoffset="`-${(getPrimaryPercentage() + getSecondaryPercentage()) * 5.02}`"
+                      transform="rotate(-90 100 100)"
+                    />
+                    <text x="100" y="95" text-anchor="middle" class="pie-center-text-title">Education</text>
+                    <text x="100" y="110" text-anchor="middle" class="pie-center-text-subtitle">Facilities</text>
+                  </svg>
                 </div>
                 <div class="chart-legend">
                   <div class="legend-item"><div class="color primary"></div> Primary Schools</div>
@@ -300,7 +326,11 @@
                 <h3>Number of Student</h3>
                 <div class="bar-chart">
                   <div v-for="year in 12" :key="year" class="bar-item">
-                    <div class="bar" :style="{ height: getStudentCountHeight(year) + '%' }"></div>
+                    <div class="bar" :style="{ height: getStudentCountHeight(year) + '%' }">
+                      <div class="bar-value" v-if="getStudentCount(year) > 0">
+                        {{ getStudentCount(year) }}
+                      </div>
+                    </div>
                     <div class="year-label">{{ year }}</div>
                   </div>
                 </div>
@@ -818,12 +848,17 @@ export default {
       return total > 0 ? Math.round((this.schoolStats.totalChildcare / total) * 100) : 0
     },
 
+    getStudentCount(year) {
+      if (!this.selectedSchool) return 0
+      const yearField = `year${year}`
+      return this.selectedSchool[yearField] || 0
+    },
+
     getStudentCountHeight(year) {
       if (!this.selectedSchool) return 0
       
       // Get student count for the specific year
-      const yearField = `year${year}`
-      const studentCount = this.selectedSchool[yearField] || 0
+      const studentCount = this.getStudentCount(year)
       
       // Calculate all year counts to find maximum for scaling
       const allCounts = []
@@ -833,7 +868,7 @@ export default {
       }
       
       const maxCount = Math.max(...allCounts, 1) // Avoid division by zero
-      return (studentCount / maxCount) * 100
+      return studentCount > 0 ? Math.max((studentCount / maxCount) * 100, 10) : 0
     },
 
     handleScroll() {
@@ -2217,13 +2252,14 @@ export default {
 }
 
 .map-area {
-  flex: 4;
+  flex: 5.5;
   background: rgba(255, 255, 255, 0.8);
   border-radius: 20px;
   padding: 2rem;
   backdrop-filter: blur(20px);
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
   border: 2px solid rgba(255, 255, 255, 0.3);
+  min-height: 500px;
 }
 
 /* Map placeholder styles (now unused but kept for fallback) */
@@ -2250,7 +2286,7 @@ export default {
 }
 
 .map-legend {
-  flex: 1;
+  flex: 1.5;
   background: rgba(255, 255, 255, 0.8);
   border-radius: 20px;
   padding: 1.5rem;
@@ -2311,17 +2347,50 @@ export default {
 
 .legend-marker.school { background: #e74c3c; }
 .legend-marker.hospital { background: #3498db; }
-.legend-marker.playground { background: #2ecc71; }
+.legend-marker.playground { background: #27ae60; }
 .legend-marker.community { background: #f39c12; }
-.legend-marker.cafe { background: #9b59b6; }
-.legend-marker.bar { background: #34495e; }
-.legend-marker.childcare { background: #e67e22; }
-.legend-marker.practitioners { background: #1abc9c; }
+.legend-marker.cafe { background: #8e44ad; }
+.legend-marker.bar { 
+  background: #2c3e50; 
+  border-radius: 2px;
+  position: relative;
+}
+.legend-marker.bar::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 6px;
+  height: 6px;
+  background: #2c3e50;
+  border-radius: 50%;
+  box-shadow: 
+    -3px 0 0 #2c3e50,
+    3px 0 0 #2c3e50;
+}
+.legend-marker.childcare { background: #ff6b35; }
+.legend-marker.practitioners { background: #16a085; }
 
 /* Education Detail Section */
 .education-detail {
   padding: 4rem 0;
   background: linear-gradient(135deg, rgba(240, 248, 255, 0.9), rgba(230, 247, 255, 0.95));
+  position: relative;
+}
+
+.education-detail::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(circle at 25% 25%, rgba(52, 152, 219, 0.05) 0%, transparent 50%),
+    radial-gradient(circle at 75% 75%, rgba(231, 76, 60, 0.03) 0%, transparent 50%),
+    radial-gradient(circle at 50% 50%, rgba(243, 156, 18, 0.04) 0%, transparent 50%);
+  pointer-events: none;
 }
 
 .detail-header {
@@ -2330,14 +2399,17 @@ export default {
 }
 
 .detail-header h2 {
-  font-size: 2.5rem;
-  font-weight: 700;
+  font-size: 2.8rem;
+  font-weight: 800;
   color: #2c3e50;
   margin-bottom: 1rem;
-  background: linear-gradient(135deg, #2c3e50, #2196F3);
+  background: linear-gradient(135deg, #2c3e50, #3498db, #e74c3c);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+  letter-spacing: -0.02em;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 .detail-header p {
@@ -2346,15 +2418,30 @@ export default {
 }
 
 .education-content {
-  background: rgba(255, 255, 255, 0.8);
-  border-radius: 20px;
-  padding: 2rem;
-  backdrop-filter: blur(20px);
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-  border: 2px solid rgba(255, 255, 255, 0.3);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.9));
+  border-radius: 24px;
+  padding: 3rem;
+  backdrop-filter: blur(30px);
+  box-shadow: 
+    0 20px 60px rgba(0, 0, 0, 0.08),
+    0 8px 25px rgba(0, 0, 0, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  border: 2px solid rgba(255, 255, 255, 0.4);
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 3rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.education-content::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(52, 152, 219, 0.3), transparent);
 }
 
 .education-top-row {
@@ -2385,8 +2472,43 @@ export default {
   text-align: center;
   margin-bottom: 1.5rem;
   color: #2c3e50;
-  font-weight: 600;
-  font-size: 1.2rem;
+  font-weight: 700;
+  font-size: 1.4rem;
+  font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+  letter-spacing: -0.01em;
+}
+
+/* New Pie Chart Styles */
+.pie-chart-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+  padding: 2rem;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.8), rgba(248, 250, 252, 0.6));
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.pie-chart-svg {
+  width: 200px;
+  height: 200px;
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.1));
+}
+
+.pie-center-text-title {
+  font-size: 16px;
+  font-weight: 700;
+  fill: #2c3e50;
+  font-family: 'Inter', sans-serif;
+}
+
+.pie-center-text-subtitle {
+  font-size: 12px;
+  font-weight: 500;
+  fill: #666;
+  font-family: 'Inter', sans-serif;
 }
 
 .pie-chart-placeholder {
@@ -2451,9 +2573,18 @@ export default {
   border-radius: 50%;
 }
 
-.chart-legend .color.primary { background: #3498db; }
-.chart-legend .color.secondary { background: #e74c3c; }
-.chart-legend .color.childcare { background: #f39c12; }
+.chart-legend .color.primary { 
+  background: linear-gradient(135deg, #52a3f0, #3498db);
+  box-shadow: 0 2px 8px rgba(52, 152, 219, 0.3);
+}
+.chart-legend .color.secondary { 
+  background: linear-gradient(135deg, #e74c3c, #c0392b);
+  box-shadow: 0 2px 8px rgba(231, 76, 60, 0.3);
+}
+.chart-legend .color.childcare { 
+  background: linear-gradient(135deg, #f39c12, #e67e22);
+  box-shadow: 0 2px 8px rgba(243, 156, 18, 0.3);
+}
 
 .school-list-section {
   display: flex;
@@ -2470,8 +2601,10 @@ export default {
 
 .list-header h3 {
   color: #2c3e50;
-  font-weight: 600;
-  font-size: 1.2rem;
+  font-weight: 700;
+  font-size: 1.4rem;
+  font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+  letter-spacing: -0.01em;
 }
 
 .sort-btn {
@@ -2573,8 +2706,10 @@ export default {
 .student-count-chart h3 {
   margin-bottom: 1rem;
   color: #2c3e50;
-  font-weight: 600;
-  font-size: 1.1rem;
+  font-weight: 700;
+  font-size: 1.3rem;
+  font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+  letter-spacing: -0.01em;
 }
 
 .bar-chart {
@@ -2584,9 +2719,11 @@ export default {
   gap: 0.5rem;
   height: 250px;
   padding: 1rem;
-  background: rgba(255, 255, 255, 0.5);
-  border-radius: 15px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.8), rgba(248, 250, 252, 0.6));
+  border-radius: 18px;
   position: relative;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 .year-axis-label {
@@ -2609,10 +2746,27 @@ export default {
 .bar {
   width: 100%;
   max-width: 40px;
-  background: linear-gradient(135deg, #2196F3, #1976D2);
-  border-radius: 4px 4px 0 0;
+  background: linear-gradient(135deg, #52a3f0, #3498db);
+  border-radius: 8px 8px 0 0;
   transition: all 0.3s ease;
   margin-bottom: 0.5rem;
+  box-shadow: 0 4px 12px rgba(52, 152, 219, 0.2);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 8px;
+  position: relative;
+  min-height: 20px;
+}
+
+.bar-value {
+  font-size: 11px;
+  font-weight: 600;
+  color: white;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  min-height: 14px;
+  display: flex;
+  align-items: center;
 }
 
 .bar:hover {

@@ -10,58 +10,8 @@
         <div class="shape shape-5"></div>
       </div>
     </div>
-
-    <!-- Header Navigation -->
-    <nav class="nav-bar">
-      <div class="nav-container" ref="navContainer">
-        <!-- first line logo + suburb -->
-        <div class="nav-top">
-          <div class="logo">
-            <div class="logo-icon">
-              <svg width="32" height="32" viewBox="0 0 40 40" fill="none">
-                <rect width="40" height="40" rx="8" fill="#4CAF50"/>
-                <path d="M20 8C13.37 8 8 13.37 8 20C8 26.63 13.37 32 20 32C26.63 32 32 26.63 32 20C32 13.37 26.63 8 20 8ZM20 30C14.48 30 10 25.52 10 20C10 14.48 14.48 10 20 10C25.52 10 30 14.48 30 20C30 25.52 25.52 30 20 30Z" fill="white"/>
-                <path d="M20 12C15.58 12 12 15.58 12 20C12 24.42 15.58 28 20 28C24.42 28 28 24.42 28 20C28 15.58 24.42 12 20 12ZM20 26C16.69 26 14 23.31 14 20C14 16.69 16.69 14 20 14C23.31 14 26 16.69 26 20C26 23.31 23.31 26 20 26Z" fill="white"/>
-                <path d="M20 16C17.79 16 16 17.79 16 20C16 22.21 17.79 24 20 24C22.21 24 24 22.21 24 20C24 17.79 22.21 16 20 16Z" fill="white"/>
-              </svg>
-            </div>
-            <span class="logo-text">MelSustain</span>
-          </div>
-          <span v-if="selectedSuburb" class="suburb-display">
-            <span class="pin">📍</span>{{ selectedSuburb }}
-          </span>
-        </div>
-        
-        <!-- second line Navigation -->
-        <div class="nav-bottom">
-          <div class="nav-tabs" ref="navTabs">
-            <template v-for="tab in visibleTabs" :key="tab.label">
-              <router-link
-                v-if="tab.path.startsWith('/')"
-                :to="{ path: tab.path, query: $route.query }"
-                class="nav-tab"
-                :class="{ active: $route.path === tab.path || ($route.hash && tab.path.includes($route.hash)) }"
-              >
-                {{ tab.label }}
-              </router-link>
-              <div v-else class="nav-tab">{{ tab.label }}</div>
-            </template>
-          </div>
-
-          <!-- ☰list, only show when some navigation hide -->
-          <div v-if="hiddenTabs.length" class="more-menu">
-            <button class="menu-toggle" @click="isMenuOpen = !isMenuOpen">☰</button>
-            <transition name="fade-slide">
-              <div v-if="isMenuOpen" class="dropdown">
-                <div v-for="tab in hiddenTabs" :key="tab.label" class="nav-tab" @click="goTo(tab)">
-                  {{ tab.label }}
-                </div>
-              </div>
-            </transition>
-          </div>
-        </div>
-      </div>
-    </nav>
+    <!-- Header Component -->
+    <Header />
 
     <!-- Main Content -->
     <main class="main-content">
@@ -204,7 +154,7 @@
                     :radius="6"
                     color="green"
                     fillColor="white"
-                    fillOpacity="1"
+                    :fillOpacity="1"
                   />
                 </l-map>
               </div>
@@ -485,16 +435,9 @@ import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import LineChart from "@/components/environment/LineChart.vue";
 import DoughnutChart from "@/components/environment/DoughnutChart.vue";
-import { icon } from 'leaflet';
+import Header from '../header/Header.vue';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
-
-delete L.Icon.Default.prototype._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon-2x.png",
-  iconUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png",
-  shadowUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png"
-});
 
 const centerTextPlugin = {
   id: "centerText",
@@ -542,23 +485,13 @@ export default {
     LGeoJson, 
     LPopup,
     LineChart,
-    DoughnutChart
+    DoughnutChart,
+    Header
   },
 
   name: 'EnvironmentPage',
   data() {
     return {
-      isMenuOpen: false,
-      allTabs: [
-        { label: "HomePage", path: "/" },
-        { label: "Social", path: "/social" },
-        { label: "Economic", path: "/economic" },
-        { label: "Infrastructure", path: "/infrastructure" },
-        { label: "Environment", path: "/environment" },
-        { label: "Compare", path: "/#compare-section" }
-      ],
-      visibleTabs: [],
-      hiddenTabs: [],
       //for button which back to top
       showBackToTop: false,
       //for tree part
@@ -599,8 +532,6 @@ export default {
   },
 
   mounted() {
-    this.updateTabs();
-    window.addEventListener("resize", this.updateTabs);
 
     this.$nextTick(() => {
       const navHeight = this.$el.querySelector(".nav-bar").offsetHeight;
@@ -618,49 +549,6 @@ export default {
     window.removeEventListener("scroll", this.checkScroll);
   },
   methods: {
-    updateTabs() {
-      const containerWidth = this.$refs.navContainer?.offsetWidth || 0;
-
-      let totalWidth = 0;
-      this.visibleTabs = [];
-      this.hiddenTabs = [];
-
-      //  logo + suburb width
-      const logoWidth = this.$el.querySelector(".nav-top")?.offsetWidth || 0;
-      // ☰ width
-      const moreMenuWidth = 60;
-      // true width
-      const availableWidth = containerWidth - logoWidth - moreMenuWidth;
-
-      const hiddenMeasure = document.createElement("div");
-      hiddenMeasure.style.visibility = "hidden";
-      hiddenMeasure.style.position = "absolute";
-      hiddenMeasure.style.whiteSpace = "nowrap";
-      document.body.appendChild(hiddenMeasure);
-
-      this.allTabs.forEach((tab, index) => {
-        const tabEl = document.createElement("span");
-        tabEl.className = "nav-tab";
-        tabEl.innerText = tab.label;
-        hiddenMeasure.appendChild(tabEl);
-
-        const tabWidth = tabEl.offsetWidth + 24; // margin/padding
-
-        if (totalWidth + tabWidth <= availableWidth) {
-          this.visibleTabs.push(tab);
-          totalWidth += tabWidth;
-        } else {
-          this.hiddenTabs.push(tab);
-        }
-      });
-
-      document.body.removeChild(hiddenMeasure);
-    },
-    goTo(tab) {
-      this.$router.push(tab.path);
-      this.isMenuOpen = false;
-    },
-
     //button for back top
     checkScroll() {
       this.showBackToTop = window.scrollY > 200;
@@ -769,10 +657,6 @@ export default {
         const res = await environmentApi.getEnergyMap(suburb);
         const blocks = res.data?.data || [];
 
-        blocks.forEach((row, idx) => {
-          console.log(`Block ${idx}: total=${row.total}, comm=${row.comm}, resi=${row.resi}`);
-        });
-
         const geojson = {
           type: "FeatureCollection",
           features: blocks.map((row, idx) => {
@@ -846,7 +730,6 @@ export default {
             backgroundColor: ["#2196F3", "#e0e0e0"]
           }]
         };
-        console.log("EnergyTrend Response", res.data);
       } catch (e) {
         console.error("Failed to load energy trend", e);
       }
@@ -1596,6 +1479,9 @@ export default {
   justify-content: center;
   gap: 1rem;
   flex-wrap: wrap;
+  background: linear-gradient(135deg, #2c3e50, #4CAF50, #2196F3);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .title-word {

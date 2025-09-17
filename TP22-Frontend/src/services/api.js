@@ -220,6 +220,15 @@ export const environmentApi = {
   },
 }
 
+export const infrastructureApi = {
+  getTransportStats: (suburb) =>
+    api.get(`/infrastructure/publicTransport`, { params: { suburb } }),
+  getCyclingStats: (suburb) =>
+    api.get(`/infrastructure/bicycle`, { params: { suburb } }),
+  getParkingStats: (suburb) =>
+    api.get(`/infrastructure/parking`, { params: { suburb } }),
+}
+
 // General suburb API
 export const suburbApi = {
   // Get all suburbs

@@ -6,14 +6,14 @@
         <!-- first line logo + suburb -->
         <div class="nav-top">
           <div class="logo">
-            <div class="logo-icon">
+            <!-- <div class="logo-icon">
               <svg width="32" height="32" viewBox="0 0 40 40" fill="none">
                 <rect width="40" height="40" rx="8" fill="#4CAF50"/>
                 <path d="M20 8C13.37 8 8 13.37 8 20C8 26.63 13.37 32 20 32C26.63 32 32 26.63 32 20C32 13.37 26.63 8 20 8ZM20 30C14.48 30 10 25.52 10 20C10 14.48 14.48 10 20 10C25.52 10 30 14.48 30 20C30 25.52 25.52 30 20 30Z" fill="white"/>
                 <path d="M20 12C15.58 12 12 15.58 12 20C12 24.42 15.58 28 20 28C24.42 28 28 24.42 28 20C28 15.58 24.42 12 20 12ZM20 26C16.69 26 14 23.31 14 20C14 16.69 16.69 14 20 14C23.31 14 26 16.69 26 20C26 23.31 23.31 26 20 26Z" fill="white"/>
                 <path d="M20 16C17.79 16 16 17.79 16 20C16 22.21 17.79 24 20 24C22.21 24 24 22.21 24 20C24 17.79 22.21 16 20 16Z" fill="white"/>
               </svg>
-            </div>
+            </div> -->
             <span class="logo-text">MelSustain</span>
           </div>
           <span v-if="selectedSuburb" class="suburb-display">
@@ -162,7 +162,6 @@ export default {
 /* first line */
 .nav-top {
   display: flex;
-  /* justify-content: space-between; */
   justify-content: flex-start;
   align-items: center;
   gap: 1rem;
@@ -172,32 +171,29 @@ export default {
 .nav-bottom {
   position: relative;
   display: flex;
-  justify-content: center;
+  justify-content: stretch;
   align-items: center;
   width: 100%;
-  padding-right: 60px;
 }
 
 .nav-tabs {
   display: flex;
-  flex-wrap: nowrap;
-  overflow: hidden;
-  flex: 0 1 auto;      
-  justify-content: center; 
-  gap: 0.5rem;
-  background: rgba(255, 255, 255, 0.3);
-  backdrop-filter: blur(10px);
-  padding: 0.5rem;
-  border-radius: 25px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  margin: 0 auto;  
+  flex: 1;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 0;
+  margin: 0;
 }
 
 .nav-tab {
-  padding: 0.8rem 1.5rem;
+  padding: 0.6rem 1.2rem;
   border-radius: 20px;
   font-weight: 500;
-  color: #666;
+  color: #444;
   text-decoration: none;
   transition: all 0.3s ease;
   cursor: pointer;

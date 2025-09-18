@@ -131,26 +131,43 @@
         </p>
         
         <div class="feature-cards">
+          <!-- Why MelSustain -->
           <div class="feature-card">
-            <div class="feature-icon">💡</div>
+            <div class="feature-icon why-icon">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+                <path d="M9 21H15M10 17H14M12 2C8.13 2 5 5.13 5 9C5 11.39 6.22 13.47 8.06 14.74C8.55 15.07 9 15.5 9 16V18H15V16C15 15.5 15.45 15.07 15.94 14.74C17.78 13.47 19 11.39 19 9C19 5.13 15.87 2 12 2Z" stroke="currentColor" stroke-width="2"/>
+              </svg>
+            </div>
             <h3>Why MelSustain</h3>
             <p>
               The first comprehensive platform dedicated to Melbourne's suburban sustainability data, 
               helping families make environmentally conscious housing choices with confidence and clarity.
             </p>
           </div>
-          
+          <!-- How It Works -->
           <div class="feature-card">
-            <div class="feature-icon">⚙️</div>
+            <div class="feature-icon how-icon">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+                <path d="M12 15.5C13.3807 15.5 14.5 14.3807 14.5 13C14.5 11.6193 13.3807 10.5 12 10.5C10.6193 10.5 9.5 11.6193 9.5 13C9.5 14.3807 10.6193 15.5 12 15.5Z" stroke="currentColor" stroke-width="2"/>
+                <path d="M19.4 15A7.963 7.963 0 0020 13C20 8.58 16.42 5 12 5C7.58 5 4 8.58 4 13C4 14.48 4.43 15.85 5.2 17L3 21L7 18.8C8.15 19.57 9.52 20 11 20C15.42 20 19 16.42 19 12" stroke="currentColor" stroke-width="2"/>
+              </svg>
+            </div>
             <h3>How It Works</h3>
             <p>
               Simply search for suburbs, explore detailed sustainability profiles, or compare multiple 
               locations side-by-side. Our intuitive platform makes complex environmental data accessible and actionable.
             </p>
           </div>
-          
+          <!-- Benefits for Families -->
           <div class="feature-card">
-            <div class="feature-icon">🏠</div>
+            <div class="feature-icon family-icon">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+                <path d="M12 7C13.6569 7 15 5.65685 15 4C15 2.34315 13.6569 1 12 1C10.3431 1 9 2.34315 9 4C9 5.65685 10.3431 7 12 7Z" stroke="currentColor" stroke-width="2"/>
+                <path d="M17 21V19C17 17.3431 15.6569 16 14 16H10C8.34315 16 7 17.3431 7 19V21" stroke="currentColor" stroke-width="2"/>
+                <path d="M4 21V19C4 16.7909 5.79086 15 8 15H9" stroke="currentColor" stroke-width="2"/>
+                <path d="M20 21V19C20 16.7909 18.2091 15 16 15H15" stroke="currentColor" stroke-width="2"/>
+              </svg>
+            </div>
             <h3>Benefits for Families</h3>
             <p>
               Make informed decisions that align with your values. Find suburbs with excellent public transport, 
@@ -250,7 +267,7 @@ export default {
       comparing: false,
       suburbs: [
         "Carlton",
-        "CBD",
+        "Melbourne",
         "Docklands",
         "East Melbourne",
         "Kensington",
@@ -529,6 +546,7 @@ export default {
   -webkit-text-fill-color: transparent;
   background-clip: text;
   position: relative;
+  text-shadow: none;
 }
 
 .highlight::after {
@@ -1604,7 +1622,7 @@ export default {
 
 .compare-btn {
   width: 100%;
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: linear-gradient(135deg, #4CAF50, #45a049);
   color: white;
   border: none;
   padding: 1.2rem 2rem;
@@ -1623,7 +1641,7 @@ export default {
 }
 
 .compare-btn:hover {
-  background: linear-gradient(135deg, #764ba2, #667eea);
+  background: linear-gradient(135deg, #4CAF50, #45a049);
   transform: translateY(-4px) scale(1.02);
   box-shadow: 0 12px 35px rgba(102, 126, 234, 0.4);
 }
@@ -1747,7 +1765,7 @@ export default {
 /* Why Choose MelSustain Section */
 .why-section {
   padding: 6rem 2rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+  background: linear-gradient(135deg, #4CAF50, #45a049 50%, #4CAF50 100%);
   color: white;
   position: relative;
   overflow: hidden;
@@ -1819,10 +1837,34 @@ export default {
 }
 
 .feature-icon {
-  font-size: 3.5rem;
-  margin-bottom: 1.5rem;
-  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
-  animation: none !important
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+  backdrop-filter: blur(15px);
+  border: 2px solid rgba(255,255,255,0.4);
+}
+
+.feature-icon svg {
+  color: currentColor;
+}
+
+.feature-icon.why-icon {
+  background: linear-gradient(135deg, rgba(33,150,243,0.2), rgba(33,150,243,0.3));
+  color: #2196F3;
+}
+
+.feature-icon.how-icon {
+  background: linear-gradient(135deg, rgba(76,175,80,0.2), rgba(76,175,80,0.3));
+  color: #fff;
+}
+
+.feature-icon.family-icon {
+  background: linear-gradient(135deg, rgba(255,152,0,0.2), rgba(255,152,0,0.3));
+  color: #FF9800;
 }
 
 .feature-card h3 {
@@ -1887,6 +1929,38 @@ export default {
   color: rgba(255, 255, 255, 0.8);
   line-height: 1.6;
   margin-bottom: 1.5rem;
+}
+
+.footer .footer-brand,
+.footer .footer-brand * {
+  text-align: left;
+}
+
+.footer .footer-nav,
+.footer .nav-column,
+.footer .nav-column h4 {
+  text-align: left;
+}
+
+.footer .nav-column ul {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+}
+
+.footer .nav-column a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  justify-content: flex-start;
+}
+
+.footer .container {
+  text-align: left;
+}
+
+.footer .footer-bottom {
+  text-align: center;
 }
 
 .social-icons {

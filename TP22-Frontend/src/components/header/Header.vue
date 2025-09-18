@@ -17,7 +17,7 @@
             <span class="logo-text">MelSustain</span>
           </div>
           <span v-if="selectedSuburb" class="suburb-display">
-            <span class="pin">📍</span>{{ selectedSuburb }}
+            <span class="pin"></span>{{ selectedSuburb }}
           </span>
         </div>
         
@@ -94,7 +94,7 @@ export default {
 
       const logoWidth = this.$el.querySelector(".nav-top")?.offsetWidth || 0;
       const moreMenuWidth = 60;
-      const availableWidth = containerWidth - logoWidth - moreMenuWidth;
+      const availableWidth = containerWidth - moreMenuWidth; 
 
       const hiddenMeasure = document.createElement("div");
       hiddenMeasure.style.visibility = "hidden";
@@ -135,64 +135,6 @@ export default {
 
 <style scoped>
 /* fixed on top */
-.nav-bar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  z-index: 1000;
-  background: white;
-  border-bottom: 1px solid #eee;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-}
-
-.nav-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0.5rem 1rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.3rem;
-}
-
-/* first line */
-.nav-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-/* second line */
-.nav-bottom {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-/* tabs */
-.nav-tabs {
-  display: flex;
-  flex-wrap: nowrap;
-  overflow: hidden;
-  gap: 0.5rem;
-  flex: 1;
-}
-
-.nav-tab {
-  padding: 0.6rem 1.2rem;
-  border-radius: 20px;
-  font-weight: 500;
-  color: #666;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: all 0.3s ease;
-}
-
-.nav-tab.active {
-  background: #4CAF50;
-  color: white;
-}
-
 /* Navigation Bar */
 .nav-bar {
   position: fixed;
@@ -211,21 +153,44 @@ export default {
   margin: 0 auto;
   padding: 1rem 2rem;
   display: flex;
+  flex-direction: column;
+  /* align-items: center; */
+  gap: 0.5rem;
+  /* justify-content: space-between; */
+}
+
+/* first line */
+.nav-top {
+  display: flex;
+  /* justify-content: space-between; */
+  justify-content: flex-start;
   align-items: center;
-  justify-content: space-between;
+  gap: 1rem;
+}
+
+/* second line */
+.nav-bottom {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  padding-right: 60px;
 }
 
 .nav-tabs {
   display: flex;
   flex-wrap: nowrap;
   overflow: hidden;
-  flex: 1;
+  flex: 0 1 auto;      
+  justify-content: center; 
   gap: 0.5rem;
   background: rgba(255, 255, 255, 0.3);
   backdrop-filter: blur(10px);
   padding: 0.5rem;
   border-radius: 25px;
   border: 1px solid rgba(255, 255, 255, 0.2);
+  margin: 0 auto;  
 }
 
 .nav-tab {
@@ -251,9 +216,12 @@ export default {
 
 /* ☰list + pull down */
 .more-menu {
-  position: relative;
-  margin-left: 0.5rem;
-  flex-shrink: 0;
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  /* margin-left: 0.5rem; */
+  /* flex-shrink: 0; */
 }
 
 .menu-toggle {

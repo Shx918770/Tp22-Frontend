@@ -34,56 +34,111 @@
       </section>
     </main>
     <!-- Infrastructure Cards -->
-    <section class="infrastructure-cards">
-      <div class="container">
-        <div class="card-grid">
-          <!-- Public Transport -->
-          <div class="infra-card transport">
-            <div class="card-icon">🚉</div>
-            <div class="card-title">Public Transport</div>
-            <div class="card-total">{{ stats.transport.total || 0 }} <span>Total</span></div>
-            <ul class="card-details">
-              <li>🚆 {{ stats.transport.trainStations || 0 }} Train Stations</li>
-              <li>🚋 {{ stats.transport.tramStops || 0 }} Tram Stops</li>
-              <li>🚌 {{ stats.transport.busStops || 0 }} Bus Stops</li>
-            </ul>
-          </div>
+      <section class="infrastructure-cards">
+        <div class="container">
+          <div class="facilities-grid">
+            <!-- Public Transport Bubble -->
+            <div class="facility-bubble transport">
+              <div class="bubble-icon">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+                  <path d="M3 7V5C3 3.89543 3.89543 3 5 3H19C20.1046 3 21 3.89543 21 5V7M3 7L5 19C5 20.1046 5.89543 21 7 21H17C18.1046 21 19 20.1046 19 19L21 7M3 7H21M9 11V17M15 11V17" stroke="currentColor" stroke-width="2"/>
+                </svg>
+              </div>
+              <div class="bubble-content">
+                <div class="bubble-label">Public Transport</div>
+                <div class="bubble-number">{{ stats.transport.total || 0 }}</div>
+                <ul class="bubble-details">
+                  <li>{{ stats.transport.trainStations || 0 }} Train Stations</li>
+                  <li>{{ stats.transport.tramStops || 0 }} Tram Stops</li>
+                  <li>{{ stats.transport.busStops || 0 }} Bus Stops</li>
+                </ul>
+              </div>
+              <div class="bubble-glow"></div>
+            </div>
 
-          <!-- Cycling Infrastructure -->
-          <div class="infra-card cycling">
-            <div class="card-icon">🚲</div>
-            <div class="card-title">Cycling Infrastructure</div>
-            <div class="card-total">{{ stats.cycling.total || 0 }} <span>Total</span></div>
-            <ul class="card-details">
-              <li>{{ stats.cycling.bikeLanes || 0 }} km Bike Lanes</li>
-              <li>{{ stats.cycling.bikeRacks || 0 }} Bike Racks</li>
-              <li>{{ stats.cycling.repairStations || 0 }} Repair Stations</li>
-            </ul>
-          </div>
+            <!-- Cycling Infrastructure Bubble -->
+            <div class="facility-bubble cycling">
+              <div class="bubble-icon">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+                  <circle cx="7" cy="17" r="3" stroke="currentColor" stroke-width="2"/>
+                  <circle cx="17" cy="17" r="3" stroke="currentColor" stroke-width="2"/>
+                  <path d="M5 17L9 7H15L19 17" stroke="currentColor" stroke-width="2"/>
+                  <path d="M9 7L12 13L15 7" stroke="currentColor" stroke-width="2"/>
+                </svg>
+              </div>
+              <div class="bubble-content">
+                <div class="bubble-label">Cycling Infrastructure</div>
+                <div class="bubble-number">{{ stats.cycling.total || 0 }}</div>
+                <ul class="bubble-details">
+                  <li>{{ stats.cycling.bikeLanes || 0 }} km Bike Lanes</li>
+                  <li>{{ stats.cycling.bikeRacks || 0 }} Bike Racks</li>
+                  <li>{{ stats.cycling.repairStations || 0 }} Repair Stations</li>
+                </ul>
+              </div>
+              <div class="bubble-glow"></div>
+            </div>
 
-          <!-- Parking -->
-          <div class="infra-card parking">
-            <div class="card-icon">🚗</div>
-            <div class="card-title">Parking</div>
-            <div class="card-total">{{ stats.parking.total || 0 }} <span>Total</span></div>
-            <ul class="card-details">
-              <li>{{ stats.parking.publicSpaces || 0 }} Public Spaces</li>
-              <li>{{ stats.parking.disability || 0 }} Disability Parking</li>
-              <li>{{ stats.parking.shortTerm || 0 }} Short-term Parking</li>
-            </ul>
+            <!-- Parking Bubble -->
+            <div class="facility-bubble parking">
+              <div class="bubble-icon">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+                  <rect x="3" y="7" width="18" height="10" rx="3" stroke="currentColor" stroke-width="2"/>
+                  <circle cx="7" cy="17" r="2" stroke="currentColor" stroke-width="2"/>
+                  <circle cx="17" cy="17" r="2" stroke="currentColor" stroke-width="2"/>
+                </svg>
+              </div>
+              <div class="bubble-content">
+                <div class="bubble-label">Parking</div>
+                <div class="bubble-number">{{ stats.parking.total || 0 }}</div>
+                <ul class="bubble-details">
+                  <li>{{ stats.parking.publicSpaces || 0 }} Public Spaces</li>
+                  <li>{{ stats.parking.disability || 0 }} Disability Parking</li>
+                  <li>{{ stats.parking.shortTerm || 0 }} Short-term Parking</li>
+                </ul>
+              </div>
+              <div class="bubble-glow"></div>
+            </div>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
     <div class="map-container">
-    <div id="map" class="map"></div>
-    <div class="filter-buttons">
-      <button @click="setFilter('all')">All</button>
-      <button @click="setFilter('transport')">Public Transport</button>
-      <button @click="setFilter('bicycle')">Bicycle</button>
-      <button @click="setFilter('parking')">Parking</button>
+      <div class="map-area">
+        <div id="map" class="map"></div>
+      </div>
+        <div class="map-legend">
+          <h4>Facility Legend</h4>
+          <div class="legend-items">
+            <div class="legend-items">
+              <button
+                class="legend-item"
+                :class="{ disabled: !visibleLayers.transport }"
+                @click="toggleLayer('transport')"
+              >
+                <span class="facility-legend-icon" style="background: #2196F3"></span>
+                <span>Public Transport</span>
+              </button>
+
+              <button
+                class="legend-item"
+                :class="{ disabled: !visibleLayers.bicycle }"
+                @click="toggleLayer('bicycle')"
+              >
+                <span class="facility-legend-icon" style="background: #4CAF50"></span>
+                <span>Bicycle</span>
+              </button>
+
+              <button
+                class="legend-item"
+                :class="{ disabled: !visibleLayers.parking }"
+                @click="toggleLayer('parking')"
+              >
+                <span class="facility-legend-icon" style="background: #FF9800"></span>
+                <span>Parking</span>
+              </button>
+            </div>
+          </div>
+        </div>
     </div>
-  </div>
   </div>
 </template>
 
@@ -111,6 +166,7 @@ export default {
         bicycle: null,
         parking: null,
       },
+      visibleLayers: { transport: true, bicycle: true, parking: true },
       currentFilter: 'all',
       loading: false,
       error: null
@@ -187,25 +243,11 @@ export default {
       }
     },
     initMap() {
-      this.map = L.map('map').setView([-37.81, 144.96], 13)
+      this.map = L.map('map').setView([-37.81, 144.96], 16)
 
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; OpenStreetMap contributors',
       }).addTo(this.map)
-
-      const legend = L.control({ position: 'bottomleft' })
-      legend.onAdd = () => {
-        const div = L.DomUtil.create('div', 'ms-legend')
-        div.innerHTML = `
-            <div class="legend-title">Legend</div>          
-            <div class="legend-item"><span class="swatch" style="background: blue"></span> Public Transport</div>
-            <div class="legend-item"><span class="swatch" style="background: green"></span> Bicycle</div>
-            <div class="legend-item"><span class="swatch" style="background: orange"></span> Parking</div>
-        `
-        L.DomEvent.disableClickPropagation(div)
-        return div
-    }
-      legend.addTo(this.map)
     },
     async loadData() {
         const suburb = this.selectedSuburb
@@ -223,7 +265,7 @@ export default {
                 .map(item => {
                 const coords = this.parsePoint(item.geometry)
                 if (!coords) return null
-                return L.circleMarker(coords, { color: 'blue', radius: 10 })
+                return L.circleMarker(coords, { radius: 6, color: "#fff", weight: 2, fillColor: "#2196F3", fillOpacity: 1, className: "marker-circle transport-circle" })
                     .bindPopup(`<b>${item.STOP_NAME}</b><br/>${item.MODE}`)
                 })
                 .filter(m => m !== null)
@@ -235,7 +277,7 @@ export default {
             .map(item => {
             const coords = this.parsePoint(item.geometry)
             if (!coords) return null
-            return L.circleMarker(coords, { color: 'green', radius: 4 })
+            return L.circleMarker(coords, { radius: 6, color: "#fff", weight: 2, fillColor: "#4CAF50", fillOpacity: 1, className: "marker-circle bicycle-circle" })
                 .bindPopup(`<b>${item.description || 'Bike Lane'}</b>`)
             })
             .filter(m => m)
@@ -247,7 +289,7 @@ export default {
             .map(item => {
             const coords = this.parsePoint(item.geometry)
             if (!coords) return null
-            return L.circleMarker(coords, { color: 'orange', radius: 4 })
+            return L.circleMarker(coords, { radius: 6, color: "#fff", weight: 2, fillColor: "#FF9800", fillOpacity: 1, className: "marker-circle parking-circle"})
                 .bindPopup(`<b>Parking Space</b><br/>${item.RoadSegmentDescription}`)
             })
             .filter(m => m)
@@ -283,6 +325,15 @@ export default {
             return [lat, lon]
         }
         return null
+    },
+    toggleLayer(type) {
+      this.visibleLayers[type] = !this.visibleLayers[type]
+
+      if (this.visibleLayers[type]) {
+        if (this.layers[type]) this.map.addLayer(this.layers[type])
+      } else {
+        if (this.layers[type]) this.map.removeLayer(this.layers[type])
+      }
     },
   },
 };
@@ -393,81 +444,164 @@ export default {
 }
 
 /* for three cards starts */
+/* Bubble card styles for infrastructure cards (copied from SocialPage) */
 .infrastructure-cards {
   padding: 3rem 0;
-}
-
-.infrastructure-cards .container {
-  max-width: 80%;
+  width: 80%;
   margin: 0 auto;
 }
-
-.card-grid {
+.facilities-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: 1fr 1fr 1fr;
   gap: 2rem;
+  width: 100%;
+  margin: 0;
 }
 
-.infra-card {
-  background: white;
-  border-radius: 16px;
-  padding: 1.5rem;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-  transition: transform 0.3s ease;
+.facility-bubble {
+  position: relative;
+  background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(255,255,255,0.95));
+  backdrop-filter: blur(30px);
+  border-radius: 20px;
+  padding: 1.2rem;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+  border: 2px solid rgba(255,255,255,0.3);
+  transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
+  cursor: pointer;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-.infra-card:hover {
-  transform: translateY(-6px);
+.bubble-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem;
+  backdrop-filter: blur(15px);
+  border: 2px solid rgba(255,255,255,0.4);
+  background: linear-gradient(135deg, rgba(76,175,80,0.15), rgba(76,175,80,0.25));
 }
 
-.card-icon {
-  font-size: 2rem;
-  margin-bottom: 0.5rem;
+.bubble-content {
+  text-align: center;
+  position: relative;
+  z-index: 2;
 }
 
-.card-title {
-  font-weight: 700;
-  font-size: 1.2rem;
+.bubble-label {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #2c3e50;
   margin-bottom: 0.8rem;
 }
 
-.card-total {
-  font-size: 2rem;
+.bubble-number {
+  font-size: 2.2rem;
   font-weight: 800;
-  color: #2c3e50;
-  margin-bottom: 1rem;
+  margin-bottom: 0.4rem;
 }
 
-.card-total span {
-  font-size: 1rem;
-  color: #888;
-  font-weight: 500;
-  margin-left: 0.3rem;
-}
-
-.card-details {
+.bubble-details {
   list-style: none;
   padding: 0;
   margin: 0;
   color: #444;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  justify-content: center;
+  align-items: center;
 }
 
-.card-details li {
-  margin-bottom: 0.5rem;
+.bubble-details li {
+  background: rgba(255,255,255,0.7);
+  backdrop-filter: blur(10px);
+  padding: 0.5rem 0.8rem;
+  border-radius: 15px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #444;
+  border: 1px solid rgba(255,255,255,0.4);
+  transition: all 0.3s ease;
 }
 
-/* for three cards done */
+.bubble-glow {
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  border-radius: 50%;
+  opacity: 0;
+  transition: all 0.5s ease;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.facility-bubble.transport .bubble-icon { background: linear-gradient(135deg, rgba(33,150,243,0.2), rgba(33,150,243,0.3)); color: #2196F3; }
+.facility-bubble.cycling .bubble-icon { background: linear-gradient(135deg, rgba(76,175,80,0.2), rgba(76,175,80,0.3)); color: #4CAF50; }
+.facility-bubble.parking .bubble-icon { background: linear-gradient(135deg, rgba(255,152,0,0.2), rgba(255,152,0,0.3)); color: #FF9800; }
+
+.facility-bubble.transport .bubble-glow { background: radial-gradient(circle, rgba(33,150,243,0.1) 0%, transparent 70%); }
+.facility-bubble.cycling .bubble-glow { background: radial-gradient(circle, rgba(76,175,80,0.1) 0%, transparent 70%); }
+.facility-bubble.parking .bubble-glow { background: radial-gradient(circle, rgba(255,152,0,0.1) 0%, transparent 70%); }
+
+.facility-bubble:hover .bubble-glow {
+  opacity: 1;
+  animation: glowPulse 2s ease-in-out infinite;
+}
+
+@keyframes glowPulse {
+  0%, 100% { transform: scale(1); opacity: 0.3; }
+  50% { transform: scale(1.1); opacity: 0.6; }
+}
+/* Bubble card styles end */
 
 /* for map start */
+
+:deep(.marker-circle) {
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+:deep(.transport-circle) {
+  fill: #2196F3;
+}
+
+:deep(.bicycle-circle) {
+  fill: #4CAF50;
+}
+
+:deep(.parking-circle) {
+  fill: #FF9800;
+}
 .map-container {
-  position: relative;
-  height: 80vh;
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
   width: 80%;
   margin: 0 auto;
 }
+.map-area {
+  flex: 4;
+  background: linear-gradient(135deg, rgba(248, 250, 252, 0.95), rgba(241, 245, 249, 0.9));
+  border-radius: 20px;
+  padding: 1.5rem;
+  backdrop-filter: blur(20px);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(226, 232, 240, 0.6);
+  height: 500px;
+  display: flex;
+  flex-direction: column;
+}
 .map {
-  height: 100%;
   width: 100%;
+  height: 100%;
+  flex: 1;
 }
 .filter-buttons {
   position: absolute;
@@ -487,66 +621,60 @@ export default {
   cursor: pointer;
   box-shadow: 0 2px 6px rgba(0,0,0,0.2);
 }
-.legend {
-  background: white;
-  padding: 10px 12px;
-  border-radius: 8px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-  font-size: 13px;
-  line-height: 1.6;
+.map-legend {
+  flex: 1;
+  background: linear-gradient(135deg, rgba(248, 250, 252, 0.95), rgba(241, 245, 249, 0.9));
+  border-radius: 20px;
+  padding: 1.5rem;
+  backdrop-filter: blur(20px);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(226, 232, 240, 0.6);
+  height: 500px;
+  display: flex;
+  flex-direction: column;
+}
+.map-legend h4 {
+  margin-bottom: 1.5rem;
+  color: #2c3e50;
+  font-weight: 600;
 }
 
+.legend-item.disabled {
+  opacity: 0.5;
+  pointer-events: auto;
+}
+.legend-items {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  flex: 1;
+  justify-content: space-evenly;
+}
 .legend-item {
   display: flex;
   align-items: center;
-  margin-bottom: 6px;
-}
-
-.legend-item:last-child {
-  margin-bottom: 0;
-}
-
-.legend-color {
-  width: 14px;
-  height: 14px;
-  display: inline-block;
-  margin-right: 8px;
-  border: 1px solid #ccc;
-  border-radius: 3px;
-}
-
-:deep(.ms-legend) {
-  background: #ffffff;
-  border: 1px solid rgba(0,0,0,0.1);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-  padding: 10px 12px;
+  gap: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  background: rgba(255, 255, 255, 0.5);
   border-radius: 8px;
-  font-size: 13px;
-  line-height: 1.6;
-  color: #2c3e50;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+  cursor: pointer;
+  border: none;
+  outline: none;
 }
-
-:deep(.ms-legend .legend-title) {
-  font-weight: 600;
-  margin-bottom: 6px;
+.legend-item:hover {
+  background: rgba(76,175,80,0.08);
 }
-
-:deep(.ms-legend .legend-item) {
-  display: flex;
-  align-items: center;
-  margin: 4px 0;
-}
-
-:deep(.ms-legend .swatch) {
-  width: 14px;
-  height: 14px;
-  border-radius: 3px;
-  border: 1px solid rgba(0,0,0,0.2);
-  display: inline-block;
-  margin-right: 8px;
-}
-
-/* for map done */
+  .facility-legend-icon {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 8px;
+    border: 2px solid #fff;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  }
 
 
 </style>

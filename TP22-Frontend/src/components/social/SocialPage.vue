@@ -12,39 +12,7 @@
     </div>
 
     <!-- Header Navigation -->
-    <nav class="nav-bar">
-      <div class="nav-container">
-        <!-- first line logo + suburb -->
-        <div class="nav-top">
-          <div class="logo">
-            <div class="logo-icon">
-              <svg width="32" height="32" viewBox="0 0 40 40" fill="none">
-                <rect width="40" height="40" rx="8" fill="#4CAF50"/>
-                <path d="M20 8C13.37 8 8 13.37 8 20C8 26.63 13.37 32 20 32C26.63 32 32 26.63 32 20C32 13.37 26.63 8 20 8ZM20 30C14.48 30 10 25.52 10 20C10 14.48 14.48 10 20 10C25.52 10 30 14.48 30 20C30 25.52 25.52 30 20 30Z" fill="white"/>
-                <path d="M20 12C15.58 12 12 15.58 12 20C12 24.42 15.58 28 20 28C24.42 28 28 24.42 28 20C28 15.58 24.42 12 20 12ZM20 26C16.69 26 14 23.31 14 20C14 16.69 16.69 14 20 14C23.31 14 26 16.69 26 20C26 23.31 23.31 26 20 26Z" fill="white"/>
-                <path d="M20 16C17.79 16 16 17.79 16 20C16 22.21 17.79 24 20 24C22.21 24 24 22.21 24 20C24 17.79 22.21 16 20 16Z" fill="white"/>
-              </svg>
-            </div>
-            <span class="logo-text">MelSustain</span>
-          </div>
-          <span v-if="selectedSuburb" class="suburb-display">
-            <span class="pin">&#x1F4CD;</span>{{ selectedSuburb }}
-          </span>
-        </div>
-        
-        <!-- second line Navigation -->
-        <div class="nav-bottom">
-          <div class="nav-tabs">
-            <router-link :to="{ path: '/', query: $route.query }" class="nav-tab">Overview</router-link>
-            <div class="nav-tab active">Social</div>
-            <div class="nav-tab">Economic</div>
-            <router-link :to="{ path: '/infrastructure', query: $route.query }" class="nav-tab">Infrastructure</router-link>
-            <router-link :to="{ path: '/environment', query: $route.query }" class="nav-tab">Environment</router-link>
-            <router-link :to="{ path: '/', hash: '#compare-section', query: $route.query }" class="nav-tab">Compare</router-link>
-          </div>
-        </div>
-      </div>
-    </nav>
+    <Header />
 
     <!-- Main Content -->
     <main class="main-content">
@@ -690,12 +658,14 @@
 
 <script>
 import { socialApi, schoolApi, childCareApi, apiUtils } from '../../services/api.js'
+import Header from '../header/Header.vue';
 import SocialMap from './SocialMap.vue'
 
 export default {
   name: 'SocialPage',
   components: {
-    SocialMap
+    SocialMap,
+    Header
   },
   data() {
     return {
@@ -1095,6 +1065,7 @@ export default {
   position: relative;
   min-height: 100vh;
   overflow-x: hidden;
+  --header-height: 80px; 
 }
 
 /* Dynamic Background */
@@ -1304,6 +1275,7 @@ export default {
 .main-content {
   position: relative;
   z-index: 1;
+  padding-top: var(--header-height);
 }
 
 .container {

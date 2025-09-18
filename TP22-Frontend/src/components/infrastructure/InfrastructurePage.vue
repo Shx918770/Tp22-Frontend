@@ -347,7 +347,7 @@ export default {
   position: relative;
   min-height: 100vh;
   overflow-x: hidden;
-  padding-top: 60px;
+  padding-top: 80px;
 }
 
 .dynamic-background {

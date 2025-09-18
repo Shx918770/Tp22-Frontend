@@ -63,10 +63,10 @@ export default {
       allTabs: [
         { label: "HomePage", path: "/" },
         { label: "Social", path: "/social" },
-        { label: "Economic", path: "/economic" },
+        // { label: "Economic", path: "/economic" },
         { label: "Infrastructure", path: "/infrastructure" },
         { label: "Environment", path: "/environment" },
-        { label: "Compare", path: "/#compare-section" }
+        // { label: "Compare", path: "/#compare-section" }
       ],
       visibleTabs: [],
       hiddenTabs: []

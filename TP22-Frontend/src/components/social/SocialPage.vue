@@ -38,7 +38,7 @@
             <router-link :to="{ path: '/', query: $route.query }" class="nav-tab">Overview</router-link>
             <div class="nav-tab active">Social</div>
             <div class="nav-tab">Economic</div>
-            <div class="nav-tab">Infrastructure</div>
+            <router-link :to="{ path: '/infrastructure', query: $route.query }" class="nav-tab">Infrastructure</router-link>
             <router-link :to="{ path: '/environment', query: $route.query }" class="nav-tab">Environment</router-link>
             <router-link :to="{ path: '/', hash: '#compare-section', query: $route.query }" class="nav-tab">Compare</router-link>
           </div>
@@ -263,79 +263,91 @@
                 </div>
                 <h3>School Type Distribution</h3>
               </div>
-              <div class="section-content">
-                <div class="pie-chart-container">
-                  <svg class="pie-chart-svg" viewBox="0 0 200 200">
-                    <!-- Primary Schools Segment -->
-                    <circle
-                      cx="100"
-                      cy="100"
-                      r="80"
-                      fill="none"
-                      stroke="#52a3f0"
-                      :stroke-width="40"
-                      :stroke-dasharray="`${getPrimaryPercentage() * 5.02} 502`"
-                      stroke-dashoffset="0"
-                      transform="rotate(-90 100 100)"
-                    />
-                    <!-- Secondary Schools Segment -->
-                    <circle
-                      cx="100"
-                      cy="100"
-                      r="80"
-                      fill="none"
-                      stroke="#e74c3c"
-                      :stroke-width="40"
-                      :stroke-dasharray="`${getSecondaryPercentage() * 5.02} 502`"
-                      :stroke-dashoffset="`-${getPrimaryPercentage() * 5.02}`"
-                      transform="rotate(-90 100 100)"
-                    />
-                    <!-- Childcare Segment -->
-                    <circle
-                      cx="100"
-                      cy="100"
-                      r="80"
-                      fill="none"
-                      stroke="#f39c12"
-                      :stroke-width="40"
-                      :stroke-dasharray="`${getChildcarePercentage() * 5.02} 502`"
-                      :stroke-dashoffset="`-${(getPrimaryPercentage() + getSecondaryPercentage()) * 5.02}`"
-                      transform="rotate(-90 100 100)"
-                    />
+                <div class="section-content">
+                  <div class="pie-chart-container">
+                    <svg class="pie-chart-svg" viewBox="0 0 200 200">
+                      <!-- Primary Segment -->
+                      <circle
+                        cx="100"
+                        cy="100"
+                        r="80"
+                        fill="none"
+                        stroke="#52a3f0"
+                        :stroke-width="40"
+                        :stroke-dasharray="`${getPrimaryPct() * 5.02} 502`"
+                        stroke-dashoffset="0"
+                        transform="rotate(-90 100 100)"
+                      />
+                      <!-- Secondary Segment -->
+                      <circle
+                        cx="100"
+                        cy="100"
+                        r="80"
+                        fill="none"
+                        stroke="#e74c3c"
+                        :stroke-width="40"
+                        :stroke-dasharray="`${getSecondaryPct() * 5.02} 502`"
+                        :stroke-dashoffset="`-${getPrimaryPct() * 5.02}`"
+                        transform="rotate(-90 100 100)"
+                      />
+                      <!-- Special Segment -->
+                      <circle
+                        cx="100"
+                        cy="100"
+                        r="80"
+                        fill="none"
+                        stroke="#9C27B0"
+                        :stroke-width="40"
+                        :stroke-dasharray="`${getSpecialPct() * 5.02} 502`"
+                        :stroke-dashoffset="`-${(getPrimaryPct() + getSecondaryPct()) * 5.02}`"
+                        transform="rotate(-90 100 100)"
+                      />
+                      <!-- PRI/SEC Segment -->
+                      <circle
+                        cx="100"
+                        cy="100"
+                        r="80"
+                        fill="none"
+                        stroke="#16a085"
+                        :stroke-width="40"
+                        :stroke-dasharray="`${getPriSecPct() * 5.02} 502`"
+                        :stroke-dashoffset="`-${(getPrimaryPct() + getSecondaryPct() + getSpecialPct()) * 5.02}`"
+                        transform="rotate(-90 100 100)"
+                      />
                     
-                    <!-- Percentage Labels with improved font -->
-                    <text v-if="getPrimaryPercentage() > 5" 
-                          :x="getPrimaryLabelPosition().x" 
-                          :y="getPrimaryLabelPosition().y" 
-                          text-anchor="middle" 
-                          class="pie-percentage-label primary">
-                      {{ getPrimaryPercentage() }}%
-                    </text>
-                    <text v-if="getSecondaryPercentage() > 5" 
-                          :x="getSecondaryLabelPosition().x" 
-                          :y="getSecondaryLabelPosition().y" 
-                          text-anchor="middle" 
-                          class="pie-percentage-label secondary">
-                      {{ getSecondaryPercentage() }}%
-                    </text>
-                    <text v-if="getChildcarePercentage() > 5" 
-                          :x="getChildcareLabelPosition().x" 
-                          :y="getChildcareLabelPosition().y" 
-                          text-anchor="middle" 
-                          class="pie-percentage-label childcare">
-                      {{ getChildcarePercentage() }}%
-                    </text>
-                    
-                    <!-- Center Text -->
+                      <!-- Percent Labels -->
+                      <text v-if="getPrimaryPct() >= 3"
+                            :x="getPrimaryLabelPos().x"
+                            :y="getPrimaryLabelPos().y"
+                            text-anchor="middle"
+                            class="pie-percentage-label primary">{{ Math.round(getPrimaryPct()) }}%</text>
+                      <text v-if="getSecondaryPct() >= 3"
+                            :x="getSecondaryLabelPos().x"
+                            :y="getSecondaryLabelPos().y"
+                            text-anchor="middle"
+                            class="pie-percentage-label secondary">{{ Math.round(getSecondaryPct()) }}%</text>
+                      <text v-if="getSpecialPct() >= 3"
+                            :x="getSpecialLabelPos().x"
+                            :y="getSpecialLabelPos().y"
+                            text-anchor="middle"
+                            class="pie-percentage-label special">{{ Math.round(getSpecialPct()) }}%</text>
+                      <text v-if="getPriSecPct() >= 3"
+                            :x="getPriSecLabelPos().x"
+                            :y="getPriSecLabelPos().y"
+                            text-anchor="middle"
+                            class="pie-percentage-label prisecc">{{ Math.round(getPriSecPct()) }}%</text>
+
+                      <!-- Center Text -->
                     <text x="100" y="95" text-anchor="middle" class="pie-center-text-title">Education</text>
                     <text x="100" y="110" text-anchor="middle" class="pie-center-text-subtitle">Facilities</text>
-                  </svg>
-                </div>
-                <div class="chart-legend">
-                  <div class="legend-item"><div class="color primary"></div> Primary Schools</div>
-                  <div class="legend-item"><div class="color secondary"></div> Secondary Schools</div>
-                  <div class="legend-item"><div class="color childcare"></div> Childcare Centers</div>
-                </div>
+                    </svg>
+                  </div>
+                  <div class="chart-legend">
+                    <div class="legend-item"><div class="color primary"></div> Primary</div>
+                    <div class="legend-item"><div class="color secondary"></div> Secondary</div>
+                    <div class="legend-item"><div class="color special"></div> Special</div>
+                    <div class="legend-item"><div class="color prisecc"></div> PRI/SEC</div>
+                  </div>
               </div>
             </div>
 
@@ -380,9 +392,9 @@
               </div>
               <div class="section-content">
                 <div class="school-selector">
-                  <label for="school-select">School</label>
+                  <label for="school-select">Select a school to view student statistics</label>
                   <select id="school-select" v-model="selectedSchool" @change="onSchoolChange">
-                    <option value="">Choose a school...</option>
+                    <option value="">Select a school to view statistics...</option>
                     <option v-for="school in schools" :key="school.schoolNo" :value="school">
                       {{ school.schoolName }}
                     </option>
@@ -917,6 +929,87 @@ export default {
     getChildcarePercentage() {
       const total = this.schoolStats.totalSchools + this.schoolStats.totalChildcare
       return total > 0 ? Math.round((this.schoolStats.totalChildcare / total) * 100) : 0
+    },
+
+    // New: robust type counting for Primary, Secondary, Special, PRI/SEC
+    getTypeCounts() {
+      const counts = { primary: 0, secondary: 0, special: 0, prisec: 0 }
+
+      const incrementByType = (rawType) => {
+        if (!rawType) return
+        const t = String(rawType).toLowerCase().trim()
+        if (t.includes('pri/sec') || /pri\s*\/\s*sec/i.test(rawType) || /(primary).*?(secondary)|(secondary).*?(primary)/i.test(rawType)) {
+          counts.prisec++
+          return
+        }
+        if (t.includes('primary')) { counts.primary++; return }
+        if (t.includes('secondary')) { counts.secondary++; return }
+        if (t.includes('special')) { counts.special++; return }
+      }
+
+      // Prefer aggregated stats when available
+      if (this.schoolStats && this.schoolStats.schoolTypes) {
+        Object.entries(this.schoolStats.schoolTypes).forEach(([typeName, num]) => {
+          const n = Number(num) || 0
+          for (let i = 0; i < n; i++) incrementByType(typeName)
+        })
+      } else if (Array.isArray(this.schools)) {
+        this.schools.forEach(s => incrementByType(s?.schoolType))
+      }
+
+      return counts
+    },
+
+    getPrimaryPct() {
+      const c = this.getTypeCounts()
+      const total = c.primary + c.secondary + c.special + c.prisec
+      return total > 0 ? (c.primary / total) * 100 : 0
+    },
+
+    getSecondaryPct() {
+      const c = this.getTypeCounts()
+      const total = c.primary + c.secondary + c.special + c.prisec
+      return total > 0 ? (c.secondary / total) * 100 : 0
+    },
+
+    getSpecialPct() {
+      const c = this.getTypeCounts()
+      const total = c.primary + c.secondary + c.special + c.prisec
+      return total > 0 ? (c.special / total) * 100 : 0
+    },
+
+    getPriSecPct() {
+      const c = this.getTypeCounts()
+      const total = c.primary + c.secondary + c.special + c.prisec
+      return total > 0 ? (c.prisec / total) * 100 : 0
+    },
+
+    // Label positions per segment based on cumulative angles
+    getPrimaryLabelPos() {
+      const angle = (this.getPrimaryPct() / 100) * Math.PI
+      const radius = 65
+      return { x: 100 + radius * Math.cos(angle - Math.PI/2), y: 100 + radius * Math.sin(angle - Math.PI/2) }
+    },
+    getSecondaryLabelPos() {
+      const primaryAngle = (this.getPrimaryPct() / 100) * 2 * Math.PI
+      const secondaryAngle = primaryAngle + (this.getSecondaryPct() / 100) * Math.PI
+      const radius = 65
+      return { x: 100 + radius * Math.cos(secondaryAngle - Math.PI/2), y: 100 + radius * Math.sin(secondaryAngle - Math.PI/2) }
+    },
+    getSpecialLabelPos() {
+      const primaryAngle = (this.getPrimaryPct() / 100) * 2 * Math.PI
+      const secondaryAngle = (this.getSecondaryPct() / 100) * 2 * Math.PI
+      const specialAngle = primaryAngle + secondaryAngle + (this.getSpecialPct() / 100) * Math.PI
+      const radius = 65
+      return { x: 100 + radius * Math.cos(specialAngle - Math.PI/2), y: 100 + radius * Math.sin(specialAngle - Math.PI/2) }
+    },
+    getPriSecLabelPos() {
+      const primaryAngle = (this.getPrimaryPct() / 100) * 2 * Math.PI
+      const secondaryAngle = (this.getSecondaryPct() / 100) * 2 * Math.PI
+      const specialAngle = (this.getSpecialPct() / 100) * 2 * Math.PI
+      const prisecAngle = primaryAngle + secondaryAngle + specialAngle + (this.getPriSecPct() / 100) * Math.PI
+      const radius = 65
+      return { x: 100 + radius * Math.cos(prisecAngle - Math.PI/2), y: 100 + radius * Math.sin(prisecAngle - Math.PI/2) }
     },
 
     getStudentCount(year) {
@@ -2580,12 +2673,14 @@ export default {
   grid-area: pie-chart;
   background: linear-gradient(135deg, rgba(248, 250, 252, 0.95), rgba(241, 245, 249, 0.9));
   border: 1px solid rgba(226, 232, 240, 0.6);
+  height: 500px;
 }
 
 .education-section.school-list-section {
   grid-area: school-list;
   background: linear-gradient(135deg, rgba(248, 250, 252, 0.95), rgba(241, 245, 249, 0.9));
   border: 1px solid rgba(226, 232, 240, 0.6);
+  height: 500px;
 }
 
 .education-section.student-chart-section {
@@ -2665,6 +2760,7 @@ export default {
   flex: 1;
   display: flex;
   flex-direction: column;
+  min-height: 0;
 }
 
 .education-top-row {
@@ -2692,19 +2788,19 @@ export default {
 }
 
 .pie-chart-section h3 {
-  text-align: center;
+  text-align: left;
   margin-bottom: 1.5rem;
   color: #1e293b;
   font-weight: 700;
-  font-size: 1.5rem;
+  font-size: 1.25rem;
   font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
   letter-spacing: -0.01em;
-  background: rgba(255, 255, 255, 0.8);
-  padding: 1rem 1.5rem;
-  border-radius: 12px;
-  border: 2px solid rgba(59, 130, 246, 0.2);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  backdrop-filter: blur(10px);
+  background: transparent;
+  padding: 0;
+  border-radius: 0;
+  border: none;
+  box-shadow: none;
+  backdrop-filter: none;
 }
 
 /* New Pie Chart Styles */
@@ -2712,7 +2808,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
   padding: 2.5rem;
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.9));
   border-radius: 20px;
@@ -2811,10 +2907,20 @@ export default {
 }
 
 .chart-legend {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(4, max-content);
   justify-content: center;
-  gap: 2rem;
-  flex-wrap: wrap;
+  gap: 0.8rem 1.5rem;
+  margin-top: 0.5rem;
+}
+
+.chart-legend .legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #2c3e50;
 }
 
 .chart-legend .legend-item {
@@ -2839,9 +2945,35 @@ export default {
   background: linear-gradient(135deg, #e74c3c, #c0392b);
   box-shadow: 0 2px 8px rgba(231, 76, 60, 0.3);
 }
-.chart-legend .color.childcare { 
-  background: linear-gradient(135deg, #f39c12, #e67e22);
-  box-shadow: 0 2px 8px rgba(243, 156, 18, 0.3);
+.chart-legend .color.special { 
+  background: linear-gradient(135deg, #9C27B0, #7B1FA2);
+  box-shadow: 0 2px 8px rgba(156, 39, 176, 0.3);
+}
+.chart-legend .color.prisecc { 
+  background: linear-gradient(135deg, #16a085, #0e766e);
+  box-shadow: 0 2px 8px rgba(22, 160, 133, 0.3);
+}
+
+/* Reduce legend color dot size for single-row layout */
+.chart-legend .color {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+@media (max-width: 768px) {
+  .education-section.pie-chart-section { height: auto; }
+  .chart-legend { grid-template-columns: repeat(2, max-content); }
+}
+
+/* Percentage label colors match legend */
+.pie-percentage-label.special {
+  fill: #ffffff;
+  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.6));
+}
+.pie-percentage-label.prisecc {
+  fill: #ffffff;
+  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.6));
 }
 
 .school-list-section {
@@ -2892,7 +3024,7 @@ export default {
 
 .school-list {
   flex: 1;
-  max-height: 350px;
+  height: 100%;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
@@ -2956,32 +3088,40 @@ export default {
 .school-selector select {
   width: 100%;
   padding: 0.875rem 1rem;
-  border: none;
-  border-bottom: 2px solid rgba(148, 163, 184, 0.3);
-  background: transparent;
+  border: 2px solid rgba(148, 163, 184, 0.4);
+  background: rgba(255, 255, 255, 0.95);
   font-size: 1rem;
   font-weight: 500;
   color: #1e293b;
   transition: all 0.3s ease;
   font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
   appearance: none;
-  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
-  background-position: right 0.5rem center;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23334155' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 0.75rem center;
   background-repeat: no-repeat;
-  background-size: 1.5em 1.5em;
+  background-size: 1.8em 1.8em;
   padding-right: 2.5rem;
+  height: 48px;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(2, 6, 23, 0.06);
+  cursor: pointer;
 }
 
 .school-selector select:focus {
   outline: none;
-  border-bottom-color: #f59e0b;
-  background-color: rgba(255, 255, 255, 0.05);
+  border-color: #f59e0b;
+  background-color: #ffffff;
+  box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.15), 0 8px 24px rgba(2, 6, 23, 0.08);
 }
 
 .school-selector select option {
   background: white;
   color: #1e293b;
   padding: 0.5rem;
+}
+
+.school-selector select:hover {
+  border-color: rgba(100, 116, 139, 0.7);
 }
 
 .student-count-chart {
@@ -3193,6 +3333,9 @@ export default {
   height: 1px;
   background: linear-gradient(90deg, transparent, rgba(239, 68, 68, 0.3), transparent);
 }
+
+/* Hide decorative top line to align inner and outer frames better */
+.school-list::before { display: none; }
 
 .bar-chart::before {
   content: '';

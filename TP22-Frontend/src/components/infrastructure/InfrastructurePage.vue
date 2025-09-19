@@ -34,73 +34,62 @@
       </section>
     </main>
     <!-- Infrastructure Cards -->
-      <section class="infrastructure-cards">
-        <div class="container">
-          <div class="facilities-grid">
-            <!-- Public Transport Bubble -->
-            <div class="facility-bubble transport">
-              <div class="bubble-icon">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
-                  <path d="M3 7V5C3 3.89543 3.89543 3 5 3H19C20.1046 3 21 3.89543 21 5V7M3 7L5 19C5 20.1046 5.89543 21 7 21H17C18.1046 21 19 20.1046 19 19L21 7M3 7H21M9 11V17M15 11V17" stroke="currentColor" stroke-width="2"/>
-                </svg>
-              </div>
-              <div class="bubble-content">
-                <div class="bubble-label">Public Transport</div>
-                <div class="bubble-number">{{ stats.transport.total || 0 }}</div>
-                <ul class="bubble-details">
-                  <li>{{ stats.transport.trainStations || 0 }} Train Stations</li>
-                  <li>{{ stats.transport.tramStops || 0 }} Tram Stops</li>
-                  <li>{{ stats.transport.busStops || 0 }} Bus Stops</li>
-                </ul>
-              </div>
-              <div class="bubble-glow"></div>
-            </div>
-
-            <!-- Cycling Infrastructure Bubble -->
-            <div class="facility-bubble cycling">
-              <div class="bubble-icon">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
-                  <circle cx="7" cy="17" r="3" stroke="currentColor" stroke-width="2"/>
-                  <circle cx="17" cy="17" r="3" stroke="currentColor" stroke-width="2"/>
-                  <path d="M5 17L9 7H15L19 17" stroke="currentColor" stroke-width="2"/>
-                  <path d="M9 7L12 13L15 7" stroke="currentColor" stroke-width="2"/>
-                </svg>
-              </div>
-              <div class="bubble-content">
-                <div class="bubble-label">Cycling Infrastructure</div>
-                <div class="bubble-number">{{ stats.cycling.total || 0 }}</div>
-                <ul class="bubble-details">
-                  <li>{{ stats.cycling.bikeLanes || 0 }} km Bike Lanes</li>
-                  <li>{{ stats.cycling.bikeRacks || 0 }} Bike Racks</li>
-                  <li>{{ stats.cycling.repairStations || 0 }} Repair Stations</li>
-                </ul>
-              </div>
-              <div class="bubble-glow"></div>
-            </div>
-
-            <!-- Parking Bubble -->
-            <div class="facility-bubble parking">
-              <div class="bubble-icon">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
-                  <rect x="3" y="7" width="18" height="10" rx="3" stroke="currentColor" stroke-width="2"/>
-                  <circle cx="7" cy="17" r="2" stroke="currentColor" stroke-width="2"/>
-                  <circle cx="17" cy="17" r="2" stroke="currentColor" stroke-width="2"/>
-                </svg>
-              </div>
-              <div class="bubble-content">
-                <div class="bubble-label">Parking</div>
-                <div class="bubble-number">{{ stats.parking.total || 0 }}</div>
-                <ul class="bubble-details">
-                  <li>{{ stats.parking.publicSpaces || 0 }} Public Spaces</li>
-                  <li>{{ stats.parking.disability || 0 }} Disability Parking</li>
-                  <li>{{ stats.parking.shortTerm || 0 }} Short-term Parking</li>
-                </ul>
-              </div>
-              <div class="bubble-glow"></div>
-            </div>
+    <div class="facilities-grid">
+      <!-- Public Transport Bubble -->
+      <div class="facility-bubble transport">
+        <div class="bubble-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+            <path d="M3 7V5C3 3.89543 3.89543 3 5 3H19C20.1046 3 21 3.89543 21 5V7M3 7L5 19C5 20.1046 5.89543 21 7 21H17C18.1046 21 19 20.1046 19 19L21 7M3 7H21M9 11V17M15 11V17" stroke="currentColor" stroke-width="2"/>
+          </svg>
+        </div>
+        <div class="bubble-content">
+          <div class="bubble-label">Public Transport</div>
+          <div class="bubble-details">
+            <span class="detail-pill">{{ stats.transport.trainStations || 0 }} Train Stations</span>
+            <span class="detail-pill">{{ stats.transport.tramStops || 0 }} Tram Stops</span>
+            <span class="detail-pill">{{ stats.transport.busStops || 0 }} Bus Stops</span>
           </div>
         </div>
-      </section>
+        <div class="bubble-glow"></div>
+      </div>
+
+      <!-- Cycling Infrastructure Bubble -->
+      <div class="facility-bubble cycling">
+        <div class="bubble-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+            <circle cx="7" cy="17" r="3" stroke="currentColor" stroke-width="2"/>
+            <circle cx="17" cy="17" r="3" stroke="currentColor" stroke-width="2"/>
+            <path d="M5 17L9 7H15L19 17" stroke="currentColor" stroke-width="2"/>
+            <path d="M9 7L12 13L15 7" stroke="currentColor" stroke-width="2"/>
+          </svg>
+        </div>
+        <div class="bubble-content">
+          <div class="bubble-label">Cycling Infrastructure</div>
+          <div class="bubble-details">
+            <span class="detail-pill">{{ stats.cycling.bikeLanes || 0 }} km Bike Lanes</span>
+          </div>
+        </div>
+        <div class="bubble-glow"></div>
+      </div>
+
+      <!-- Parking Bubble -->
+      <div class="facility-bubble parking">
+        <div class="bubble-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+            <rect x="3" y="7" width="18" height="10" rx="3" stroke="currentColor" stroke-width="2"/>
+            <circle cx="7" cy="17" r="2" stroke="currentColor" stroke-width="2"/>
+            <circle cx="17" cy="17" r="2" stroke="currentColor" stroke-width="2"/>
+          </svg>
+        </div>
+        <div class="bubble-content">
+          <div class="bubble-label">Parking</div>
+          <div class="bubble-details">
+            <span class="detail-pill">{{ stats.parking.publicSpaces || 0 }} Public Spaces</span>
+          </div>
+        </div>
+        <div class="bubble-glow"></div>
+      </div>
+    </div>
     <div class="map-container">
       <div class="map-area">
         <div id="map" class="map"></div>
@@ -445,33 +434,61 @@ export default {
 
 /* for three cards starts */
 /* Bubble card styles for infrastructure cards (copied from SocialPage) */
-.infrastructure-cards {
-  padding: 3rem 0;
+.facilities-grid {
+  display: flex;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
   width: 80%;
   margin: 0 auto;
-}
-.facilities-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 2rem;
-  width: 100%;
-  margin: 0;
+  justify-content: space-between;
 }
 
 .facility-bubble {
-  position: relative;
-  background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(255,255,255,0.95));
+  /* position: relative; */
+  flex: 1;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.95));
   backdrop-filter: blur(30px);
   border-radius: 20px;
   padding: 1.2rem;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-  border: 2px solid rgba(255,255,255,0.3);
-  transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
   overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  max-width: 300px;
+  animation: bubbleFloat 6s ease-in-out infinite;
+}
+
+@keyframes bubbleFloat {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-10px) rotate(1deg);
+  }
+  50% {
+    transform: translateY(-5px) rotate(0deg);
+  }
+  75% {
+    transform: translateY(-15px) rotate(-1deg);
+  }
+}
+
+.facility-bubble:hover {
+  transform: translateY(-15px) scale(1.05) rotate(2deg);
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.15);
+}
+
+.facility-bubble.transport:hover {
+  box-shadow: 0 25px 60px rgba(33, 150, 243, 0.3);
+}
+
+.facility-bubble.cycling:hover {
+  box-shadow: 0 25px 60px rgba(244, 67, 54, 0.3);
+}
+
+.facility-bubble.parking:hover {
+  box-shadow: 0 25px 60px rgba(76, 175, 80, 0.3);
 }
 
 .bubble-icon {
@@ -483,14 +500,64 @@ export default {
   justify-content: center;
   margin: 0 auto 1rem;
   backdrop-filter: blur(15px);
-  border: 2px solid rgba(255,255,255,0.4);
-  background: linear-gradient(135deg, rgba(76,175,80,0.15), rgba(76,175,80,0.25));
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  transition: all 0.3s ease;
+  position: relative;
+  z-index: 2;
+}
+
+.facility-bubble.transport .bubble-icon {
+  background: linear-gradient(135deg, rgba(33, 150, 243, 0.2), rgba(33, 150, 243, 0.3));
+  color: #2196F3;
+}
+
+.facility-bubble.cycling .bubble-icon {
+  background: linear-gradient(135deg, rgba(244, 67, 54, 0.2), rgba(244, 67, 54, 0.3));
+  color: #f44336;
+}
+
+.facility-bubble.parking .bubble-icon {
+  background: linear-gradient(135deg, rgba(76, 175, 80, 0.2), rgba(76, 175, 80, 0.3));
+  color: #4CAF50;
+}
+
+.facility-bubble:hover .bubble-icon {
+  transform: scale(1.1) rotate(360deg);
+  border-color: rgba(255, 255, 255, 0.6);
 }
 
 .bubble-content {
   text-align: center;
   position: relative;
   z-index: 2;
+}
+
+.bubble-number {
+  font-size: 2.2rem;
+  font-weight: 800;
+  margin-bottom: 0.4rem;
+  animation: numberPop 2s ease-in-out infinite;
+}
+
+@keyframes numberPop {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+.facility-bubble.transport .bubble-number {
+  color: #2196F3;
+}
+
+.facility-bubble.cycling .bubble-number {
+  color: #f44336;
+}
+
+.facility-bubble.parking .bubble-number {
+  color: #4CAF50;
 }
 
 .bubble-label {
@@ -500,34 +567,39 @@ export default {
   margin-bottom: 0.8rem;
 }
 
-.bubble-number {
-  font-size: 2.2rem;
-  font-weight: 800;
-  margin-bottom: 0.4rem;
-}
-
 .bubble-details {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  color: #444;
   display: flex;
-  flex-direction: column;
+  flex-wrap: wrap;
   gap: 0.4rem;
   justify-content: center;
-  align-items: center;
 }
 
-.bubble-details li {
-  background: rgba(255,255,255,0.7);
+.detail-pill {
+  background: rgba(255, 255, 255, 0.7);
   backdrop-filter: blur(10px);
   padding: 0.5rem 0.8rem;
   border-radius: 15px;
   font-size: 0.85rem;
   font-weight: 500;
   color: #444;
-  border: 1px solid rgba(255,255,255,0.4);
+  border: 1px solid rgba(255, 255, 255, 0.4);
   transition: all 0.3s ease;
+  animation: pillFloat 4s ease-in-out infinite;
+}
+
+@keyframes pillFloat {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+.facility-bubble:hover .detail-pill {
+  background: rgba(255, 255, 255, 0.8);
+  border-color: rgba(255, 255, 255, 0.6);
+  transform: translateY(-2px);
 }
 
 .bubble-glow {
@@ -543,13 +615,17 @@ export default {
   z-index: 1;
 }
 
-.facility-bubble.transport .bubble-icon { background: linear-gradient(135deg, rgba(33,150,243,0.2), rgba(33,150,243,0.3)); color: #2196F3; }
-.facility-bubble.cycling .bubble-icon { background: linear-gradient(135deg, rgba(76,175,80,0.2), rgba(76,175,80,0.3)); color: #4CAF50; }
-.facility-bubble.parking .bubble-icon { background: linear-gradient(135deg, rgba(255,152,0,0.2), rgba(255,152,0,0.3)); color: #FF9800; }
+.facility-bubble.transport .bubble-glow {
+  background: radial-gradient(circle, rgba(33, 150, 243, 0.1) 0%, transparent 70%);
+}
 
-.facility-bubble.transport .bubble-glow { background: radial-gradient(circle, rgba(33,150,243,0.1) 0%, transparent 70%); }
-.facility-bubble.cycling .bubble-glow { background: radial-gradient(circle, rgba(76,175,80,0.1) 0%, transparent 70%); }
-.facility-bubble.parking .bubble-glow { background: radial-gradient(circle, rgba(255,152,0,0.1) 0%, transparent 70%); }
+.facility-bubble.cycling .bubble-glow {
+  background: radial-gradient(circle, rgba(244, 67, 54, 0.1) 0%, transparent 70%);
+}
+
+.facility-bubble.parking .bubble-glow {
+  background: radial-gradient(circle, rgba(76, 175, 80, 0.1) 0%, transparent 70%);
+}
 
 .facility-bubble:hover .bubble-glow {
   opacity: 1;
@@ -557,9 +633,23 @@ export default {
 }
 
 @keyframes glowPulse {
-  0%, 100% { transform: scale(1); opacity: 0.3; }
-  50% { transform: scale(1.1); opacity: 0.6; }
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.3;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.6;
+  }
 }
+
+.facility-bubble.transport .bubble-icon { background: linear-gradient(135deg, rgba(33,150,243,0.2), rgba(33,150,243,0.3)); color: #2196F3; }
+.facility-bubble.cycling .bubble-icon { background: linear-gradient(135deg, rgba(76,175,80,0.2), rgba(76,175,80,0.3)); color: #4CAF50; }
+.facility-bubble.parking .bubble-icon { background: linear-gradient(135deg, rgba(255,152,0,0.2), rgba(255,152,0,0.3)); color: #FF9800; }
+
+.facility-bubble.transport .bubble-glow { background: radial-gradient(circle, rgba(33,150,243,0.1) 0%, transparent 70%); }
+.facility-bubble.cycling .bubble-glow { background: radial-gradient(circle, rgba(76,175,80,0.1) 0%, transparent 70%); }
+.facility-bubble.parking .bubble-glow { background: radial-gradient(circle, rgba(255,152,0,0.1) 0%, transparent 70%); }
 /* Bubble card styles end */
 
 /* for map start */

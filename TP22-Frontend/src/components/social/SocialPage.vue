@@ -82,7 +82,7 @@
             </div>
 
             <!-- Healthcare Bubble -->
-            <div class="facility-bubble healthcare">
+            <div class="facility-bubble healthcare" @click="scrollToHealthDetail">
               <div class="bubble-icon">
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
                   <path d="M19 14C20.49 12.54 22 10.79 22 8.5C22 7.04131 21.4205 5.64236 20.3891 4.61091C19.3576 3.57946 17.9587 3 16.5 3C15.74 3 15.04 3.16 14.38 3.46L12 5.5L9.62 3.46C8.96 3.16 8.26 3 7.5 3C6.04131 3 4.64236 3.57946 3.61091 4.61091C2.57946 5.64236 2 7.04131 2 8.5C2 10.79 3.51 12.54 5 14L12 21L19 14Z" stroke="currentColor" stroke-width="2"/>
@@ -91,8 +91,8 @@
               <div class="bubble-content">
                 <div class="bubble-label">Healthcare</div>
                 <div class="bubble-details">
-                  <span class="detail-pill">{{ facilityStats?.detailedCounts?.HEALTHCARE?.Hospital || 2 }} Hospitals</span>
-                  <span class="detail-pill">{{ facilityStats?.detailedCounts?.HEALTHCARE?.Practitioners || 12 }} Practitioners</span>
+                  <span class="detail-pill">{{ healthBubble.hospitals }} Hospitals</span>
+                  <span class="detail-pill">{{ healthBubble.practitioners }} Practitioners</span>
                 </div>
               </div>
               <div class="bubble-glow"></div>
@@ -146,9 +146,13 @@
               <SocialMap 
                 :schools="schools" 
                 :childCares="childCares" 
+                :hospitals="hospitals"
+                :practitioners="practitioners"
                 :selectedSuburb="selectedSuburb"
                 :showSchools="mapLegendState.schools"
                 :showChildCares="mapLegendState.childcare"
+                :showHospitals="mapLegendState.hospitals"
+                :showPractitioners="mapLegendState.practitioners"
                 class="social-map-full"
               />
             </div>
@@ -208,6 +212,8 @@
           </div>
         </div>
       </section>
+
+      
 
       <!-- Education Detail Section -->
       <section id="education-detail" class="education-detail">
@@ -388,6 +394,100 @@
                       </div>
                     </div>
                     <div class="x-axis-label">Year</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Health Services Detail Section -->
+      <section id="health-detail" class="education-detail">
+        <div class="container">
+          <div class="detail-header">
+            <h2>Health Services</h2>
+            <p>Hospitals and medical practitioners overview</p>
+          </div>
+          <div class="education-grid health-grid-wide">
+            <!-- Gauge Card (left) -->
+            <div class="education-section pie-chart-section health-wide health-tall">
+              <div class="section-header">
+                <div class="section-icon">
+                  <!-- speedometer icon -->
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <path d="M3 13a9 9 0 1 1 18 0" stroke="currentColor" stroke-width="2"/>
+                    <path d="M12 13l5-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                  </svg>
+                </div>
+                <h3>Hospital Beds per 1,000 Residents</h3>
+              </div>
+              <div class="section-content">
+                <div class="pie-chart-container gauge-container-compact">
+                  <svg viewBox="0 0 320 200" class="gauge-svg">
+                    <!-- Three equal zones: Low (Red), Medium (Yellow), High (Green) -->
+                    
+                    <!-- Low zone: Red (-90° to -30°) -->
+                    <path d="M60 160 A100 100 0 0 1 110 73.2" stroke="#ef4444" stroke-width="18" fill="none" stroke-linecap="round"/>
+                    
+                    <!-- Medium zone: Yellow (-30° to +30°) -->
+                    <path d="M110 73.2 A100 100 0 0 1 210 73.2" stroke="#f59e0b" stroke-width="18" fill="none" stroke-linecap="round"/>
+                    
+                    <!-- High zone: Green (+30° to +90°) -->
+                    <path d="M210 73.2 A100 100 0 0 1 260 160" stroke="#22c55e" stroke-width="18" fill="none" stroke-linecap="round"/>
+                    
+                    <!-- Labels -->
+                    <text x="110" y="65" class="gauge-tick" text-anchor="middle">3.2</text>
+                    <text x="210" y="65" class="gauge-tick" text-anchor="middle">3.8</text>
+                    
+                    <!-- Needle -->
+                    <g :transform="`rotate(${getCorrectNeedleAngle(bedsValue)} 160 160)`">
+                      <line x1="160" y1="160" x2="240" y2="160" stroke="#1d4ed8" stroke-width="3" stroke-linecap="round"/>
+                      <circle cx="240" cy="160" r="5" fill="#1d4ed8"/>
+                    </g>
+                    <circle cx="160" cy="160" r="8" fill="#1d4ed8"/>
+                    <text x="160" y="185" text-anchor="middle" class="gauge-value">{{ bedsValue.toFixed(1) }}</text>
+                  </svg>
+                </div>
+                <div class="gauge-legend expanded">
+                  <div class="legend-item"><span class="dot low"></span><span>Low (0 - 3.2)</span></div>
+                  <div class="legend-item"><span class="dot medium"></span><span>Medium (3.2 - 3.8)</span></div>
+                  <div class="legend-item"><span class="dot high"></span><span>High (3.8+)</span></div>
+                </div>
+                
+                <div class="health-description" v-if="bedsStat && bedsStat.Description">
+                  <div class="health-description-content">
+                    <h4>Description</h4>
+                    <p>{{ bedsStat.Description }}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- List Card (right) -->
+            <div class="education-section school-list-section health-wide health-tall">
+              <div class="section-header">
+                <div class="section-icon">
+                  <!-- medical list icon -->
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <rect x="3" y="4" width="18" height="16" rx="2" stroke="currentColor" stroke-width="2"/>
+                    <path d="M12 8v6M9 11h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                  </svg>
+                </div>
+                <h3>Medical & Practitioner List</h3>
+              </div>
+              <div class="section-content" style="flex: 1; overflow: hidden;">
+                <div class="school-list" style="height: 100%; overflow-y: auto; max-height: 600px;">
+                  <div v-if="!hospitals.length && !practitioners.length" class="empty-hint">No medical facilities available for this suburb.</div>
+                  <div v-for="h in hospitals" :key="h.Hospital_Provider_Number || h.Name" class="school-item">
+                    <div class="school-name">{{ h.Name }}</div>
+                    <div class="school-type">{{ h.Type }}<span v-if="Number(h.Beds) > 0"> · Beds: {{ h.Beds }}</span></div>
+                    <div class="school-suburb">{{ h.Suburb }}</div>
+                  </div>
+                  <div v-for="p in practitioners" :key="p.GP + p.ADDRESS" class="school-item">
+                    <div class="school-name">{{ p.GP }}</div>
+                    <div class="school-type">Practitioner</div>
+                    <div class="school-suburb">{{ p.SUBURB || p.Suburb || p.suburb }}</div>
                   </div>
                 </div>
               </div>
@@ -657,7 +757,7 @@
 </template>
 
 <script>
-import { socialApi, schoolApi, childCareApi, apiUtils } from '../../services/api.js'
+import { socialApi, schoolApi, childCareApi, apiUtils, healthApi } from '../../services/api.js'
 import Header from '../header/Header.vue';
 import SocialMap from './SocialMap.vue'
 
@@ -674,6 +774,10 @@ export default {
       accessibilityData: [],
       schools: [],
       childCares: [],
+      hospitals: [],
+      practitioners: [],
+      healthSummary: null,
+      bedsStat: null,
       schoolStats: {
         totalSchools: 0,
         totalChildcare: 0,
@@ -693,21 +797,32 @@ export default {
         bars: true,
         childcare: true,
         practitioners: true
-      }
+      },
+      maxGauge: 8
     }
   },
   computed: {
     selectedSuburb() {
-      return this.$route?.query?.suburb || '';
+      return this.$route?.query?.suburb || ''
     },
     
     sortedSchools() {
-      if (!this.schools || this.schools.length === 0) return [];
+      if (!this.schools || this.schools.length === 0) return []
       
       if (this.sortSchoolsAlphabetically) {
-        return [...this.schools].sort((a, b) => a.schoolName.localeCompare(b.schoolName));
+        return [...this.schools].sort((a, b) => a.schoolName.localeCompare(b.schoolName))
       }
-      return this.schools;
+      return this.schools
+    },
+    healthBubble() {
+      return {
+        hospitals: this.hospitals?.length || 0,
+        practitioners: this.practitioners?.length || 0,
+      }
+    },
+    bedsValue() {
+      const v = Number(this.bedsStat?.Beds_per_1000 || 0)
+      return isNaN(v) ? 0 : Math.max(0, v)
     }
   },
   watch: {
@@ -729,6 +844,90 @@ export default {
     window.removeEventListener('scroll', this.handleScroll);
   },
   methods: {
+    scrollToHealthDetail() {
+      const el = document.getElementById('health-detail')
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    },
+    getNeedleAngle(value) {
+      // Map 0 -> -90deg (left), 3.2 -> ~0deg, 3.8 -> ~20deg, 8 -> +90deg (right limit)
+      const v = Math.max(0, Math.min(8, Number(value || 0)))
+      // linear map [0,8] -> [-90,90]
+      return -90 + (v / 8) * 180
+    },
+    getNeedleAngleFixed(value) {
+      // Semicircle 180deg, divided into three 60deg zones
+      // 0-3.2: -90deg to -30deg
+      // 3.2-3.8: -30deg to +30deg  
+      // 3.8+: +30deg to +90deg
+      const v = Number(value || 0)
+      if (v <= 3.2) {
+        return -90 + (v / 3.2) * 60
+      } else if (v <= 3.8) {
+        return -30 + ((v - 3.2) / 0.6) * 60
+      } else {
+        const maxVal = Math.min(v, 6)
+        return 30 + ((maxVal - 3.8) / (6 - 3.8)) * 60
+      }
+    },
+    getCorrectNeedleAngle(value) {
+      // Upper semicircle mapping:
+      // Value range: 0 to 5 (max)
+      // Angle range: 180° (left) to -90° (top) to 0° (right)
+      // This is a 180° span going counter-clockwise from left to right via top
+      
+      const v = Number(value || 0)
+      const maxValue = 5.0
+      const clampedValue = Math.max(0, Math.min(maxValue, v))
+      
+      // Map value to position in semicircle (0 to 1)
+      const position = clampedValue / maxValue
+      
+      // Upper semicircle goes from 180° to 0° via -90°
+      // Linear interpolation: 180° + position * (0° - 180°) = 180° - position * 180°
+      // But we need to handle the -90° (top) correctly
+      // Actually, let's map: 180° to -90° to 0° which is 180° to 270° to 360° (or 0°)
+      
+      let targetAngle
+      if (position <= 0.5) {
+        // First half: 180° to -90° (or 270°)
+        // Map [0, 0.5] to [180°, 270°]
+        targetAngle = 180 + (position * 2) * 90  // 180° to 270°
+      } else {
+        // Second half: -90° (270°) to 0°
+        // Map [0.5, 1] to [270°, 360°] 
+        targetAngle = 270 + ((position - 0.5) * 2) * 90  // 270° to 360°
+      }
+      
+      // Convert 360° to 0° for SVG
+      if (targetAngle >= 360) targetAngle -= 360
+      
+      // Convert angles > 180° to negative equivalents for SVG
+      if (targetAngle > 180) targetAngle = targetAngle - 360
+      
+      return targetAngle
+    },
+    // SVG helpers for gauge
+    gaugeArcPath(start, end, radius = 80) {
+      // map value to angle on semicircle (-90deg to 90deg)
+      const a1 = (-90 + (start / this.maxGauge) * 180) * Math.PI / 180
+      const a2 = (-90 + (end / this.maxGauge) * 180) * Math.PI / 180
+      const cx = 130, cy = 120, r = radius
+      const x1 = cx + r * Math.cos(a1)
+      const y1 = cy + r * Math.sin(a1)
+      const x2 = cx + r * Math.cos(a2)
+      const y2 = cy + r * Math.sin(a2)
+      return `M ${x1} ${y1} A ${r} ${r} 0 0 1 ${x2} ${y2}`
+    },
+
+    gaugeLabelPos(value, radius = 88) {
+      const angle = (-90 + (value / this.maxGauge) * 180) * Math.PI / 180
+      const cx = 130, cy = 120, r = radius
+      return { x: cx + r * Math.cos(angle), y: cy + r * Math.sin(angle) - 6 }
+    },
+    getNeedleY(value) {
+      const angle = (Math.PI / 180) * this.getNeedleAngle(value)
+      return 100 + 60 * Math.sin(angle)
+    },
     async loadSuburbData(suburb) {
       if (!suburb) return
       
@@ -737,13 +936,16 @@ export default {
       
       try {
         // Load all social data in parallel
-        const [statsResponse, facilitiesResponse, accessibilityResponse, schoolsResponse, childCareResponse, educationStatsResponse] = await Promise.allSettled([
+        const [statsResponse, facilitiesResponse, accessibilityResponse, schoolsResponse, childCareResponse, educationStatsResponse, hospitalsResp, practitionersResp, bedsResp] = await Promise.allSettled([
           socialApi.getFacilityStats(suburb),
           socialApi.getFacilities(suburb),
           socialApi.getFacilityAccessibility(suburb),
           schoolApi.getSchoolsBySuburb(suburb),
           childCareApi.getChildCareBySuburb(suburb),
-          schoolApi.getEducationStatsBySuburb(suburb)
+          schoolApi.getEducationStatsBySuburb(suburb),
+          healthApi.getHospitals(suburb),
+          healthApi.getPractitioners(suburb),
+          healthApi.getBedsPerThousand(suburb)
         ])
 
         // Handle facility stats
@@ -802,6 +1004,27 @@ export default {
           }
         } else {
           this.calculateSchoolStats() // Fallback to manual calculation
+        }
+
+        // Handle hospitals
+        if (hospitalsResp.status === 'fulfilled') {
+          const r = apiUtils.extractData(hospitalsResp.value)
+          if (r.success) {
+            // 0 beds should be hidden already by backend; double-check here
+            this.hospitals = (r.data || []).filter(h => !h.Beds || Number(h.Beds) > 0)
+          }
+        }
+
+        // Handle practitioners
+        if (practitionersResp.status === 'fulfilled') {
+          const r = apiUtils.extractData(practitionersResp.value)
+          if (r.success) this.practitioners = r.data || []
+        }
+
+        // Handle beds per 1000
+        if (bedsResp.status === 'fulfilled') {
+          const r = apiUtils.extractData(bedsResp.value)
+          if (r.success) this.bedsStat = r.data || null
         }
 
       } catch (error) {
@@ -1058,6 +1281,185 @@ export default {
 </script>
 
 <style scoped>
+/* Gauge styles */
+.gauge-svg {
+  width: 100%;
+  filter: drop-shadow(0 8px 20px rgba(0,0,0,.06));
+}
+
+.gauge-container-compact {
+  max-width: 500px;
+  margin: 0 auto;
+}
+.health-wide .section-content { padding-bottom: 8px; }
+.health-tall { min-height: 800px; }
+.health-tall .section-content { min-height: 700px; display: flex; flex-direction: column; }
+.health-grid-wide { 
+  grid-template-columns: 1.2fr 1.2fr; 
+  gap: 2rem; 
+  max-width: none;
+}
+.gauge-tick {
+  fill: #4b5563;
+  font-size: 12px;
+  font-weight: 600;
+}
+.gauge-zero {
+  fill: #6b7280;
+  font-size: 12px;
+}
+.gauge-value {
+  fill: #111827;
+  font-size: 14px;
+  font-weight: 700;
+}
+.gauge-legend {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 12px;
+}
+.gauge-legend.expanded {
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 1.2rem;
+  margin-top: 20px;
+  padding: 12px 20px;
+  background: rgba(248, 250, 252, 0.8);
+  border-radius: 25px;
+  border: 1px solid rgba(226, 232, 240, 0.6);
+  flex-wrap: wrap;
+}
+.gauge-legend .legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: #64748b;
+  font-size: 0.8rem;
+  font-weight: 500;
+  background: rgba(255, 255, 255, 0.7);
+  padding: 0.3rem 0.7rem;
+  border-radius: 15px;
+  border: 1px solid rgba(226, 232, 240, 0.5);
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+.gauge-legend .legend-item:hover {
+  background: rgba(255, 255, 255, 0.9);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+.gauge-legend .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+.gauge-legend .dot.low { background: linear-gradient(135deg, #ef4444, #dc2626); }
+.gauge-legend .dot.medium { background: linear-gradient(135deg, #f59e0b, #d97706); }
+.gauge-legend .dot.high { background: linear-gradient(135deg, #22c55e, #16a34a); }
+
+.health-description {
+  margin-top: 1.5rem;
+  position: relative;
+}
+
+.health-description-content {
+  padding: 1.8rem 2rem;
+  background: linear-gradient(145deg, rgba(248, 250, 252, 0.9), rgba(241, 245, 249, 0.8));
+  border-radius: 20px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 
+    0 20px 25px -5px rgba(0, 0, 0, 0.08),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  transition: all 0.3s ease;
+}
+
+.health-description-content:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 25px 50px -12px rgba(0, 0, 0, 0.12),
+    0 20px 25px -5px rgba(0, 0, 0, 0.08);
+}
+
+.health-description-content::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at 20% 20%, rgba(59, 130, 246, 0.08) 0%, transparent 50%),
+              radial-gradient(circle at 80% 80%, rgba(16, 185, 129, 0.08) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.health-description-content::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: conic-gradient(from 0deg, transparent, rgba(59, 130, 246, 0.03), transparent, rgba(16, 185, 129, 0.03), transparent);
+  animation: rotate-bg 20s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes rotate-bg {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.health-description h4 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 1.2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  position: relative;
+  z-index: 1;
+}
+
+.health-description h4::before {
+  content: '\1F4A1';
+  font-size: 1.2rem;
+  filter: hue-rotate(200deg) brightness(1.1);
+}
+
+.health-description p {
+  font-size: 1rem;
+  line-height: 1.7;
+  color: #374151;
+  margin: 0;
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  position: relative;
+  z-index: 1;
+  text-align: left;
+}
+
+.health-description p::before {
+  content: '"';
+  font-size: 2.5rem;
+  color: rgba(59, 130, 246, 0.2);
+  font-family: Georgia, serif;
+  position: absolute;
+  left: -0.5rem;
+  top: -0.8rem;
+  line-height: 1;
+  z-index: -1;
+}
+
+.empty-hint {
+  padding: 12px 14px;
+  color: #9ca3af;
+}
 .social-page {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   line-height: 1.6;

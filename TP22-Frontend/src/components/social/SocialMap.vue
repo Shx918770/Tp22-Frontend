@@ -19,6 +19,14 @@ export default {
       type: Array,
       default: () => []
     },
+    hospitals: {
+      type: Array,
+      default: () => []
+    },
+    practitioners: {
+      type: Array,
+      default: () => []
+    },
     selectedSuburb: {
       type: String,
       default: ''
@@ -30,6 +38,14 @@ export default {
     showChildCares: {
       type: Boolean,
       default: true
+    },
+    showHospitals: {
+      type: Boolean,
+      default: true
+    },
+    showPractitioners: {
+      type: Boolean,
+      default: true
     }
   },
   data() {
@@ -37,6 +53,8 @@ export default {
       map: null,
       schoolMarkers: [],
       childCareMarkers: [],
+      hospitalMarkers: [],
+      practitionerMarkers: [],
       markerGroup: null
     }
   },
@@ -61,11 +79,29 @@ export default {
       },
       deep: true
     },
+    hospitals: {
+      handler() {
+        this.updateHospitalMarkers()
+      },
+      deep: true
+    },
+    practitioners: {
+      handler() {
+        this.updatePractitionerMarkers()
+      },
+      deep: true
+    },
     showSchools() {
       this.toggleSchoolMarkers()
     },
     showChildCares() {
       this.toggleChildCareMarkers()
+    },
+    showHospitals() {
+      this.toggleHospitalMarkers()
+    },
+    showPractitioners() {
+      this.togglePractitionerMarkers()
     }
   },
   methods: {
@@ -84,6 +120,8 @@ export default {
       // Update markers initially
       this.updateSchoolMarkers()
       this.updateChildCareMarkers()
+      this.updateHospitalMarkers()
+      this.updatePractitionerMarkers()
     },
 
     updateSchoolMarkers() {
@@ -134,6 +172,47 @@ export default {
         }
       })
 
+      this.fitMapToMarkers()
+    },
+
+    updateHospitalMarkers() {
+      this.hospitalMarkers.forEach(marker => {
+        this.markerGroup.removeLayer(marker)
+      })
+      this.hospitalMarkers = []
+      if (!this.hospitals || this.hospitals.length === 0) return
+      this.hospitals.forEach(h => {
+        const lat = parseFloat(h.Latitude || h.latitude)
+        const lng = parseFloat(h.Longitude || h.longitude)
+        const beds = Number(h.Beds ?? h.beds)
+        if (!isNaN(lat) && !isNaN(lng) && (!beds || beds > 0)) {
+          const marker = this.createHospitalMarker(h, { lat, lng })
+          if (marker) {
+            this.hospitalMarkers.push(marker)
+            if (this.showHospitals) this.markerGroup.addLayer(marker)
+          }
+        }
+      })
+      this.fitMapToMarkers()
+    },
+
+    updatePractitionerMarkers() {
+      this.practitionerMarkers.forEach(marker => {
+        this.markerGroup.removeLayer(marker)
+      })
+      this.practitionerMarkers = []
+      if (!this.practitioners || this.practitioners.length === 0) return
+      this.practitioners.forEach(p => {
+        const lat = parseFloat(p.LATITUDE ?? p.latitude)
+        const lng = parseFloat(p.LONGITUDE ?? p.longitude)
+        if (!isNaN(lat) && !isNaN(lng)) {
+          const marker = this.createPractitionerMarker(p, { lat, lng })
+          if (marker) {
+            this.practitionerMarkers.push(marker)
+            if (this.showPractitioners) this.markerGroup.addLayer(marker)
+          }
+        }
+      })
       this.fitMapToMarkers()
     },
 
@@ -205,6 +284,56 @@ export default {
       }
     },
 
+    createHospitalMarker(hospital, { lat, lng }) {
+      try {
+        const hospitalIcon = L.divIcon({
+          className: 'custom-marker hospital-marker',
+          html: '<div class="marker-dot hospital"></div>',
+          iconSize: [20, 20],
+          iconAnchor: [10, 10]
+        })
+        const marker = L.marker([lat, lng], { icon: hospitalIcon })
+        const beds = hospital.Beds ?? hospital.beds
+        const popupContent = `
+          <div class="marker-popup">
+            <h4>${hospital.Name || hospital.name}</h4>
+            <p><strong>Type:</strong> ${hospital.Type || hospital.type}</p>
+            ${beds && Number(beds) > 0 ? `<p><strong>Beds:</strong> ${beds}</p>` : ''}
+            <p><strong>Suburb:</strong> ${hospital.Suburb || hospital.suburb}</p>
+          </div>
+        `
+        marker.bindPopup(popupContent)
+        return marker
+      } catch (error) {
+        console.error('Error creating hospital marker:', error)
+        return null
+      }
+    },
+
+    createPractitionerMarker(prac, { lat, lng }) {
+      try {
+        const practitionerIcon = L.divIcon({
+          className: 'custom-marker practitioner-marker',
+          html: '<div class="marker-dot practitioner"></div>',
+          iconSize: [20, 20],
+          iconAnchor: [10, 10]
+        })
+        const marker = L.marker([lat, lng], { icon: practitionerIcon })
+        const popupContent = `
+          <div class="marker-popup">
+            <h4>${prac.GP || prac.gp}</h4>
+            <p><strong>Address:</strong> ${prac.ADDRESS || prac.address || ''}</p>
+            <p><strong>Suburb:</strong> ${prac.SUBURB || prac.suburb}</p>
+          </div>
+        `
+        marker.bindPopup(popupContent)
+        return marker
+      } catch (error) {
+        console.error('Error creating practitioner marker:', error)
+        return null
+      }
+    },
+
     parseCoordinates(coordinatesString) {
       try {
         if (!coordinatesString) return null
@@ -235,13 +364,19 @@ export default {
       if (this.showChildCares) {
         visibleMarkers.push(...this.childCareMarkers)
       }
+      if (this.showHospitals) {
+        visibleMarkers.push(...this.hospitalMarkers)
+      }
+      if (this.showPractitioners) {
+        visibleMarkers.push(...this.practitionerMarkers)
+      }
       
       if (visibleMarkers.length > 0) {
         const group = new L.featureGroup(visibleMarkers)
         this.map.fitBounds(group.getBounds().pad(0.1))
-      } else if (this.schoolMarkers.length > 0 || this.childCareMarkers.length > 0) {
+      } else if (this.schoolMarkers.length > 0 || this.childCareMarkers.length > 0 || this.hospitalMarkers.length > 0 || this.practitionerMarkers.length > 0) {
         // If no markers are visible but we have data, show all markers for fitting
-        const allMarkers = [...this.schoolMarkers, ...this.childCareMarkers]
+        const allMarkers = [...this.schoolMarkers, ...this.childCareMarkers, ...this.hospitalMarkers, ...this.practitionerMarkers]
         const group = new L.featureGroup(allMarkers)
         this.map.fitBounds(group.getBounds().pad(0.1))
       }
@@ -260,6 +395,26 @@ export default {
     toggleChildCareMarkers() {
       this.childCareMarkers.forEach(marker => {
         if (this.showChildCares) {
+          this.markerGroup.addLayer(marker)
+        } else {
+          this.markerGroup.removeLayer(marker)
+        }
+      })
+    },
+
+    toggleHospitalMarkers() {
+      this.hospitalMarkers.forEach(marker => {
+        if (this.showHospitals) {
+          this.markerGroup.addLayer(marker)
+        } else {
+          this.markerGroup.removeLayer(marker)
+        }
+      })
+    },
+
+    togglePractitionerMarkers() {
+      this.practitionerMarkers.forEach(marker => {
+        if (this.showPractitioners) {
           this.markerGroup.addLayer(marker)
         } else {
           this.markerGroup.removeLayer(marker)
@@ -307,6 +462,14 @@ export default {
 
 :deep(.marker-dot.childcare) {
   background: #e67e22;
+}
+
+:deep(.marker-dot.hospital) {
+  background: #2980b9;
+}
+
+:deep(.marker-dot.practitioner) {
+  background: #27ae60;
 }
 
 :deep(.marker-popup) {

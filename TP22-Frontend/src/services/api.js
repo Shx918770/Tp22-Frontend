@@ -106,6 +106,19 @@ export const socialApi = {
   },
 }
 
+// Health API (Hospitals / Practitioners / Beds per 1000)
+export const healthApi = {
+  getHospitals(suburb) {
+    return api.get(`/health/hospitals`, { params: { suburb } })
+  },
+  getPractitioners(suburb) {
+    return api.get(`/health/practitioners`, { params: { suburb } })
+  },
+  getBedsPerThousand(suburb) {
+    return api.get(`/health/beds-per-1000`, { params: { suburb } })
+  },
+}
+
 // School API
 export const schoolApi = {
   // Get schools by suburb

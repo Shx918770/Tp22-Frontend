@@ -540,4 +540,86 @@ export const apiUtils = {
   },
 }
 
+// Hospitality API (Cafes, Bars, Restaurant Growth)
+export const hospitalityApi = {
+  // Get all cafes for map display
+  getAllCafes() {
+    return api.get('/hospitality/cafes')
+  },
+
+  // Get cafes by suburb
+  getCafesBySuburb(suburb) {
+    return api.get(`/hospitality/cafes/suburb/${encodeURIComponent(suburb)}`)
+  },
+
+  // Get cafes within coordinate bounds
+  getCafesWithinBounds(minLat, maxLat, minLng, maxLng) {
+    return api.get('/hospitality/cafes/bounds', {
+      params: { minLat, maxLat, minLng, maxLng }
+    })
+  },
+
+  // Get cafe details by property ID
+  getCafeDetails(propertyId) {
+    return api.get(`/hospitality/cafes/${propertyId}`)
+  },
+
+  // Get all bars for map display
+  getAllBars() {
+    return api.get('/hospitality/bars')
+  },
+
+  // Get bars by suburb
+  getBarsBySuburb(suburb) {
+    return api.get(`/hospitality/bars/suburb/${encodeURIComponent(suburb)}`)
+  },
+
+  // Get bars within coordinate bounds
+  getBarsWithinBounds(minLat, maxLat, minLng, maxLng) {
+    return api.get('/hospitality/bars/bounds', {
+      params: { minLat, maxLat, minLng, maxLng }
+    })
+  },
+
+  // Get bar details by property ID
+  getBarDetails(propertyId) {
+    return api.get(`/hospitality/bars/${propertyId}`)
+  },
+
+  // Get all restaurant bar growth data
+  getAllGrowthData() {
+    return api.get('/hospitality/growth')
+  },
+
+  // Get growth data by year
+  getGrowthDataByYear(year) {
+    return api.get(`/hospitality/growth/year/${year}`)
+  },
+
+  // Get growth data by suburb
+  getGrowthDataBySuburb(suburb) {
+    return api.get(`/hospitality/growth/suburb/${encodeURIComponent(suburb)}`)
+  },
+
+  // Get all available years
+  getAllYears() {
+    return api.get('/hospitality/growth/years')
+  },
+
+  // Get all available suburbs
+  getAllSuburbs() {
+    return api.get('/hospitality/growth/suburbs')
+  },
+
+  // Get social venue statistics by suburb
+  getHospitalityStats(suburb) {
+    return api.get(`/hospitality/stats/${encodeURIComponent(suburb)}`)
+  },
+
+  // Health check
+  healthCheck() {
+    return api.get('/hospitality/cafes?limit=1')
+  }
+}
+
 export default api

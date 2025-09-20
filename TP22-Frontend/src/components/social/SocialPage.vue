@@ -117,8 +117,8 @@
               <div class="bubble-glow"></div>
             </div>
 
-            <!-- Restaurant Bubble -->
-            <div class="facility-bubble restaurant">
+            <!-- Hospitality Bubble -->
+            <div class="facility-bubble hospitality">
               <div class="bubble-icon">
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
                   <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12V7a1 1 0 0 0-2 0v5a.5.5 0 0 1-1 0V7a1 1 0 0 0-2 0v5a.5.5 0 0 1-1 0V7a1 1 0 0 0-2 0v5a2.5 2.5 0 0 0 2.5 2.5V20a1 1 0 0 0 2 0v-5.5Z" stroke="currentColor" stroke-width="2"/>
@@ -126,10 +126,10 @@
                 </svg>
               </div>
               <div class="bubble-content">
-                <div class="bubble-label">Restaurant</div>
+                <div class="bubble-label">Hospitality</div>
                 <div class="bubble-details">
-                  <span class="detail-pill">{{ facilityStats?.detailedCounts?.RESTAURANT?.Cafe || 15 }} Cafes</span>
-                  <span class="detail-pill">{{ facilityStats?.detailedCounts?.RESTAURANT?.Bar || 8 }} Bars</span>
+                  <span class="detail-pill">{{ hospitalityStats.totalCafes || 0 }} Cafe&Restaurant</span>
+                  <span class="detail-pill">{{ hospitalityStats.totalBars || 0 }} Bars</span>
                 </div>
               </div>
               <div class="bubble-glow"></div>
@@ -148,11 +148,15 @@
                 :childCares="childCares" 
                 :hospitals="hospitals"
                 :practitioners="practitioners"
+                :cafes="cafes"
+                :bars="bars"
                 :selectedSuburb="selectedSuburb"
                 :showSchools="mapLegendState.schools"
                 :showChildCares="mapLegendState.childcare"
                 :showHospitals="mapLegendState.hospitals"
                 :showPractitioners="mapLegendState.practitioners"
+                :showCafes="mapLegendState.cafes"
+                :showBars="mapLegendState.bars"
                 class="social-map-full"
               />
             </div>
@@ -185,15 +189,17 @@
                 </div>
                 <div class="legend-item" 
                      :class="{ 'inactive': !mapLegendState.cafes }"
-                     @click="toggleLegendItem('cafes')">
+                     @click="toggleLegendItem('cafes')"
+                     :title="cafes.length > 150 ? `Showing up to 150 unique locations (highest capacity cafes) out of ${cafes.length} total` : `Showing all ${cafes.length} cafes at unique locations`">
                   <div class="facility-legend-icon facility-legend-cafes"></div>
-                  <span>Cafes</span>
+                  <span>Cafes{{ cafes.length > 150 ? ' (Limited)' : '' }}</span>
                 </div>
                 <div class="legend-item" 
                      :class="{ 'inactive': !mapLegendState.bars }"
-                     @click="toggleLegendItem('bars')">
+                     @click="toggleLegendItem('bars')"
+                     :title="bars.length > 150 ? `Showing up to 150 unique locations (highest capacity bars) out of ${bars.length} total` : `Showing all ${bars.length} bars at unique locations`">
                   <div class="facility-legend-icon facility-legend-bars"></div>
-                  <span>Bars</span>
+                  <span>Bars{{ bars.length > 150 ? ' (Limited)' : '' }}</span>
                 </div>
                 <div class="legend-item" 
                      :class="{ 'inactive': !mapLegendState.childcare }"
@@ -835,7 +841,7 @@
 </template>
 
 <script>
-import { socialApi, schoolApi, childCareApi, apiUtils, healthApi } from '../../services/api.js'
+import { socialApi, schoolApi, childCareApi, apiUtils, healthApi, hospitalityApi } from '../../services/api.js'
 import Header from '../header/Header.vue';
 import SocialMap from './SocialMap.vue'
 
@@ -861,6 +867,14 @@ export default {
         totalChildcare: 0,
         schoolTypes: {}
       },
+      hospitalityStats: {
+        totalCafes: 0,
+        totalBars: 0,
+        totalVenues: 0
+      },
+      cafes: [],
+      bars: [],
+      growthData: [],
       loading: false,
       error: null,
       selectedSchool: null,
@@ -871,7 +885,7 @@ export default {
         hospitals: true,
         playgrounds: true,
         communityCenter: true,
-        cafes: true,
+        cafes: true, // Re-enabled with 150 unique locations limit
         bars: true,
         childcare: true,
         practitioners: true
@@ -1083,7 +1097,7 @@ export default {
       
       try {
         // Load all social data in parallel
-        const [statsResponse, facilitiesResponse, accessibilityResponse, schoolsResponse, childCareResponse, educationStatsResponse, hospitalsResp, practitionersResp, bedsResp] = await Promise.allSettled([
+        const [statsResponse, facilitiesResponse, accessibilityResponse, schoolsResponse, childCareResponse, educationStatsResponse, hospitalsResp, practitionersResp, bedsResp, hospitalityStatsResp, cafesResp, barsResp] = await Promise.allSettled([
           socialApi.getFacilityStats(suburb),
           socialApi.getFacilities(suburb),
           socialApi.getFacilityAccessibility(suburb),
@@ -1092,7 +1106,10 @@ export default {
           schoolApi.getEducationStatsBySuburb(suburb),
           healthApi.getHospitals(suburb),
           healthApi.getPractitioners(suburb),
-          healthApi.getBedsPerThousand(suburb)
+          healthApi.getBedsPerThousand(suburb),
+          hospitalityApi.getHospitalityStats(suburb),
+          hospitalityApi.getCafesBySuburb(suburb),
+          hospitalityApi.getBarsBySuburb(suburb)
         ])
 
         // Handle facility stats
@@ -1172,6 +1189,30 @@ export default {
         if (bedsResp.status === 'fulfilled') {
           const r = apiUtils.extractData(bedsResp.value)
           if (r.success) this.bedsStat = r.data || null
+        }
+
+        // Handle hospitality statistics
+        if (hospitalityStatsResp.status === 'fulfilled') {
+          const r = apiUtils.extractData(hospitalityStatsResp.value)
+          if (r.success) {
+            this.hospitalityStats = {
+              totalCafes: r.data.totalCafes || 0,
+              totalBars: r.data.totalBars || 0,
+              totalVenues: r.data.totalVenues || 0
+            }
+          }
+        }
+
+        // Handle cafes (re-enabled with 150 unique locations limit)
+        if (cafesResp.status === 'fulfilled') {
+          const r = apiUtils.extractData(cafesResp.value)
+          if (r.success) this.cafes = r.data || []
+        }
+
+        // Handle bars (limited to 150 unique locations)
+        if (barsResp.status === 'fulfilled') {
+          const r = apiUtils.extractData(barsResp.value)
+          if (r.success) this.bars = r.data || []
         }
 
       } catch (error) {
@@ -2072,7 +2113,7 @@ export default {
   color: #FF9800;
 }
 
-.facility-bubble.restaurant .bubble-icon {
+.facility-bubble.hospitality .bubble-icon {
   background: linear-gradient(135deg, rgba(156, 39, 176, 0.2), rgba(156, 39, 176, 0.3));
   color: #9C27B0;
 }
@@ -2124,7 +2165,7 @@ export default {
   color: #FF9800;
 }
 
-.facility-bubble.restaurant .bubble-number {
+.facility-bubble.hospitality .bubble-number {
   color: #9C27B0;
 }
 
@@ -3102,13 +3143,13 @@ export default {
 }
 
 .facility-legend-schools { background: #e74c3c; }
-.facility-legend-hospitals { background: #3498db; }
+.facility-legend-hospitals { background: #2980b9; }
 .facility-legend-playgrounds { background: #27ae60; }
 .facility-legend-community { background: #f39c12; }
-.facility-legend-cafes { background: #8e44ad; }
-.facility-legend-bars { background: #2c3e50; }
-.facility-legend-childcare { background: #ff6b35; }
-.facility-legend-practitioners { background: #16a085; }
+.facility-legend-cafes { background: #9C27B0; }
+.facility-legend-bars { background: #673AB7; }
+.facility-legend-childcare { background: #e67e22; }
+.facility-legend-practitioners { background: #27ae60; }
 
 /* Education Detail Section */
 .education-detail {
@@ -3878,12 +3919,12 @@ export default {
   transform: translateY(-2px);
 }
 
-/* Restaurant hover effects */
-.facility-bubble.restaurant:hover {
+/* Hospitality hover effects */
+.facility-bubble.hospitality:hover {
   box-shadow: 0 25px 60px rgba(156, 39, 176, 0.3);
 }
 
-.facility-bubble.restaurant .bubble-glow {
+.facility-bubble.hospitality .bubble-glow {
   background: radial-gradient(circle, rgba(156, 39, 176, 0.1) 0%, transparent 70%);
 }
 

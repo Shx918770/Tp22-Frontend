@@ -27,6 +27,14 @@ export default {
       type: Array,
       default: () => []
     },
+    cafes: {
+      type: Array,
+      default: () => []
+    },
+    bars: {
+      type: Array,
+      default: () => []
+    },
     selectedSuburb: {
       type: String,
       default: ''
@@ -46,6 +54,14 @@ export default {
     showPractitioners: {
       type: Boolean,
       default: true
+    },
+    showCafes: {
+      type: Boolean,
+      default: true
+    },
+    showBars: {
+      type: Boolean,
+      default: true
     }
   },
   data() {
@@ -55,6 +71,8 @@ export default {
       childCareMarkers: [],
       hospitalMarkers: [],
       practitionerMarkers: [],
+      cafeMarkers: [],
+      barMarkers: [],
       markerGroup: null
     }
   },
@@ -91,6 +109,18 @@ export default {
       },
       deep: true
     },
+    cafes: {
+      handler() {
+        this.updateCafeMarkers()
+      },
+      deep: true
+    },
+    bars: {
+      handler() {
+        this.updateBarMarkers()
+      },
+      deep: true
+    },
     showSchools() {
       this.toggleSchoolMarkers()
     },
@@ -102,6 +132,12 @@ export default {
     },
     showPractitioners() {
       this.togglePractitionerMarkers()
+    },
+    showCafes() {
+      this.toggleCafeMarkers()
+    },
+    showBars() {
+      this.toggleBarMarkers()
     }
   },
   methods: {
@@ -122,6 +158,8 @@ export default {
       this.updateChildCareMarkers()
       this.updateHospitalMarkers()
       this.updatePractitionerMarkers()
+      this.updateCafeMarkers() // Re-enabled with 150 unique locations limit
+      this.updateBarMarkers()
     },
 
     updateSchoolMarkers() {
@@ -213,6 +251,142 @@ export default {
           }
         }
       })
+      this.fitMapToMarkers()
+    },
+
+    updateCafeMarkers() {
+      // Clear existing cafe markers
+      this.cafeMarkers.forEach(marker => {
+        this.markerGroup.removeLayer(marker)
+      })
+      this.cafeMarkers = []
+
+      if (!this.cafes || this.cafes.length === 0) return
+
+      // Limit cafes to maximum 150 for performance
+      const maxCafes = 150
+      
+      // Sort cafes by seat capacity (descending) to show the most significant ones first
+      const sortedCafes = [...this.cafes].sort((a, b) => {
+        const seatsA = parseInt(a.numOfSeats) || 0
+        const seatsB = parseInt(b.numOfSeats) || 0
+        return seatsB - seatsA
+      })
+      
+      // Remove duplicate coordinates - keep the one with highest seat capacity
+      const uniqueLocationCafes = []
+      const seenCoordinates = new Set()
+      
+      for (const cafe of sortedCafes) {
+        if (cafe.latitude && cafe.longitude) {
+          // Create coordinate key with some precision to handle minor differences
+          const lat = parseFloat(cafe.latitude).toFixed(6)
+          const lng = parseFloat(cafe.longitude).toFixed(6)
+          const coordKey = `${lat},${lng}`
+          
+          if (!seenCoordinates.has(coordKey)) {
+            seenCoordinates.add(coordKey)
+            uniqueLocationCafes.push(cafe)
+            
+            // Stop when we have enough unique locations
+            if (uniqueLocationCafes.length >= maxCafes) {
+              break
+            }
+          }
+        }
+      }
+      
+      const cafesToShow = uniqueLocationCafes
+      
+      const cafesWithCoords = sortedCafes.filter(c => c.latitude && c.longitude).length
+      const duplicatesFiltered = cafesWithCoords - uniqueLocationCafes.length
+      
+      console.log(`Displaying ${cafesToShow.length} unique cafe locations out of ${this.cafes.length} total cafes (max: ${maxCafes})`)
+      if (duplicatesFiltered > 0) {
+        console.log(`Filtered out ${duplicatesFiltered} cafes with duplicate coordinates`)
+      }
+
+      // Add cafe markers (limited quantity)
+      cafesToShow.forEach(cafe => {
+        if (cafe.latitude && cafe.longitude) {
+          const marker = this.createCafeMarker(cafe)
+          if (marker) {
+            this.cafeMarkers.push(marker)
+            if (this.showCafes) {
+              this.markerGroup.addLayer(marker)
+            }
+          }
+        }
+      })
+
+      this.fitMapToMarkers()
+    },
+
+    updateBarMarkers() {
+      // Clear existing bar markers
+      this.barMarkers.forEach(marker => {
+        this.markerGroup.removeLayer(marker)
+      })
+      this.barMarkers = []
+
+      if (!this.bars || this.bars.length === 0) return
+
+      // Limit bars to maximum 150 for performance
+      const maxBars = 150
+      
+      // Sort bars by patron capacity (descending) to show the most significant ones first
+      const sortedBars = [...this.bars].sort((a, b) => {
+        const patronsA = parseInt(a.numOfPatrons) || 0
+        const patronsB = parseInt(b.numOfPatrons) || 0
+        return patronsB - patronsA
+      })
+      
+      // Remove duplicate coordinates - keep the one with highest patron capacity
+      const uniqueLocationBars = []
+      const seenCoordinates = new Set()
+      
+      for (const bar of sortedBars) {
+        if (bar.latitude && bar.longitude) {
+          // Create coordinate key with some precision to handle minor differences
+          const lat = parseFloat(bar.latitude).toFixed(6)
+          const lng = parseFloat(bar.longitude).toFixed(6)
+          const coordKey = `${lat},${lng}`
+          
+          if (!seenCoordinates.has(coordKey)) {
+            seenCoordinates.add(coordKey)
+            uniqueLocationBars.push(bar)
+            
+            // Stop when we have enough unique locations
+            if (uniqueLocationBars.length >= maxBars) {
+              break
+            }
+          }
+        }
+      }
+      
+      const barsToShow = uniqueLocationBars
+      
+      const barsWithCoords = sortedBars.filter(b => b.latitude && b.longitude).length
+      const duplicatesFiltered = barsWithCoords - uniqueLocationBars.length
+      
+      console.log(`Displaying ${barsToShow.length} unique locations out of ${this.bars.length} total bars (max: ${maxBars})`)
+      if (duplicatesFiltered > 0) {
+        console.log(`Filtered out ${duplicatesFiltered} bars with duplicate coordinates`)
+      }
+
+      // Add bar markers (limited quantity)
+      barsToShow.forEach(bar => {
+        if (bar.latitude && bar.longitude) {
+          const marker = this.createBarMarker(bar)
+          if (marker) {
+            this.barMarkers.push(marker)
+            if (this.showBars) {
+              this.markerGroup.addLayer(marker)
+            }
+          }
+        }
+      })
+
       this.fitMapToMarkers()
     },
 
@@ -334,6 +508,81 @@ export default {
       }
     },
 
+    createCafeMarker(cafe) {
+      try {
+        const lat = parseFloat(cafe.latitude)
+        const lng = parseFloat(cafe.longitude)
+        
+        if (isNaN(lat) || isNaN(lng)) return null
+
+        // Create custom icon for cafe
+        const cafeIcon = L.divIcon({
+          className: 'custom-marker cafe-marker',
+          html: '<div class="marker-dot cafe"></div>',
+          iconSize: [20, 20],
+          iconAnchor: [10, 10]
+        })
+
+        const marker = L.marker([lat, lng], { icon: cafeIcon })
+        
+        // Add popup with required fields
+        const popupContent = `
+          <div class="marker-popup">
+            <h4>${cafe.tradingName || 'Cafe'}</h4>
+            <p><strong>Address:</strong> ${cafe.businessAddress || ''}</p>
+            <p><strong>Industry:</strong> ${cafe.industryDescription || ''}</p>
+            <p><strong>Seats:</strong> ${cafe.numOfSeats || 'N/A'}</p>
+            <p style="font-size: 0.8em; color: #666; margin-top: 5px;">
+              <em>Showing highest capacity cafe at this location</em>
+            </p>
+          </div>
+        `
+        marker.bindPopup(popupContent)
+
+        return marker
+      } catch (error) {
+        console.error('Error creating cafe marker:', error)
+        return null
+      }
+    },
+
+    createBarMarker(bar) {
+      try {
+        const lat = parseFloat(bar.latitude)
+        const lng = parseFloat(bar.longitude)
+        
+        if (isNaN(lat) || isNaN(lng)) return null
+
+        // Create custom icon for bar
+        const barIcon = L.divIcon({
+          className: 'custom-marker bar-marker',
+          html: '<div class="marker-dot bar"></div>',
+          iconSize: [20, 20],
+          iconAnchor: [10, 10]
+        })
+
+        const marker = L.marker([lat, lng], { icon: barIcon })
+        
+        // Add popup with required fields
+        const popupContent = `
+          <div class="marker-popup">
+            <h4>${bar.tradingName || 'Bar'}</h4>
+            <p><strong>Address:</strong> ${bar.businessAddress || ''}</p>
+            <p><strong>Patrons:</strong> ${bar.numOfPatrons || 'N/A'}</p>
+            <p style="font-size: 0.8em; color: #666; margin-top: 5px;">
+              <em>Showing highest capacity bar at this location</em>
+            </p>
+          </div>
+        `
+        marker.bindPopup(popupContent)
+
+        return marker
+      } catch (error) {
+        console.error('Error creating bar marker:', error)
+        return null
+      }
+    },
+
     parseCoordinates(coordinatesString) {
       try {
         if (!coordinatesString) return null
@@ -420,6 +669,26 @@ export default {
           this.markerGroup.removeLayer(marker)
         }
       })
+    },
+
+    toggleCafeMarkers() {
+      this.cafeMarkers.forEach(marker => {
+        if (this.showCafes) {
+          this.markerGroup.addLayer(marker)
+        } else {
+          this.markerGroup.removeLayer(marker)
+        }
+      })
+    },
+
+    toggleBarMarkers() {
+      this.barMarkers.forEach(marker => {
+        if (this.showBars) {
+          this.markerGroup.addLayer(marker)
+        } else {
+          this.markerGroup.removeLayer(marker)
+        }
+      })
     }
   }
 }
@@ -470,6 +739,14 @@ export default {
 
 :deep(.marker-dot.practitioner) {
   background: #27ae60;
+}
+
+:deep(.marker-dot.cafe) {
+  background: #9C27B0;
+}
+
+:deep(.marker-dot.bar) {
+  background: #673AB7;
 }
 
 :deep(.marker-popup) {

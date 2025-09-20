@@ -338,16 +338,21 @@
                   </svg>
                 </div>
                 <h3>List of School</h3>
-                <button class="sort-btn" @click="toggleSort">
-                  {{ sortSchoolsAlphabetically ? 'Original Order' : 'Sort A-Z' }}
-                </button>
+                <select v-model="schoolFilter" class="healthcare-filter">
+                  <option value="all">All Types</option>
+                  <option value="primary">Primary</option>
+                  <option value="secondary">Secondary</option>
+                  <option value="special">Special</option>
+                  <option value="pri/sec">PRI/SEC</option>
+                  <option value="childcare">Childcare</option>
+                </select>
               </div>
               <div class="section-content">
                 <div class="school-list">
-                  <div v-for="school in sortedSchools" :key="school.schoolNo" class="school-item">
-                    <div class="school-name">{{ school.schoolName }}</div>
-                    <div class="school-type">{{ school.schoolType }}</div>
-                    <div class="school-suburb">{{ school.suburb }}</div>
+                  <div v-for="item in filteredSchoolList" :key="item.schoolNo || item.ref" class="school-item">
+                    <div class="school-name">{{ item.isChildcare ? item.name : item.schoolName }}</div>
+                    <div class="school-type">{{ item.isChildcare ? 'Childcare' : item.schoolType }}</div>
+                    <div class="school-suburb">{{ item.isChildcare ? item.suburbname : item.suburb }}</div>
                   </div>
                 </div>
               </div>
@@ -872,6 +877,7 @@ export default {
         practitioners: true
       },
       healthcareFilter: 'all', // 'all', 'public', 'private', 'practitioner'
+      schoolFilter: 'all', // 'all', 'primary', 'secondary', 'special', 'childcare'
       maxGauge: 8
     }
   },
@@ -909,6 +915,23 @@ export default {
         return this.practitioners.map(p => ({ ...p, isP: true }))
       }
       return []
+    },
+    filteredSchoolList() {
+      // Combine schools and childcares
+      const allEducationFacilities = [
+        ...this.schools,
+        ...this.childCares.map(c => ({ ...c, isChildcare: true, schoolType: 'childcare' }))
+      ]
+      
+      if (this.schoolFilter === 'all') {
+        return allEducationFacilities
+      } else if (this.schoolFilter === 'childcare') {
+        return this.childCares.map(c => ({ ...c, isChildcare: true, schoolType: 'childcare' }))
+      } else if (this.schoolFilter === 'pri/sec') {
+        return this.schools.filter(s => s.schoolType?.toLowerCase() === 'pri/sec')
+      } else {
+        return this.schools.filter(s => s.schoolType?.toLowerCase() === this.schoolFilter.toLowerCase())
+      }
     }
   },
   watch: {

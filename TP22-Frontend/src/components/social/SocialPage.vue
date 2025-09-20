@@ -99,7 +99,7 @@
             </div>
 
             <!-- Recreation Bubble -->
-            <div class="facility-bubble recreation">
+            <div class="facility-bubble recreation" @click="scrollToCommunityConditionsDetail">
               <div class="bubble-icon">
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
                   <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2"/>
@@ -576,6 +576,96 @@
                     <div class="school-name">{{ item.isP ? item.gp : item.name }}</div>
                     <div class="school-type">{{ item.isP ? 'Practitioner' : item.type }}</div>
                     <div v-if="!item.isP && item.beds && Number(item.beds) > 0" class="school-beds">Beds: {{ item.beds }}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Community Center Conditions Detail Section -->
+      <section id="community-conditions-detail" class="education-detail">
+        <div class="container">
+          <div class="detail-header">
+            <h2>Community Center Facility Conditions</h2>
+            <p>Assessment of community center facility conditions in {{ selectedSuburb }}</p>
+          </div>
+          
+          <div class="community-conditions-content">
+            <!-- No data message -->
+            <div v-if="communityCenters.length === 0" class="no-data-message">
+              <div class="no-data-icon">&#x1F3E2;</div>
+              <p>No community centers found in {{ selectedSuburb }}</p>
+            </div>
+            
+            <!-- Community Centers Condition Assessment -->
+            <div v-else class="conditions-assessment">
+              <div class="assessment-header">
+                <div class="header-left">
+                  <h3>Facility Name</h3>
+                </div>
+                <div class="header-right">
+                  <h3>Condition Rating</h3>
+                  <!-- Simple scale line with markers -->
+                  <div class="simple-scale">
+                    <div class="scale-line-simple"></div>
+                    <div class="scale-markers-simple">
+                      <div class="marker-simple" style="left: 0%;">
+                        <div class="marker-number">1</div>
+                        <div class="marker-tick"></div>
+                      </div>
+                      <div class="marker-simple" style="left: 25%;">
+                        <div class="marker-number">2</div>
+                        <div class="marker-tick"></div>
+                      </div>
+                      <div class="marker-simple" style="left: 50%;">
+                        <div class="marker-number">3</div>
+                        <div class="marker-tick"></div>
+                      </div>
+                      <div class="marker-simple" style="left: 75%;">
+                        <div class="marker-number">4</div>
+                        <div class="marker-tick"></div>
+                      </div>
+                      <div class="marker-simple" style="left: 100%;">
+                        <div class="marker-number">5</div>
+                        <div class="marker-tick"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Facility Rows -->
+              <div class="assessment-rows">
+                <div 
+                  v-for="(center, index) in communityCenters" 
+                  :key="index"
+                  class="assessment-row"
+                >
+                  <div class="name-column">
+                    <div class="facility-main-info">
+                      <div class="facility-name">{{ center.name || 'Unnamed Community Center' }}</div>
+                      <div class="facility-type" v-if="center.sportsPlayed">
+                        {{ center.sportsPlayed }}
+                      </div>
+                    </div>
+                    <div class="facility-badge">
+                      <span class="badge-score">{{ getConditionRating(center.conditionOfFacility) }}/5</span>
+                    </div>
+                  </div>
+                  <div class="rating-column">
+                    <div class="condition-bar">
+                      <div 
+                        class="condition-fill" 
+                        :style="{ width: `${getConditionPercentage(center.conditionOfFacility)}%` }"
+                        :class="getConditionClass(center.conditionOfFacility)"
+                      ></div>
+                      <div 
+                        class="condition-dot"
+                        :style="{ left: `${getConditionPercentage(center.conditionOfFacility)}%` }"
+                      ></div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1117,6 +1207,96 @@ export default {
         window.scrollTo({ top: y, behavior: 'smooth' });
       }
     },
+
+    scrollToCommunityConditionsDetail() {
+      const el = document.getElementById('community-conditions-detail')
+      if (el) {
+        // Scroll with offset to avoid covering the title
+        const yOffset = -80; // Adjust this value as needed
+        const y = el.getBoundingClientRect().top + window.pageYOffset + yOffset;
+        window.scrollTo({ top: y, behavior: 'smooth' });
+      }
+    },
+
+    getConditionRating(condition) {
+      // Convert condition text to numerical rating (1-5)
+      if (!condition) return 0;
+      
+      const conditionUpper = condition.toString().toUpperCase();
+      
+      // Map exact database values to ratings (based on backend model)
+      const conditionMap = {
+        '1. VERY POOR': 1,
+        '2. POOR': 2,
+        '3. AVERAGE': 3,
+        '4. GOOD': 4,
+        '5. VERY GOOD': 5
+      };
+      
+      // Check for exact matches first
+      if (conditionMap[conditionUpper]) {
+        return conditionMap[conditionUpper];
+      }
+      
+      // Check for partial matches (fallback)
+      if (conditionUpper.includes('VERY POOR')) return 1;
+      if (conditionUpper.includes('POOR')) return 2;
+      if (conditionUpper.includes('AVERAGE')) return 3;
+      if (conditionUpper.includes('VERY GOOD')) return 5;
+      if (conditionUpper.includes('GOOD')) return 4;
+      
+      // Try to parse as number if it's numeric
+      const numericValue = parseFloat(condition);
+      if (!isNaN(numericValue)) {
+        return Math.max(1, Math.min(5, numericValue));
+      }
+      
+      console.log('Unknown condition format:', condition);
+      return 0; // Return 0 for unknown conditions
+    },
+
+    getConditionPercentage(condition) {
+      // Convert rating to percentage for progress bar (1-5 scale)
+      const rating = this.getConditionRating(condition);
+      if (rating === 0) return 0; // No data
+      return ((rating - 1) / 4) * 100; // Map 1-5 to 0-100%
+    },
+
+    getConditionClass(condition) {
+      // Return CSS class based on condition rating
+      const rating = this.getConditionRating(condition);
+      
+      if (rating <= 2) return 'condition-poor';
+      if (rating <= 3) return 'condition-average';
+      if (rating <= 4) return 'condition-good';
+      return 'condition-excellent';
+    },
+
+    getConditionText(condition) {
+      // Return descriptive text for the condition
+      if (!condition || condition === null || condition === undefined) {
+        return 'No Data';
+      }
+      
+      const conditionUpper = condition.toString().toUpperCase();
+      
+      // Map exact database values to readable text
+      const conditionTextMap = {
+        '1. VERY POOR': 'Very Poor',
+        '2. POOR': 'Poor',
+        '3. AVERAGE': 'Average',
+        '4. GOOD': 'Good',
+        '5. VERY GOOD': 'Very Good'
+      };
+      
+      // Return mapped text if found
+      if (conditionTextMap[conditionUpper]) {
+        return conditionTextMap[conditionUpper];
+      }
+      
+      // Fallback: return the original condition text
+      return condition;
+    },
     getNeedleAngle(value) {
       // Map 0 -> -90deg (left), 3.2 -> ~0deg, 3.8 -> ~20deg, 8 -> +90deg (right limit)
       const v = Math.max(0, Math.min(8, Number(value || 0)))
@@ -1409,6 +1589,12 @@ export default {
           if (r.success) {
             this.communityCenters = r.data || []
             console.log('Community Centers loaded:', this.communityCenters.length, 'community centers for', suburb)
+            // Debug: Log the first few community centers to check data structure
+            if (this.communityCenters.length > 0) {
+              console.log('Sample community center data:', this.communityCenters[0])
+              console.log('conditionOfFacility values:', this.communityCenters.map(c => c.conditionOfFacility))
+              console.log('All field names:', Object.keys(this.communityCenters[0]))
+            }
           } else {
             console.error('Failed to load community centers:', r.message)
             this.communityCenters = []
@@ -4639,6 +4825,524 @@ export default {
   
   .stage-year {
     font-size: 1rem;
+  }
+}
+
+/* Community Center Conditions Styles */
+.community-conditions-content {
+  padding: 2rem 0;
+}
+
+.no-data-message {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: linear-gradient(135deg, rgba(248, 250, 252, 0.95), rgba(241, 245, 249, 0.9));
+  border-radius: 20px;
+  border: 2px dashed rgba(148, 163, 184, 0.4);
+}
+
+.no-data-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+}
+
+.conditions-assessment {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.9));
+  border-radius: 24px;
+  padding: 2rem;
+  backdrop-filter: blur(30px);
+  box-shadow: 
+    0 20px 60px rgba(0, 0, 0, 0.08),
+    0 8px 25px rgba(0, 0, 0, 0.05);
+  border: 2px solid rgba(255, 255, 255, 0.4);
+}
+
+.assessment-header {
+  display: grid;
+  grid-template-columns: 1.5fr 3.5fr;
+  gap: 2rem;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+}
+
+.header-left h3,
+.header-right h3 {
+  color: #1e293b;
+  font-weight: 800;
+  font-size: 1.4rem;
+  margin-bottom: 1rem;
+  font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+  letter-spacing: -0.02em;
+  background: linear-gradient(135deg, #1e293b 0%, #3b82f6 50%, #10b981 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Simple scale line design */
+.simple-scale {
+  position: relative;
+  height: 40px;
+  margin-top: 1rem;
+  padding: 0 1rem;
+}
+
+.scale-line-simple {
+  position: absolute;
+  top: 20px;
+  left: 1rem;
+  right: 1rem;
+  height: 3px;
+  background: linear-gradient(90deg, #ef4444 0%, #f59e0b 25%, #fbbf24 50%, #22c55e 75%, #10b981 100%);
+  border-radius: 2px;
+}
+
+.scale-markers-simple {
+  position: relative;
+  height: 100%;
+}
+
+.marker-simple {
+  position: absolute;
+  top: 0;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.marker-number {
+  margin-bottom: 1px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #64748b;
+}
+
+.marker-tick {
+  width: 2px;
+  height: 17px;
+  background: #64748b;
+}
+
+/* Assessment Rows */
+.assessment-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin-top: 1.5rem;
+}
+
+.assessment-row {
+  display: grid;
+  grid-template-columns: 1.5fr 3.5fr;
+  gap: 2rem;
+  align-items: center;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(20px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
+}
+
+.assessment-row:hover {
+  background: rgba(255, 255, 255, 0.95);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.12);
+  border-color: rgba(16, 185, 129, 0.3);
+}
+
+.assessment-row:last-child {
+  margin-bottom: 0;
+}
+
+.name-column {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.facility-main-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.facility-name {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #1e293b;
+  line-height: 1.4;
+  font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+  letter-spacing: -0.005em;
+  margin-bottom: 0.3rem;
+}
+
+.facility-type {
+  display: inline-block;
+  color: #f59e0b;
+  font-weight: 500;
+  font-size: 0.7rem;
+  background: rgba(251, 191, 36, 0.08);
+  padding: 0.1rem 0.4rem;
+  border-radius: 8px;
+  text-transform: capitalize;
+  letter-spacing: 0.2px;
+  border: 1px solid rgba(251, 191, 36, 0.15);
+  width: fit-content;
+}
+
+.facility-badge {
+  background: #10b981;
+  color: white;
+  padding: 0.2rem 0.4rem;
+  border-radius: 6px;
+  text-align: center;
+  box-shadow: 0 1px 3px rgba(16, 185, 129, 0.2);
+  min-width: 35px;
+}
+
+.badge-score {
+  font-weight: 600;
+  font-size: 0.7rem;
+}
+
+.rating-column {
+  position: relative;
+}
+
+.condition-bar {
+  position: relative;
+  height: 16px;
+  background: #f1f5f9;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  overflow: hidden;
+  margin: 0 1rem;
+}
+
+.condition-fill {
+  height: 100%;
+  border-radius: 8px;
+  transition: all 0.6s ease;
+}
+
+.condition-dot {
+  position: absolute;
+  top: -4px;
+  width: 20px;
+  height: 20px;
+  background: #22c55e;
+  border-radius: 50%;
+  border: 3px solid white;
+  box-shadow: 0 3px 10px rgba(34, 197, 94, 0.4);
+  transform: translateX(-50%);
+  transition: all 0.6s ease;
+  z-index: 1;
+}
+
+/* Condition colors */
+.condition-fill.condition-poor {
+  background: #ef4444;
+}
+
+.condition-fill.condition-average {
+  background: #f59e0b;
+}
+
+.condition-fill.condition-good {
+  background: #22c55e;
+}
+
+.condition-fill.condition-excellent {
+  background: #10b981;
+}
+
+.conditions-header {
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+  gap: 2rem;
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 2px solid rgba(148, 163, 184, 0.2);
+}
+
+.facility-column h3,
+.rating-column h3 {
+  color: #1e293b;
+  font-weight: 700;
+  font-size: 1.4rem;
+  margin-bottom: 0.5rem;
+}
+
+.facility-column p {
+  color: #64748b;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.rating-scale {
+  margin-top: 1rem;
+}
+
+.scale-markers {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.scale-marker {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #64748b;
+  width: 20px;
+  text-align: center;
+}
+
+.scale-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 0.5rem;
+}
+
+.scale-label {
+  font-size: 0.75rem;
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+.conditions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.condition-item {
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+  gap: 2rem;
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  transition: all 0.3s ease;
+  align-items: center;
+}
+
+.condition-item:hover {
+  background: rgba(255, 255, 255, 0.8);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.facility-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.facility-name {
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: #1e293b;
+  line-height: 1.3;
+}
+
+.facility-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.facility-address {
+  color: #64748b;
+  font-size: 0.9rem;
+}
+
+.facility-sports {
+  color: #f39c12;
+  font-size: 0.85rem;
+  font-weight: 500;
+  background: rgba(243, 156, 18, 0.1);
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+  display: inline-block;
+  width: fit-content;
+}
+
+.condition-rating {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.rating-bar {
+  width: 100%;
+  max-width: 300px;
+}
+
+.rating-bar-full {
+  width: 100%;
+}
+
+.rating-scale-visual {
+  width: 100%;
+}
+
+.rating-track-points {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 0.75rem;
+  position: relative;
+}
+
+.rating-track-points::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: #e2e8f0;
+  border-radius: 2px;
+  z-index: 0;
+}
+
+.rating-point {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #e2e8f0;
+  border: 3px solid white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 1;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.rating-point.active {
+  background: #22c55e;
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+}
+
+.point-number {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #64748b;
+}
+
+.rating-point.active .point-number {
+  color: white;
+}
+
+.rating-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0.5rem;
+}
+
+.rating-raw {
+  font-size: 0.8rem;
+  color: #94a3b8;
+  font-style: italic;
+}
+
+.rating-track {
+  width: 100%;
+  height: 12px;
+  background: #e2e8f0;
+  border-radius: 6px;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 0.75rem;
+}
+
+.rating-fill {
+  height: 100%;
+  border-radius: 6px;
+  transition: all 0.6s ease;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.rating-dot {
+  width: 16px;
+  height: 16px;
+  background: #22c55e;
+  border-radius: 50%;
+  border: 3px solid white;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  margin-right: -8px;
+  position: relative;
+  z-index: 1;
+}
+
+.rating-fill.condition-poor {
+  background: linear-gradient(90deg, #ef4444, #dc2626);
+}
+
+.rating-fill.condition-average {
+  background: linear-gradient(90deg, #f59e0b, #d97706);
+}
+
+.rating-fill.condition-good {
+  background: linear-gradient(90deg, #22c55e, #16a34a);
+}
+
+.rating-fill.condition-excellent {
+  background: linear-gradient(90deg, #10b981, #059669);
+}
+
+.rating-value {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.rating-number {
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: #1e293b;
+}
+
+.rating-text {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #64748b;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .assessment-header {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .assessment-row {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .conditions-assessment {
+    padding: 1.5rem;
+  }
+  
+  .condition-scale {
+    margin-top: 1rem;
   }
 }
 </style>

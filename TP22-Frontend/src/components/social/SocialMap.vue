@@ -760,8 +760,8 @@ export default {
     createCommunityCenterMarker(center) {
       try {
         // Parse latitude and longitude from the center object
-        const lat = parseFloat(center.LATITUDE || center.latitude)
-        const lng = parseFloat(center.LONGITUDE || center.longitude)
+        const lat = parseFloat(center.latitude || center.LATITUDE)
+        const lng = parseFloat(center.longitude || center.LONGITUDE)
         
         if (isNaN(lat) || isNaN(lng)) {
           console.warn('Invalid coordinates for community center:', center)
@@ -781,11 +781,12 @@ export default {
         // Add popup
         const popupContent = `
           <div class="marker-popup">
-            <h4>${center.NAME || center.name || 'Community Center'}</h4>
+            <h4>${center.name || center.NAME || 'Community Center'}</h4>
             <p><strong>Type:</strong> Community Center</p>
-            <p><strong>Address:</strong> ${center.ADDRESS || center.address || 'N/A'}</p>
-            <p><strong>Suburb:</strong> ${center.SUBURB || center.suburb || 'N/A'}</p>
-            ${center.SPORTS_TYPE ? `<p><strong>Sports:</strong> ${center.SPORTS_TYPE}</p>` : ''}
+            <p><strong>Address:</strong> ${center.fullAddress || center.streetName + ' ' + center.streetType || 'N/A'}</p>
+            <p><strong>Suburb:</strong> ${center.suburb || center.SUBURB || 'N/A'}</p>
+            ${center.sportsPlayed || center.SPORTS_PLAYED ? `<p><strong>Sports:</strong> ${center.sportsPlayed || center.SPORTS_PLAYED}</p>` : ''}
+            <p><strong>Condition:</strong> ${center.conditionOfFacility || 'N/A'}</p>
           </div>
         `
         marker.bindPopup(popupContent)

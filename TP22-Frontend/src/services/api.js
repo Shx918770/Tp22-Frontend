@@ -540,6 +540,78 @@ export const apiUtils = {
   },
 }
 
+// Recreation API (Community Centers, Playgrounds)
+export const recreationApi = {
+  // Get all community centers
+  getAllCommunityCenters() {
+    return api.get('/recreation/community-centers')
+  },
+
+  // Get community centers by suburb
+  getCommunityCentersBySuburb(suburb) {
+    return api.get(`/recreation/community-centers/suburb/${encodeURIComponent(suburb)}`)
+  },
+
+  // Get community centers by sports type
+  getCommunityCentersBySports(sportsType) {
+    return api.get(`/recreation/community-centers/sports/${encodeURIComponent(sportsType)}`)
+  },
+
+  // Get community centers within geographic area
+  getCommunityCentersInArea(minLat, maxLat, minLng, maxLng) {
+    return api.get('/recreation/community-centers/area', {
+      params: { minLat, maxLat, minLng, maxLng }
+    })
+  },
+
+  // Get all playgrounds
+  getAllPlaygrounds() {
+    return api.get('/recreation/playgrounds')
+  },
+
+  // Get playgrounds by suburb
+  getPlaygroundsBySuburb(suburb) {
+    return api.get(`/recreation/playgrounds/suburb/${encodeURIComponent(suburb)}`)
+  },
+
+  // Search playgrounds by features
+  getPlaygroundsByFeatures(features) {
+    return api.get('/recreation/playgrounds/features', {
+      params: { features }
+    })
+  },
+
+  // Get playground count by suburb
+  getPlaygroundCountBySuburb(suburb) {
+    return api.get(`/recreation/stats/playgrounds/suburb/${encodeURIComponent(suburb)}`)
+  },
+
+  // Get community center count by suburb
+  getCommunityCenterCountBySuburb(suburb) {
+    return api.get(`/recreation/stats/community-centers/count/suburb/${encodeURIComponent(suburb)}`)
+  },
+
+  // Get community center statistics
+  getCommunityCenterStats() {
+    return api.get('/recreation/stats/community-centers')
+  },
+
+  // Get statistics by suburb
+  getCommunityCenterStatsBySuburb(suburb) {
+    return api.get(`/recreation/stats/community-centers/suburb/${encodeURIComponent(suburb)}`)
+  },
+
+  // Get combined facilities data for a suburb
+  getFacilitiesBySuburb(suburb) {
+    return api.get(`/recreation/facilities/suburb/${encodeURIComponent(suburb)}`)
+  },
+
+  // Health check
+  healthCheck() {
+    return api.get('/recreation/community-centers?limit=1')
+  }
+}
+
 // Hospitality API (Cafes, Bars, Restaurant Growth)
 export const hospitalityApi = {
   // Get all cafes for map display

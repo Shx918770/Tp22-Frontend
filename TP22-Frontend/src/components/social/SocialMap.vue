@@ -35,6 +35,14 @@ export default {
       type: Array,
       default: () => []
     },
+    playgrounds: {
+      type: Array,
+      default: () => []
+    },
+    communityCenters: {
+      type: Array,
+      default: () => []
+    },
     selectedSuburb: {
       type: String,
       default: ''
@@ -62,6 +70,14 @@ export default {
     showBars: {
       type: Boolean,
       default: true
+    },
+    showPlaygrounds: {
+      type: Boolean,
+      default: true
+    },
+    showCommunityCenters: {
+      type: Boolean,
+      default: true
     }
   },
   data() {
@@ -73,6 +89,8 @@ export default {
       practitionerMarkers: [],
       cafeMarkers: [],
       barMarkers: [],
+      playgroundPolygons: [],
+      communityCenterMarkers: [],
       markerGroup: null
     }
   },
@@ -121,6 +139,18 @@ export default {
       },
       deep: true
     },
+    playgrounds: {
+      handler() {
+        this.updatePlaygroundPolygons()
+      },
+      deep: true
+    },
+    communityCenters: {
+      handler() {
+        this.updateCommunityCenterMarkers()
+      },
+      deep: true
+    },
     showSchools() {
       this.toggleSchoolMarkers()
     },
@@ -138,6 +168,12 @@ export default {
     },
     showBars() {
       this.toggleBarMarkers()
+    },
+    showPlaygrounds() {
+      this.togglePlaygroundPolygons()
+    },
+    showCommunityCenters() {
+      this.toggleCommunityCenterMarkers()
     }
   },
   methods: {
@@ -160,6 +196,8 @@ export default {
       this.updatePractitionerMarkers()
       this.updateCafeMarkers() // Re-enabled with 150 unique locations limit
       this.updateBarMarkers()
+      this.updatePlaygroundPolygons()
+      this.updateCommunityCenterMarkers()
     },
 
     updateSchoolMarkers() {
@@ -583,6 +621,183 @@ export default {
       }
     },
 
+    updatePlaygroundPolygons() {
+      // Clear existing playground polygons
+      this.playgroundPolygons.forEach(polygon => {
+        this.markerGroup.removeLayer(polygon)
+      })
+      this.playgroundPolygons = []
+
+      if (!this.playgrounds || this.playgrounds.length === 0) return
+
+      console.log(`Processing ${this.playgrounds.length} playgrounds for polygon rendering`)
+
+      // Add playground polygons
+      this.playgrounds.forEach(playground => {
+        const polygon = this.createPlaygroundPolygon(playground)
+        if (polygon) {
+          this.playgroundPolygons.push(polygon)
+          if (this.showPlaygrounds) {
+            this.markerGroup.addLayer(polygon)
+          }
+        }
+      })
+
+      this.fitMapToMarkers()
+    },
+
+    createPlaygroundPolygon(playground) {
+      try {
+        // Check if playground has shape coordinates (polygon data)
+        if (playground.shapeCoordinates && playground.shapeCoordinates.length > 2) {
+          // Convert coordinates to Leaflet format [lat, lng]
+          const coordinates = playground.shapeCoordinates.map(coord => [
+            parseFloat(coord.latitude),
+            parseFloat(coord.longitude)
+          ])
+
+          // Filter out invalid coordinates
+          const validCoordinates = coordinates.filter(coord => 
+            !isNaN(coord[0]) && !isNaN(coord[1])
+          )
+
+          if (validCoordinates.length >= 3) {
+            // Create polygon
+            const polygon = L.polygon(validCoordinates, {
+              color: '#333333',
+              fillColor: '#333333',
+              fillOpacity: 0.4,
+              weight: 3,
+              opacity: 1.0
+            })
+
+            // Add popup
+            const popupContent = `
+              <div class="marker-popup">
+                <h4>${playground.name || 'Playground'}</h4>
+                <p><strong>Type:</strong> Playground Area</p>
+                <p><strong>Features:</strong> ${playground.features || 'N/A'}</p>
+                <p><strong>Suburb:</strong> ${playground.suburb || 'N/A'}</p>
+                <p><strong>Council:</strong> ${playground.councilRe || 'N/A'}</p>
+              </div>
+            `
+            polygon.bindPopup(popupContent)
+
+            console.log(`Created polygon for playground: ${playground.name} with ${validCoordinates.length} points`)
+            return polygon
+          }
+        }
+
+        // Fallback: if no shape coordinates, use center point as a circle
+        if (playground.latitude && playground.longitude) {
+          const lat = parseFloat(playground.latitude)
+          const lng = parseFloat(playground.longitude)
+
+          if (!isNaN(lat) && !isNaN(lng)) {
+            // Create a circle to represent the playground area
+            const circle = L.circle([lat, lng], {
+              color: '#333333',
+              fillColor: '#333333',
+              fillOpacity: 0.4,
+              radius: 50, // 50 meter radius
+              weight: 3,
+              opacity: 1.0
+            })
+
+            // Add popup
+            const popupContent = `
+              <div class="marker-popup">
+                <h4>${playground.name || 'Playground'}</h4>
+                <p><strong>Type:</strong> Playground (Estimated Area)</p>
+                <p><strong>Features:</strong> ${playground.features || 'N/A'}</p>
+                <p><strong>Suburb:</strong> ${playground.suburb || 'N/A'}</p>
+                <p><strong>Council:</strong> ${playground.councilRe || 'N/A'}</p>
+                <p style="font-size: 0.8em; color: #666; margin-top: 5px;">
+                  <em>Approximate 50m radius area</em>
+                </p>
+              </div>
+            `
+            circle.bindPopup(popupContent)
+
+            console.log(`Created circle for playground: ${playground.name} at center point`)
+            return circle
+          }
+        }
+
+        console.warn('Playground has no valid coordinates:', playground.name)
+        return null
+      } catch (error) {
+        console.error('Error creating playground polygon:', error, playground)
+        return null
+      }
+    },
+
+    updateCommunityCenterMarkers() {
+      // Clear existing community center markers
+      this.communityCenterMarkers.forEach(marker => {
+        this.markerGroup.removeLayer(marker)
+      })
+      this.communityCenterMarkers = []
+
+      if (!this.communityCenters || this.communityCenters.length === 0) return
+
+      console.log(`Processing ${this.communityCenters.length} community centers for marker rendering`)
+
+      // Add community center markers
+      this.communityCenters.forEach(center => {
+        const marker = this.createCommunityCenterMarker(center)
+        if (marker) {
+          this.communityCenterMarkers.push(marker)
+          if (this.showCommunityCenters) {
+            this.markerGroup.addLayer(marker)
+          }
+        }
+      })
+
+      this.fitMapToMarkers()
+    },
+
+    createCommunityCenterMarker(center) {
+      try {
+        // Parse latitude and longitude from the center object
+        const lat = parseFloat(center.LATITUDE || center.latitude)
+        const lng = parseFloat(center.LONGITUDE || center.longitude)
+        
+        if (isNaN(lat) || isNaN(lng)) {
+          console.warn('Invalid coordinates for community center:', center)
+          return null
+        }
+
+        // Create custom icon for community center
+        const centerIcon = L.divIcon({
+          className: 'custom-marker community-center-marker',
+          html: '<div class="marker-dot community-center"></div>',
+          iconSize: [20, 20],
+          iconAnchor: [10, 10]
+        })
+
+        const marker = L.marker([lat, lng], { icon: centerIcon })
+        
+        // Add popup
+        const popupContent = `
+          <div class="marker-popup">
+            <h4>${center.NAME || center.name || 'Community Center'}</h4>
+            <p><strong>Type:</strong> Community Center</p>
+            <p><strong>Address:</strong> ${center.ADDRESS || center.address || 'N/A'}</p>
+            <p><strong>Suburb:</strong> ${center.SUBURB || center.suburb || 'N/A'}</p>
+            ${center.SPORTS_TYPE ? `<p><strong>Sports:</strong> ${center.SPORTS_TYPE}</p>` : ''}
+          </div>
+        `
+        marker.bindPopup(popupContent)
+
+        console.log(`Created marker for community center: ${center.NAME || center.name}`)
+        return marker
+      } catch (error) {
+        console.error('Error creating community center marker:', error, center)
+        return null
+      }
+    },
+
     parseCoordinates(coordinatesString) {
       try {
         if (!coordinatesString) return null
@@ -605,28 +820,34 @@ export default {
     },
 
     fitMapToMarkers() {
-      const visibleMarkers = []
+      const visibleLayers = []
       
       if (this.showSchools) {
-        visibleMarkers.push(...this.schoolMarkers)
+        visibleLayers.push(...this.schoolMarkers)
       }
       if (this.showChildCares) {
-        visibleMarkers.push(...this.childCareMarkers)
+        visibleLayers.push(...this.childCareMarkers)
       }
       if (this.showHospitals) {
-        visibleMarkers.push(...this.hospitalMarkers)
+        visibleLayers.push(...this.hospitalMarkers)
       }
       if (this.showPractitioners) {
-        visibleMarkers.push(...this.practitionerMarkers)
+        visibleLayers.push(...this.practitionerMarkers)
+      }
+      if (this.showPlaygrounds) {
+        visibleLayers.push(...this.playgroundPolygons)
+      }
+      if (this.showCommunityCenters) {
+        visibleLayers.push(...this.communityCenterMarkers)
       }
       
-      if (visibleMarkers.length > 0) {
-        const group = new L.featureGroup(visibleMarkers)
+      if (visibleLayers.length > 0) {
+        const group = new L.featureGroup(visibleLayers)
         this.map.fitBounds(group.getBounds().pad(0.1))
-      } else if (this.schoolMarkers.length > 0 || this.childCareMarkers.length > 0 || this.hospitalMarkers.length > 0 || this.practitionerMarkers.length > 0) {
-        // If no markers are visible but we have data, show all markers for fitting
-        const allMarkers = [...this.schoolMarkers, ...this.childCareMarkers, ...this.hospitalMarkers, ...this.practitionerMarkers]
-        const group = new L.featureGroup(allMarkers)
+      } else if (this.schoolMarkers.length > 0 || this.childCareMarkers.length > 0 || this.hospitalMarkers.length > 0 || this.practitionerMarkers.length > 0 || this.playgroundPolygons.length > 0 || this.communityCenterMarkers.length > 0) {
+        // If no layers are visible but we have data, show all layers for fitting
+        const allLayers = [...this.schoolMarkers, ...this.childCareMarkers, ...this.hospitalMarkers, ...this.practitionerMarkers, ...this.playgroundPolygons, ...this.communityCenterMarkers]
+        const group = new L.featureGroup(allLayers)
         this.map.fitBounds(group.getBounds().pad(0.1))
       }
     },
@@ -684,6 +905,26 @@ export default {
     toggleBarMarkers() {
       this.barMarkers.forEach(marker => {
         if (this.showBars) {
+          this.markerGroup.addLayer(marker)
+        } else {
+          this.markerGroup.removeLayer(marker)
+        }
+      })
+    },
+
+    togglePlaygroundPolygons() {
+      this.playgroundPolygons.forEach(polygon => {
+        if (this.showPlaygrounds) {
+          this.markerGroup.addLayer(polygon)
+        } else {
+          this.markerGroup.removeLayer(polygon)
+        }
+      })
+    },
+
+    toggleCommunityCenterMarkers() {
+      this.communityCenterMarkers.forEach(marker => {
+        if (this.showCommunityCenters) {
           this.markerGroup.addLayer(marker)
         } else {
           this.markerGroup.removeLayer(marker)
@@ -747,6 +988,24 @@ export default {
 
 :deep(.marker-dot.bar) {
   background: #673AB7;
+}
+
+:deep(.marker-dot.community-center) {
+  background: #f39c12;
+}
+
+/* Playground polygon styles */
+:deep(.leaflet-interactive) {
+  cursor: pointer;
+}
+
+:deep(.leaflet-interactive:hover) {
+  opacity: 0.8 !important;
+}
+
+/* Playground area styles */
+:deep(.leaflet-polygon-pane path) {
+  transition: all 0.3s ease;
 }
 
 :deep(.marker-popup) {

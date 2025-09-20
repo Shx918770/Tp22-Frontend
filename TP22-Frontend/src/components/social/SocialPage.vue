@@ -110,8 +110,8 @@
               <div class="bubble-content">
                 <div class="bubble-label">Recreation</div>
                 <div class="bubble-details">
-                  <span class="detail-pill">{{ facilityStats?.detailedCounts?.RECREATION?.Playgrounds || 8 }} Playgrounds</span>
-                  <span class="detail-pill">{{ facilityStats?.detailedCounts?.RECREATION?.CommunityCenter || 4 }} Community Centers</span>
+                  <span class="detail-pill">{{ playgroundCount }} Playgrounds</span>
+                  <span class="detail-pill">{{ communityCenterCount }} Community Centers</span>
                 </div>
               </div>
               <div class="bubble-glow"></div>
@@ -150,6 +150,8 @@
                 :practitioners="practitioners"
                 :cafes="cafes"
                 :bars="bars"
+                :playgrounds="playgrounds"
+                :communityCenters="communityCenters"
                 :selectedSuburb="selectedSuburb"
                 :showSchools="mapLegendState.schools"
                 :showChildCares="mapLegendState.childcare"
@@ -157,6 +159,8 @@
                 :showPractitioners="mapLegendState.practitioners"
                 :showCafes="mapLegendState.cafes"
                 :showBars="mapLegendState.bars"
+                :showPlaygrounds="mapLegendState.playgrounds"
+                :showCommunityCenters="mapLegendState.communityCenter"
                 class="social-map-full"
               />
             </div>
@@ -918,7 +922,7 @@
 </template>
 
 <script>
-import { socialApi, schoolApi, childCareApi, apiUtils, healthApi, hospitalityApi } from '../../services/api.js'
+import { socialApi, schoolApi, childCareApi, apiUtils, healthApi, hospitalityApi, recreationApi } from '../../services/api.js'
 import Header from '../header/Header.vue';
 import SocialMap from './SocialMap.vue'
 
@@ -951,6 +955,8 @@ export default {
       },
       cafes: [],
       bars: [],
+      playgrounds: [],
+      communityCenters: [],
       growthData: [],
       loading: false,
       error: null,
@@ -975,6 +981,14 @@ export default {
   computed: {
     selectedSuburb() {
       return this.$route?.query?.suburb || ''
+    },
+    
+    playgroundCount() {
+      return this.playgrounds?.length || 0
+    },
+    
+    communityCenterCount() {
+      return this.communityCenters?.length || 0
     },
     
     sortedSchools() {
@@ -1224,7 +1238,7 @@ export default {
       
       try {
         // Load all social data in parallel
-        const [statsResponse, facilitiesResponse, accessibilityResponse, schoolsResponse, childCareResponse, educationStatsResponse, hospitalsResp, practitionersResp, bedsResp, hospitalityStatsResp, cafesResp, barsResp, growthDataResp] = await Promise.allSettled([
+        const [statsResponse, facilitiesResponse, accessibilityResponse, schoolsResponse, childCareResponse, educationStatsResponse, hospitalsResp, practitionersResp, bedsResp, hospitalityStatsResp, cafesResp, barsResp, growthDataResp, playgroundsResp, communityCentersResp] = await Promise.allSettled([
           socialApi.getFacilityStats(suburb),
           socialApi.getFacilities(suburb),
           socialApi.getFacilityAccessibility(suburb),
@@ -1237,7 +1251,9 @@ export default {
           hospitalityApi.getHospitalityStats(suburb),
           hospitalityApi.getCafesBySuburb(suburb),
           hospitalityApi.getBarsBySuburb(suburb),
-          hospitalityApi.getAllGrowthData()
+          hospitalityApi.getAllGrowthData(),
+          recreationApi.getPlaygroundsBySuburb(suburb),
+          recreationApi.getCommunityCentersBySuburb(suburb)
         ])
 
         // Handle facility stats
@@ -1367,6 +1383,41 @@ export default {
           }
         }
 
+        // Handle playgrounds
+        if (playgroundsResp.status === 'fulfilled') {
+          const r = apiUtils.extractData(playgroundsResp.value)
+          if (r.success) {
+            this.playgrounds = r.data || []
+            console.log('Playgrounds loaded:', this.playgrounds.length, 'playgrounds for', suburb)
+            
+            // Parse coordinates for each playground in JavaScript
+            this.playgrounds.forEach(playground => {
+              this.parsePlaygroundCoordinates(playground)
+            })
+          } else {
+            console.error('Failed to load playgrounds:', r.message)
+            this.playgrounds = []
+          }
+        } else {
+          console.error('Playgrounds API call failed:', playgroundsResp.reason)
+          this.playgrounds = []
+        }
+
+        // Handle community centers
+        if (communityCentersResp.status === 'fulfilled') {
+          const r = apiUtils.extractData(communityCentersResp.value)
+          if (r.success) {
+            this.communityCenters = r.data || []
+            console.log('Community Centers loaded:', this.communityCenters.length, 'community centers for', suburb)
+          } else {
+            console.error('Failed to load community centers:', r.message)
+            this.communityCenters = []
+          }
+        } else {
+          console.error('Community Centers API call failed:', communityCentersResp.reason)
+          this.communityCenters = []
+        }
+
       } catch (error) {
         console.error('Error loading suburb data:', error)
         this.error = `Failed to load data for ${suburb}`
@@ -1380,6 +1431,60 @@ export default {
         this.loadSuburbData(this.selectedSuburb)
       } else {
         this.error = null
+      }
+    },
+
+    parsePlaygroundCoordinates(playground) {
+      // Parse geoPoint2D for center coordinates
+      if (playground.geoPoint2D && typeof playground.geoPoint2D === 'string') {
+        const coords = playground.geoPoint2D.split(',').map(coord => parseFloat(coord.trim()))
+        if (coords.length === 2 && !isNaN(coords[0]) && !isNaN(coords[1])) {
+          playground.latitude = coords[0]
+          playground.longitude = coords[1]
+        }
+      }
+
+      // Parse geoShape for polygon coordinates
+      playground.shapeCoordinates = []
+      if (playground.geoShape && typeof playground.geoShape === 'string') {
+        try {
+          // Parse the JSON string
+          const geoShapeObj = JSON.parse(playground.geoShape)
+          
+          if (geoShapeObj.COORDINATES && Array.isArray(geoShapeObj.COORDINATES)) {
+            // Handle MULTIPOLYGON format: [[[[lng, lat], [lng, lat], ...]]]
+            const coordinates = geoShapeObj.COORDINATES
+            
+            if (coordinates.length > 0 && Array.isArray(coordinates[0])) {
+              // Get the first polygon (coordinates[0])
+              const firstPolygon = coordinates[0]
+              
+              if (firstPolygon.length > 0 && Array.isArray(firstPolygon[0])) {
+                // Get the outer ring (firstPolygon[0])
+                const outerRing = firstPolygon[0]
+                
+                // Convert [lng, lat] to {latitude, longitude} objects
+                playground.shapeCoordinates = outerRing
+                  .filter(coord => Array.isArray(coord) && coord.length >= 2)
+                  .map(coord => ({
+                    latitude: parseFloat(coord[1]), // lat is second element
+                    longitude: parseFloat(coord[0]) // lng is first element
+                  }))
+                  .filter(coord => !isNaN(coord.latitude) && !isNaN(coord.longitude))
+
+                console.log(`Parsed ${playground.shapeCoordinates.length} coordinates for playground: ${playground.name}`)
+              }
+            }
+          }
+        } catch (error) {
+          console.error('Error parsing geoShape for playground', playground.name, ':', error)
+          playground.shapeCoordinates = []
+        }
+      }
+
+      // If no shape coordinates but have center point, create a fallback
+      if (playground.shapeCoordinates.length === 0 && playground.latitude && playground.longitude) {
+        console.log(`No shape coordinates found for playground ${playground.name}, will use center point`)
       }
     },
 
@@ -3150,7 +3255,7 @@ export default {
 
 .facility-legend-schools { background: #e74c3c; }
 .facility-legend-hospitals { background: #2980b9; }
-.facility-legend-playgrounds { background: #27ae60; }
+.facility-legend-playgrounds { background: #333333; }
 .facility-legend-community { background: #f39c12; }
 .facility-legend-cafes { background: #9C27B0; }
 .facility-legend-bars { background: #673AB7; }

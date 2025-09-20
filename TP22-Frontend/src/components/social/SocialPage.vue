@@ -440,12 +440,84 @@
                     <text x="110" y="65" class="gauge-tick" text-anchor="middle">3.2</text>
                     <text x="210" y="65" class="gauge-tick" text-anchor="middle">3.8</text>
                     
-                    <!-- Needle -->
+                    <!-- Dynamic Colored Needle -->
                     <g :transform="`rotate(${getCorrectNeedleAngle(bedsValue)} 160 160)`">
-                      <line x1="160" y1="160" x2="240" y2="160" stroke="#1d4ed8" stroke-width="3" stroke-linecap="round"/>
-                      <circle cx="240" cy="160" r="5" fill="#1d4ed8"/>
+                      <!-- Needle drop shadow -->
+                      <path d="M 162 162 L 235 162 L 240 160 L 235 158 L 162 158 Z" fill="rgba(0,0,0,0.15)"/>
+                      <!-- Main needle shape -->
+                      <path d="M 160 160 L 235 160 L 240 158 L 235 156 L 160 158 Z" :fill="`url(#needleGradient-${getCurrentZone(bedsValue)})`" :stroke="`url(#needleBorder-${getCurrentZone(bedsValue)})`" stroke-width="0.5"/>
+                      <!-- Needle highlight -->
+                      <path d="M 160 159 L 235 159 L 238 158 L 235 157.5 L 160 157.5 Z" :fill="`url(#needleHighlight-${getCurrentZone(bedsValue)})`" opacity="0.7"/>
                     </g>
-                    <circle cx="160" cy="160" r="8" fill="#1d4ed8"/>
+                    
+                    <!-- Dynamic Gradient definitions -->
+                    <defs>
+                      <!-- Low zone gradients -->
+                      <linearGradient id="needleGradient-low" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" :style="`stop-color:${getNeedleColors('low').needle[0]};stop-opacity:1`" />
+                        <stop offset="50%" :style="`stop-color:${getNeedleColors('low').needle[1]};stop-opacity:1`" />
+                        <stop offset="100%" :style="`stop-color:${getNeedleColors('low').needle[2]};stop-opacity:1`" />
+                      </linearGradient>
+                      <linearGradient id="needleBorder-low" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" :style="`stop-color:${getNeedleColors('low').border[0]};stop-opacity:1`" />
+                        <stop offset="100%" :style="`stop-color:${getNeedleColors('low').border[1]};stop-opacity:1`" />
+                      </linearGradient>
+                      <linearGradient id="needleHighlight-low" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" :style="`stop-color:${getNeedleColors('low').highlight[0]};stop-opacity:1`" />
+                        <stop offset="100%" :style="`stop-color:${getNeedleColors('low').highlight[1]};stop-opacity:1`" />
+                      </linearGradient>
+                      <radialGradient id="centerGradient-low" cx="50%" cy="30%" r="70%">
+                        <stop offset="0%" :style="`stop-color:${getNeedleColors('low').center[0]};stop-opacity:1`" />
+                        <stop offset="40%" :style="`stop-color:${getNeedleColors('low').center[1]};stop-opacity:1`" />
+                        <stop offset="100%" :style="`stop-color:${getNeedleColors('low').center[2]};stop-opacity:1`" />
+                      </radialGradient>
+                      
+                      <!-- Medium zone gradients -->
+                      <linearGradient id="needleGradient-medium" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" :style="`stop-color:${getNeedleColors('medium').needle[0]};stop-opacity:1`" />
+                        <stop offset="50%" :style="`stop-color:${getNeedleColors('medium').needle[1]};stop-opacity:1`" />
+                        <stop offset="100%" :style="`stop-color:${getNeedleColors('medium').needle[2]};stop-opacity:1`" />
+                      </linearGradient>
+                      <linearGradient id="needleBorder-medium" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" :style="`stop-color:${getNeedleColors('medium').border[0]};stop-opacity:1`" />
+                        <stop offset="100%" :style="`stop-color:${getNeedleColors('medium').border[1]};stop-opacity:1`" />
+                      </linearGradient>
+                      <linearGradient id="needleHighlight-medium" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" :style="`stop-color:${getNeedleColors('medium').highlight[0]};stop-opacity:1`" />
+                        <stop offset="100%" :style="`stop-color:${getNeedleColors('medium').highlight[1]};stop-opacity:1`" />
+                      </linearGradient>
+                      <radialGradient id="centerGradient-medium" cx="50%" cy="30%" r="70%">
+                        <stop offset="0%" :style="`stop-color:${getNeedleColors('medium').center[0]};stop-opacity:1`" />
+                        <stop offset="40%" :style="`stop-color:${getNeedleColors('medium').center[1]};stop-opacity:1`" />
+                        <stop offset="100%" :style="`stop-color:${getNeedleColors('medium').center[2]};stop-opacity:1`" />
+                      </radialGradient>
+                      
+                      <!-- High zone gradients -->
+                      <linearGradient id="needleGradient-high" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" :style="`stop-color:${getNeedleColors('high').needle[0]};stop-opacity:1`" />
+                        <stop offset="50%" :style="`stop-color:${getNeedleColors('high').needle[1]};stop-opacity:1`" />
+                        <stop offset="100%" :style="`stop-color:${getNeedleColors('high').needle[2]};stop-opacity:1`" />
+                      </linearGradient>
+                      <linearGradient id="needleBorder-high" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" :style="`stop-color:${getNeedleColors('high').border[0]};stop-opacity:1`" />
+                        <stop offset="100%" :style="`stop-color:${getNeedleColors('high').border[1]};stop-opacity:1`" />
+                      </linearGradient>
+                      <linearGradient id="needleHighlight-high" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" :style="`stop-color:${getNeedleColors('high').highlight[0]};stop-opacity:1`" />
+                        <stop offset="100%" :style="`stop-color:${getNeedleColors('high').highlight[1]};stop-opacity:1`" />
+                      </linearGradient>
+                      <radialGradient id="centerGradient-high" cx="50%" cy="30%" r="70%">
+                        <stop offset="0%" :style="`stop-color:${getNeedleColors('high').center[0]};stop-opacity:1`" />
+                        <stop offset="40%" :style="`stop-color:${getNeedleColors('high').center[1]};stop-opacity:1`" />
+                        <stop offset="100%" :style="`stop-color:${getNeedleColors('high').center[2]};stop-opacity:1`" />
+                      </radialGradient>
+                    </defs>
+                    
+                    <!-- Dynamic Center hub -->
+                    <circle cx="160" cy="160" r="12" :fill="`url(#centerGradient-${getCurrentZone(bedsValue)})`" :stroke="getNeedleColors(getCurrentZone(bedsValue)).border[1]" stroke-width="2"/>
+                    <circle cx="160" cy="160" r="8" :fill="getNeedleColors(getCurrentZone(bedsValue)).center[0]" opacity="0.8"/>
+                    <circle cx="160" cy="160" r="4" :fill="getNeedleColors(getCurrentZone(bedsValue)).highlight[0]" opacity="0.9"/>
+                    <circle cx="158" cy="158" r="2" :fill="getNeedleColors(getCurrentZone(bedsValue)).highlight[0]"/>
                     <text x="160" y="185" text-anchor="middle" class="gauge-value">{{ bedsValue.toFixed(1) }}</text>
                   </svg>
                 </div>
@@ -455,10 +527,10 @@
                   <div class="legend-item"><span class="dot high"></span><span>High (3.8+)</span></div>
                 </div>
                 
-                <div class="health-description" v-if="bedsStat && bedsStat.Description">
+                <div class="health-description">
                   <div class="health-description-content">
                     <h4>Description</h4>
-                    <p>{{ bedsStat.Description }}</p>
+                    <p>{{ (bedsStat && bedsStat.Description) ? bedsStat.Description : 'No description available for this area.' }}</p>
                   </div>
                 </div>
               </div>
@@ -474,20 +546,21 @@
                     <path d="M12 8v6M9 11h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
                   </svg>
                 </div>
-                <h3>Medical & Practitioner List</h3>
+                <h3>Healthcare List</h3>
+                <select v-model="healthcareFilter" class="healthcare-filter">
+                  <option value="all">All Types</option>
+                  <option value="public">Public</option>
+                  <option value="private">Private</option>
+                  <option value="practitioner">Practitioner</option>
+                </select>
               </div>
-              <div class="section-content" style="flex: 1; overflow: hidden;">
-                <div class="school-list" style="height: 100%; overflow-y: auto; max-height: 600px;">
-                  <div v-if="!hospitals.length && !practitioners.length" class="empty-hint">No medical facilities available for this suburb.</div>
-                  <div v-for="h in hospitals" :key="h.Hospital_Provider_Number || h.Name" class="school-item">
-                    <div class="school-name">{{ h.Name }}</div>
-                    <div class="school-type">{{ h.Type }}<span v-if="Number(h.Beds) > 0"> · Beds: {{ h.Beds }}</span></div>
-                    <div class="school-suburb">{{ h.Suburb }}</div>
-                  </div>
-                  <div v-for="p in practitioners" :key="p.GP + p.ADDRESS" class="school-item">
-                    <div class="school-name">{{ p.GP }}</div>
-                    <div class="school-type">Practitioner</div>
-                    <div class="school-suburb">{{ p.SUBURB || p.Suburb || p.suburb }}</div>
+              <div class="section-content">
+                <div class="school-list medical-list-container">
+                  <div v-if="!filteredHealthcareList.length" class="empty-hint">No healthcare facilities available for this filter.</div>
+                  <div v-for="item in filteredHealthcareList" :key="item.hospitalProviderNumber || item.name || item.gp" class="school-item">
+                    <div class="school-name">{{ item.isP ? item.gp : item.name }}</div>
+                    <div class="school-type">{{ item.isP ? 'Practitioner' : item.type }}</div>
+                    <div v-if="!item.isP && item.beds && Number(item.beds) > 0" class="school-beds">Beds: {{ item.beds }}</div>
                   </div>
                 </div>
               </div>
@@ -798,6 +871,7 @@ export default {
         childcare: true,
         practitioners: true
       },
+      healthcareFilter: 'all', // 'all', 'public', 'private', 'practitioner'
       maxGauge: 8
     }
   },
@@ -823,6 +897,18 @@ export default {
     bedsValue() {
       const v = Number(this.bedsStat?.Beds_per_1000 || 0)
       return isNaN(v) ? 0 : Math.max(0, v)
+    },
+    filteredHealthcareList() {
+      if (this.healthcareFilter === 'all') {
+        return [...this.hospitals, ...this.practitioners.map(p => ({ ...p, isP: true }))]
+      } else if (this.healthcareFilter === 'public') {
+        return this.hospitals.filter(h => h.type?.toLowerCase() === 'public')
+      } else if (this.healthcareFilter === 'private') {
+        return this.hospitals.filter(h => h.type?.toLowerCase() === 'private')
+      } else if (this.healthcareFilter === 'practitioner') {
+        return this.practitioners.map(p => ({ ...p, isP: true }))
+      }
+      return []
     }
   },
   watch: {
@@ -846,7 +932,12 @@ export default {
   methods: {
     scrollToHealthDetail() {
       const el = document.getElementById('health-detail')
-      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      if (el) {
+        // Scroll with offset to avoid covering the title
+        const yOffset = -80; // Adjust this value as needed
+        const y = el.getBoundingClientRect().top + window.pageYOffset + yOffset;
+        window.scrollTo({ top: y, behavior: 'smooth' });
+      }
     },
     getNeedleAngle(value) {
       // Map 0 -> -90deg (left), 3.2 -> ~0deg, 3.8 -> ~20deg, 8 -> +90deg (right limit)
@@ -905,6 +996,39 @@ export default {
       if (targetAngle > 180) targetAngle = targetAngle - 360
       
       return targetAngle
+    },
+    getCurrentZone(value) {
+      const v = Number(value || 0)
+      if (v <= 3.2) {
+        return 'low'
+      } else if (v <= 3.8) {
+        return 'medium'
+      } else {
+        return 'high'
+      }
+    },
+    getNeedleColors(zone) {
+      const colors = {
+        low: {
+          needle: ['#ef4444', '#dc2626', '#991b1b'],
+          border: ['#7f1d1d', '#450a0a'],
+          highlight: ['#fecaca', '#fca5a5'],
+          center: ['#ef4444', '#dc2626', '#991b1b']
+        },
+        medium: {
+          needle: ['#f59e0b', '#d97706', '#92400e'],
+          border: ['#78350f', '#451a03'],
+          highlight: ['#fed7aa', '#fdba74'],
+          center: ['#fbbf24', '#f59e0b', '#d97706']
+        },
+        high: {
+          needle: ['#22c55e', '#16a34a', '#15803d'],
+          border: ['#166534', '#14532d'],
+          highlight: ['#bbf7d0', '#86efac'],
+          center: ['#4ade80', '#22c55e', '#16a34a']
+        }
+      }
+      return colors[zone] || colors.medium
     },
     // SVG helpers for gauge
     gaugeArcPath(start, end, radius = 80) {
@@ -1300,9 +1424,11 @@ export default {
   max-width: none;
 }
 .gauge-tick {
-  fill: #4b5563;
-  font-size: 12px;
-  font-weight: 600;
+  fill: #1f2937;
+  font-size: 14px;
+  font-weight: 700;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 .gauge-zero {
   fill: #6b7280;
@@ -3441,6 +3567,73 @@ export default {
 .school-suburb {
   color: #999;
   font-size: 0.8rem;
+}
+
+.school-beds {
+  color: #0066cc;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.medical-list-container {
+  max-height: 600px;
+  overflow-y: auto;
+  padding-right: 8px;
+}
+
+.healthcare-filter {
+  padding: 0.7rem 1.2rem 0.7rem 1rem;
+  border: none;
+  border-radius: 25px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.9));
+  color: #374151;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  outline: none;
+  margin-left: auto;
+  box-shadow: 
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  position: relative;
+  min-width: 120px;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23374151' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 0.7rem center;
+  background-size: 1rem;
+}
+
+.healthcare-filter:hover {
+  transform: translateY(-1px);
+  box-shadow: 
+    0 10px 15px -3px rgba(0, 0, 0, 0.15),
+    0 4px 6px -2px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 1), rgba(248, 250, 252, 0.95));
+  border-color: rgba(59, 130, 246, 0.3);
+}
+
+.healthcare-filter:focus {
+  transform: translateY(-1px);
+  box-shadow: 
+    0 10px 15px -3px rgba(59, 130, 246, 0.2),
+    0 4px 6px -2px rgba(59, 130, 246, 0.15),
+    0 0 0 3px rgba(59, 130, 246, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  border-color: rgba(59, 130, 246, 0.5);
+}
+
+.healthcare-filter:active {
+  transform: translateY(0);
+  box-shadow: 
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06),
+    inset 0 2px 4px rgba(0, 0, 0, 0.06);
 }
 
 .school-selector {

@@ -118,7 +118,7 @@
             </div>
 
             <!-- Hospitality Bubble -->
-            <div class="facility-bubble hospitality">
+            <div class="facility-bubble hospitality" @click="scrollToHospitalityDetail">
               <div class="bubble-icon">
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
                   <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12V7a1 1 0 0 0-2 0v5a.5.5 0 0 1-1 0V7a1 1 0 0 0-2 0v5a.5.5 0 0 1-1 0V7a1 1 0 0 0-2 0v5a2.5 2.5 0 0 0 2.5 2.5V20a1 1 0 0 0 2 0v-5.5Z" stroke="currentColor" stroke-width="2"/>
@@ -580,71 +580,148 @@
         </div>
       </section>
 
-      <!-- Infrastructure Demand Predictions - Creative Wave Design -->
-      <section class="demand-predictions">
+      <!-- Hospitality Development Detail Section -->
+      <section id="hospitality-detail" class="education-detail">
         <div class="container">
-          <div class="prediction-header">
-            <h2>Infrastructure Demand Predictions</h2>
-            <p>Projected needs for the next 5 years based on population growth</p>
+          <div class="detail-header">
+            <h2>Hospitality Development</h2>
+            <p>Restaurant and bar evolution timeline in {{ selectedSuburb }}</p>
           </div>
           
-          <div class="prediction-waves">
-            <div class="wave-container">
-              <!-- Year Labels -->
-              <div class="year-labels">
-                <div class="year-label">2024</div>
-                <div class="year-label">2025</div>
-                <div class="year-label">2026</div>
-                <div class="year-label">2027</div>
-                <div class="year-label">2028</div>
+          <!-- Timeline -->
+          <div class="timeline-container">
+            <!-- No data message -->
+            <div v-if="filteredGrowthData.length === 0" style="text-align: center; padding: 2rem; color: #666;">
+              <p>No hospitality development data available for {{ selectedSuburb }}</p>
+            </div>
+            
+            <!-- Timeline with data -->
+            <div v-else class="hospitality-timeline">
+              <!-- Timeline Line -->
+              <div class="timeline-line"></div>
+              
+              <!-- Timeline Stages -->
+              <div class="timeline-stages">
+                <div 
+                  v-for="(stage, index) in filteredGrowthData" 
+                  :key="stage.year"
+                  class="timeline-stage"
+                >
+                  <!-- Year Circle -->
+                  <div class="stage-circle" :class="`stage-circle-${index + 1}`">
+                    <span class="stage-year">{{ stage.year }}</span>
+                  </div>
+                  
+                  <!-- Stage Info -->
+                  <div class="stage-info">
+                    <div class="stage-label">Stage {{ stage.stage }}</div>
+                    <div class="stage-icon" :class="`stage-icon-${stage.stage}`">
+                      <!-- Stage 1: Seed -->
+                      <svg v-if="stage.stage === 1" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <circle cx="12" cy="16" r="2" fill="currentColor"/>
+                        <path d="M12 14C12 12 10 10 8 10C6 10 4 12 4 14" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                      </svg>
+                      <!-- Stage 2: Sprout -->
+                      <svg v-else-if="stage.stage === 2" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <path d="M12 20V12" stroke="currentColor" stroke-width="2"/>
+                        <path d="M12 12C12 10 10 8 8 8C6 8 4 10 4 12" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                        <path d="M12 12C12 10 14 8 16 8C18 8 20 10 20 12" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                        <circle cx="12" cy="20" r="1.5" fill="currentColor"/>
+                      </svg>
+                      <!-- Stage 3: Small Tree -->
+                      <svg v-else-if="stage.stage === 3" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <path d="M12 20V10" stroke="currentColor" stroke-width="2"/>
+                        <circle cx="12" cy="8" r="4" fill="currentColor" opacity="0.3"/>
+                        <circle cx="12" cy="8" r="2.5" fill="currentColor"/>
+                        <rect x="11" y="19" width="2" height="3" fill="currentColor"/>
+                      </svg>
+                      <!-- Stage 4: Growing Tree -->
+                      <svg v-else-if="stage.stage === 4" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <path d="M12 20V8" stroke="currentColor" stroke-width="2"/>
+                        <circle cx="12" cy="6" r="5" fill="currentColor" opacity="0.3"/>
+                        <circle cx="12" cy="6" r="3" fill="currentColor"/>
+                        <circle cx="8" cy="10" r="2" fill="currentColor" opacity="0.4"/>
+                        <circle cx="16" cy="10" r="2" fill="currentColor" opacity="0.4"/>
+                        <rect x="11" y="19" width="2" height="3" fill="currentColor"/>
+                      </svg>
+                      <!-- Stage 5: Mature Tree -->
+                      <svg v-else-if="stage.stage === 5" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <path d="M12 20V6" stroke="currentColor" stroke-width="2.5"/>
+                        <circle cx="12" cy="5" r="6" fill="currentColor" opacity="0.3"/>
+                        <circle cx="12" cy="5" r="4" fill="currentColor"/>
+                        <circle cx="7" cy="8" r="2.5" fill="currentColor" opacity="0.4"/>
+                        <circle cx="17" cy="8" r="2.5" fill="currentColor" opacity="0.4"/>
+                        <circle cx="6" cy="12" r="1.5" fill="currentColor" opacity="0.4"/>
+                        <circle cx="18" cy="12" r="1.5" fill="currentColor" opacity="0.4"/>
+                        <rect x="10.5" y="19" width="3" height="3" fill="currentColor"/>
+                      </svg>
+                    </div>
+                  </div>
+                  
+                  <!-- Arrow (except for last stage) -->
+                  <div v-if="index < filteredGrowthData.length - 1" class="stage-arrow">
+                    <svg width="40" height="20" viewBox="0 0 40 20" fill="none">
+                      <path d="M0 10H35M30 5L35 10L30 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </div>
+                </div>
               </div>
               
-              <!-- Demand Waves -->
-              <div class="waves">
-                <div class="wave education-wave">
-                  <div class="wave-path">
-                    <svg viewBox="0 0 500 100" preserveAspectRatio="none">
-                      <path d="M0,50 Q125,30 250,40 T500,35" stroke="#2196F3" stroke-width="3" fill="none"/>
-                      <path d="M0,50 Q125,30 250,40 T500,35 L500,100 L0,100 Z" fill="url(#educationGradient)" opacity="0.3"/>
-                    </svg>
+              <!-- Stage Details Cards in One Row -->
+              <div class="stage-details-row">
+                <div 
+                  v-for="(stage, index) in filteredGrowthData" 
+                  :key="`detail-${stage.year}`"
+                  class="stage-detail-card"
+                >
+                  <div class="stage-detail-header">
+                    <div class="stage-detail-icon" :class="`card-icon-${index + 1}`">
+                      <!-- Card 1: City Building Icon -->
+                      <svg v-if="index === 0" width="28" height="28" viewBox="0 0 24 24" fill="none">
+                        <path d="M3 21H21V19H3V21ZM5 19H7V12H5V19ZM9 19H11V9H9V19ZM13 19H15V16H13V19ZM17 19H19V6H17V19Z" fill="currentColor"/>
+                      </svg>
+                      <!-- Card 2: Growth Chart Icon -->
+                      <svg v-else-if="index === 1" width="28" height="28" viewBox="0 0 24 24" fill="none">
+                        <path d="M3 17L9 11L13 15L21 7V21H3V17Z" fill="currentColor" opacity="0.3"/>
+                        <path d="M3 17L9 11L13 15L21 7" stroke="currentColor" stroke-width="2" fill="none"/>
+                        <circle cx="9" cy="11" r="2" fill="currentColor"/>
+                        <circle cx="13" cy="15" r="2" fill="currentColor"/>
+                        <circle cx="21" cy="7" r="2" fill="currentColor"/>
+                      </svg>
+                      <!-- Card 3: Peak Mountain Icon -->
+                      <svg v-else-if="index === 2" width="28" height="28" viewBox="0 0 24 24" fill="none">
+                        <path d="M5 16L8 10L12 14L16 8L19 12V21H5V16Z" fill="currentColor" opacity="0.3"/>
+                        <path d="M5 16L8 10L12 14L16 8L19 12" stroke="currentColor" stroke-width="2" fill="none"/>
+                        <circle cx="16" cy="8" r="1.5" fill="currentColor"/>
+                      </svg>
+                      <!-- Card 4: Network/Diversity Icon -->
+                      <svg v-else-if="index === 3" width="28" height="28" viewBox="0 0 24 24" fill="none">
+                        <circle cx="12" cy="12" r="3" fill="currentColor"/>
+                        <circle cx="6" cy="6" r="2" fill="currentColor" opacity="0.6"/>
+                        <circle cx="18" cy="6" r="2" fill="currentColor" opacity="0.6"/>
+                        <circle cx="6" cy="18" r="2" fill="currentColor" opacity="0.6"/>
+                        <circle cx="18" cy="18" r="2" fill="currentColor" opacity="0.6"/>
+                        <path d="M12 9L8 7M12 9L16 7M12 15L8 17M12 15L16 17" stroke="currentColor" stroke-width="1.5"/>
+                      </svg>
+                      <!-- Card 5: Nightlife/Entertainment Icon -->
+                      <svg v-else-if="index === 4" width="28" height="28" viewBox="0 0 24 24" fill="none">
+                        <path d="M12 2L15.09 8.26L22 9L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9L8.91 8.26L12 2Z" fill="currentColor"/>
+                        <circle cx="8" cy="4" r="1" fill="currentColor" opacity="0.7"/>
+                        <circle cx="16" cy="4" r="1" fill="currentColor" opacity="0.7"/>
+                        <circle cx="4" cy="12" r="1" fill="currentColor" opacity="0.7"/>
+                        <circle cx="20" cy="12" r="1" fill="currentColor" opacity="0.7"/>
+                      </svg>
+                    </div>
+                    <div class="stage-detail-info">
+                      <h3>{{ stage.year }}</h3>
+                      <span class="stage-number">Stage {{ stage.stage }}</span>
+                    </div>
                   </div>
-                  <div class="wave-label">Education Demand</div>
-                </div>
-                
-                <div class="wave healthcare-wave">
-                  <div class="wave-path">
-                    <svg viewBox="0 0 500 100" preserveAspectRatio="none">
-                      <path d="M0,60 Q125,45 250,50 T500,45" stroke="#f44336" stroke-width="3" fill="none"/>
-                      <path d="M0,60 Q125,45 250,50 T500,45 L500,100 L0,100 Z" fill="url(#healthcareGradient)" opacity="0.3"/>
-                    </svg>
+                  
+                  <div class="stage-detail-content">
+                    <h4>{{ stage.option }}</h4>
+                    <p>{{ stage.description }}</p>
                   </div>
-                  <div class="wave-label">Healthcare Demand</div>
-                </div>
-                
-                <div class="wave recreation-wave">
-                  <div class="wave-path">
-                    <svg viewBox="0 0 500 100" preserveAspectRatio="none">
-                      <path d="M0,70 Q125,50 250,60 T500,55" stroke="#4CAF50" stroke-width="3" fill="none"/>
-                      <path d="M0,70 Q125,50 250,60 T500,55 L500,100 L0,100 Z" fill="url(#recreationGradient)" opacity="0.3"/>
-                    </svg>
-                  </div>
-                  <div class="wave-label">Recreation Demand</div>
-                </div>
-              </div>
-              
-              <!-- Growth Indicators -->
-              <div class="growth-indicators">
-                <div class="indicator education">
-                  <div class="indicator-value">+25%</div>
-                  <div class="indicator-label">Education Growth</div>
-                </div>
-                <div class="indicator healthcare">
-                  <div class="indicator-value">+18%</div>
-                  <div class="indicator-label">Healthcare Growth</div>
-                </div>
-                <div class="indicator recreation">
-                  <div class="indicator-value">+32%</div>
-                  <div class="indicator-label">Recreation Growth</div>
                 </div>
               </div>
             </div>
@@ -946,6 +1023,46 @@ export default {
       } else {
         return this.schools.filter(s => s.schoolType?.toLowerCase() === this.schoolFilter.toLowerCase())
       }
+    },
+    
+    filteredGrowthData() {
+      if (!this.growthData || this.growthData.length === 0) return []
+      
+      // Fixed timeline years
+      const timelineYears = [2005, 2010, 2015, 2020, 2023]
+      
+      // Filter data for current suburb first
+      const suburbData = this.growthData.filter(item => {
+        if (!this.selectedSuburb) return false
+        
+        const normalizedSuburb = this.selectedSuburb.toLowerCase().trim()
+        const itemSuburb = item.suburb.toLowerCase().trim()
+        
+        // Handle Melbourne CBD mapping
+        if (itemSuburb === 'melbourne cbd' && normalizedSuburb === 'melbourne') {
+          return true
+        }
+        
+        // Filter out Port Melbourne
+        if (itemSuburb === 'port melbourne') {
+          return false
+        }
+        
+        return itemSuburb === normalizedSuburb
+      })
+      
+      // Create timeline data by mapping fixed years to database records
+      return timelineYears.map((year, index) => {
+        // Find the record for this year
+        const yearData = suburbData.find(item => item.year === year)
+        
+        return {
+          year: year,
+          stage: index + 1,
+          option: yearData ? yearData.option : 'No data available',
+          description: yearData ? yearData.description : `No development data available for ${year}`
+        }
+      })
     }
   },
   watch: {
@@ -969,6 +1086,16 @@ export default {
   methods: {
     scrollToHealthDetail() {
       const el = document.getElementById('health-detail')
+      if (el) {
+        // Scroll with offset to avoid covering the title
+        const yOffset = -80; // Adjust this value as needed
+        const y = el.getBoundingClientRect().top + window.pageYOffset + yOffset;
+        window.scrollTo({ top: y, behavior: 'smooth' });
+      }
+    },
+    
+    scrollToHospitalityDetail() {
+      const el = document.getElementById('hospitality-detail')
       if (el) {
         // Scroll with offset to avoid covering the title
         const yOffset = -80; // Adjust this value as needed
@@ -1097,7 +1224,7 @@ export default {
       
       try {
         // Load all social data in parallel
-        const [statsResponse, facilitiesResponse, accessibilityResponse, schoolsResponse, childCareResponse, educationStatsResponse, hospitalsResp, practitionersResp, bedsResp, hospitalityStatsResp, cafesResp, barsResp] = await Promise.allSettled([
+        const [statsResponse, facilitiesResponse, accessibilityResponse, schoolsResponse, childCareResponse, educationStatsResponse, hospitalsResp, practitionersResp, bedsResp, hospitalityStatsResp, cafesResp, barsResp, growthDataResp] = await Promise.allSettled([
           socialApi.getFacilityStats(suburb),
           socialApi.getFacilities(suburb),
           socialApi.getFacilityAccessibility(suburb),
@@ -1109,7 +1236,8 @@ export default {
           healthApi.getBedsPerThousand(suburb),
           hospitalityApi.getHospitalityStats(suburb),
           hospitalityApi.getCafesBySuburb(suburb),
-          hospitalityApi.getBarsBySuburb(suburb)
+          hospitalityApi.getBarsBySuburb(suburb),
+          hospitalityApi.getAllGrowthData()
         ])
 
         // Handle facility stats
@@ -1213,6 +1341,30 @@ export default {
         if (barsResp.status === 'fulfilled') {
           const r = apiUtils.extractData(barsResp.value)
           if (r.success) this.bars = r.data || []
+        }
+
+        // Handle growth data
+        if (growthDataResp.status === 'fulfilled') {
+          const r = apiUtils.extractData(growthDataResp.value)
+          if (r.success) {
+            this.growthData = r.data || []
+            console.log('Growth data loaded:', this.growthData.length, 'records for', suburb)
+            if (this.growthData.length > 0) {
+              console.log('Available years:', this.growthData.map(d => d.year).sort())
+              console.log('Growth data by year:', this.growthData.reduce((acc, item) => {
+                acc[item.year] = { option: item.option, description: item.description.substring(0, 50) + '...' }
+                return acc
+              }, {}))
+            }
+          } else {
+            console.error('Failed to load growth data:', r.message)
+          }
+        } else {
+          console.error('Growth data API call failed:', growthDataResp.reason)
+          console.error('Growth data response status:', growthDataResp.status)
+          if (growthDataResp.reason && growthDataResp.reason.response) {
+            console.error('API Error details:', growthDataResp.reason.response.status, growthDataResp.reason.response.data)
+          }
         }
 
       } catch (error) {
@@ -2260,152 +2412,6 @@ export default {
   }
 }
 
-/* Demand Predictions - Wave Design */
-.demand-predictions {
-  padding: 6rem 0;
-}
-
-.prediction-header {
-  text-align: center;
-  margin-bottom: 4rem;
-}
-
-.prediction-header h2 {
-  font-size: 2.5rem;
-  font-weight: 700;
-  color: #2c3e50;
-  margin-bottom: 1rem;
-  background: linear-gradient(135deg, #2c3e50, #4CAF50);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.prediction-header p {
-  font-size: 1.2rem;
-  color: rgba(44, 62, 80, 0.7);
-}
-
-.prediction-waves {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.95));
-  backdrop-filter: blur(30px);
-  border-radius: 30px;
-  padding: 3rem;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  position: relative;
-  overflow: hidden;
-}
-
-.wave-container {
-  position: relative;
-}
-
-.year-labels {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 2rem;
-}
-
-.year-label {
-  font-weight: 600;
-  color: #2c3e50;
-  padding: 0.5rem 1rem;
-  background: rgba(255, 255, 255, 0.5);
-  border-radius: 10px;
-  backdrop-filter: blur(10px);
-}
-
-.waves {
-  position: relative;
-  margin-bottom: 3rem;
-}
-
-.wave {
-  margin-bottom: 2rem;
-  position: relative;
-}
-
-.wave-path {
-  height: 100px;
-  position: relative;
-}
-
-.wave-path svg {
-  width: 100%;
-  height: 100%;
-}
-
-.wave-label {
-  position: absolute;
-  top: -30px;
-  left: 20px;
-  font-weight: 600;
-  color: #2c3e50;
-  background: rgba(255, 255, 255, 0.8);
-  padding: 0.5rem 1rem;
-  border-radius: 10px;
-  backdrop-filter: blur(10px);
-}
-
-.education-wave .wave-label {
-  color: #2196F3;
-}
-
-.healthcare-wave .wave-label {
-  color: #f44336;
-}
-
-.recreation-wave .wave-label {
-  color: #4CAF50;
-}
-
-.growth-indicators {
-  display: flex;
-  justify-content: space-around;
-  gap: 2rem;
-  flex-wrap: wrap;
-}
-
-.indicator {
-  text-align: center;
-  padding: 1.5rem;
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(15px);
-  border-radius: 15px;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  transition: all 0.3s ease;
-  min-width: 150px;
-}
-
-.indicator:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
-}
-
-.indicator-value {
-  font-size: 2rem;
-  font-weight: 800;
-  margin-bottom: 0.5rem;
-}
-
-.indicator.education .indicator-value {
-  color: #2196F3;
-}
-
-.indicator.healthcare .indicator-value {
-  color: #f44336;
-}
-
-.indicator.recreation .indicator-value {
-  color: #4CAF50;
-}
-
-.indicator-label {
-  font-size: 0.9rem;
-  color: #666;
-  font-weight: 500;
-}
 
 /* Service Accessibility - Distance Timeline */
 .service-accessibility {
@@ -4124,6 +4130,410 @@ export default {
   .sort-btn {
     padding: 0.5rem 1rem;
     font-size: 0.85rem;
+  }
+}
+
+/* Hospitality Timeline Styles */
+
+.timeline-container {
+  position: relative;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 3rem 0;
+}
+
+.timeline-line {
+  position: absolute;
+  top: 120px;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #10b981 0%, #059669 25%, #047857 50%, #065f46 75%, #064e3b 100%);
+  border-radius: 2px;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+}
+
+.timeline-stages {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  position: relative;
+  z-index: 2;
+  margin-bottom: 4rem;
+}
+
+.timeline-stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  flex: 1;
+}
+
+.stage-circle {
+  width: 85px;
+  height: 85px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #10b981, #059669);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 10px 30px rgba(16, 185, 129, 0.4);
+  border: 5px solid white;
+  position: relative;
+  transition: all 0.3s ease;
+  margin-bottom: 1rem;
+}
+
+.stage-circle::before {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(5, 150, 105, 0.2));
+  z-index: -1;
+}
+
+.stage-circle:hover {
+  transform: scale(1.05);
+  box-shadow: 0 15px 40px rgba(16, 185, 129, 0.5);
+}
+
+/* Gradient colors for each year circle */
+.stage-circle-1 {
+  background: linear-gradient(135deg, #a7f3d0, #10b981) !important;
+  box-shadow: 0 10px 30px rgba(16, 185, 129, 0.4) !important;
+}
+
+.stage-circle-2 {
+  background: linear-gradient(135deg, #6ee7b7, #059669) !important;
+  box-shadow: 0 10px 30px rgba(5, 150, 105, 0.4) !important;
+}
+
+.stage-circle-3 {
+  background: linear-gradient(135deg, #34d399, #047857) !important;
+  box-shadow: 0 10px 30px rgba(4, 120, 87, 0.4) !important;
+}
+
+.stage-circle-4 {
+  background: linear-gradient(135deg, #10b981, #065f46) !important;
+  box-shadow: 0 10px 30px rgba(6, 95, 70, 0.4) !important;
+}
+
+.stage-circle-5 {
+  background: linear-gradient(135deg, #059669, #064e3b) !important;
+  box-shadow: 0 10px 30px rgba(6, 78, 59, 0.4) !important;
+}
+
+.timeline-stage.active .stage-circle {
+  background: linear-gradient(135deg, #059669, #047857);
+  box-shadow: 0 12px 35px rgba(5, 150, 105, 0.4);
+  transform: scale(1.1);
+}
+
+.stage-year {
+  color: white;
+  font-weight: 700;
+  font-size: 1.1rem;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.stage-info {
+  text-align: center;
+  margin-top: 0.5rem;
+}
+
+.stage-label {
+  font-size: 0.85rem;
+  color: #475569;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.stage-icon {
+  width: 36px;
+  height: 36px;
+  background: linear-gradient(135deg, #fef3c7, #fbbf24);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  color: #d97706;
+  box-shadow: 0 4px 12px rgba(251, 191, 36, 0.3);
+  transition: all 0.3s ease;
+}
+
+.stage-icon:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(251, 191, 36, 0.4);
+}
+
+/* Different colors for each stage icon */
+.stage-icon-1 {
+  background: linear-gradient(135deg, #dcfce7, #bbf7d0) !important;
+  color: #16a34a !important;
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3) !important;
+}
+
+.stage-icon-2 {
+  background: linear-gradient(135deg, #dbeafe, #93c5fd) !important;
+  color: #2563eb !important;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3) !important;
+}
+
+.stage-icon-3 {
+  background: linear-gradient(135deg, #fef3c7, #fbbf24) !important;
+  color: #d97706 !important;
+  box-shadow: 0 4px 12px rgba(251, 191, 36, 0.3) !important;
+}
+
+.stage-icon-4 {
+  background: linear-gradient(135deg, #fce7f3, #f9a8d4) !important;
+  color: #be185d !important;
+  box-shadow: 0 4px 12px rgba(190, 24, 93, 0.3) !important;
+}
+
+.stage-icon-5 {
+  background: linear-gradient(135deg, #ede9fe, #c4b5fd) !important;
+  color: #7c3aed !important;
+  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3) !important;
+}
+
+.stage-arrow {
+  position: absolute;
+  top: 40px;
+  right: -20px;
+  color: #10b981;
+  z-index: 1;
+}
+
+.stage-details {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+/* New layout for cards in one row */
+.stage-details-row {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1.5rem;
+  margin-top: 3rem;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.stage-detail-card {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border-radius: 20px;
+  padding: 1.8rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  border: 2px solid #e2e8f0;
+  transition: all 0.4s ease;
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+  min-height: 280px;
+  display: flex;
+  flex-direction: column;
+}
+
+.stage-detail-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 16px 48px rgba(16, 185, 129, 0.15);
+  border-color: #10b981;
+}
+
+.stage-detail-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #10b981, #059669);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+/* Removed active state styles - all cards now have consistent styling */
+
+.stage-detail-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.2rem;
+}
+
+.stage-detail-icon {
+  width: 52px;
+  height: 52px;
+  background: linear-gradient(135deg, #10b981, #059669);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.3);
+  flex-shrink: 0;
+  position: relative;
+}
+
+.stage-detail-icon::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.2), transparent);
+  pointer-events: none;
+}
+
+/* Different colors for each card icon */
+.card-icon-1 {
+  background: linear-gradient(135deg, #ecfdf5, #a7f3d0) !important;
+  color: #059669 !important;
+  box-shadow: 0 6px 20px rgba(5, 150, 105, 0.3) !important;
+}
+
+.card-icon-2 {
+  background: linear-gradient(135deg, #eff6ff, #93c5fd) !important;
+  color: #1d4ed8 !important;
+  box-shadow: 0 6px 20px rgba(29, 78, 216, 0.3) !important;
+}
+
+.card-icon-3 {
+  background: linear-gradient(135deg, #fffbeb, #fcd34d) !important;
+  color: #d97706 !important;
+  box-shadow: 0 6px 20px rgba(217, 119, 6, 0.3) !important;
+}
+
+.card-icon-4 {
+  background: linear-gradient(135deg, #fdf2f8, #f9a8d4) !important;
+  color: #be185d !important;
+  box-shadow: 0 6px 20px rgba(190, 24, 93, 0.3) !important;
+}
+
+.card-icon-5 {
+  background: linear-gradient(135deg, #f5f3ff, #c4b5fd) !important;
+  color: #7c3aed !important;
+  box-shadow: 0 6px 20px rgba(124, 58, 237, 0.3) !important;
+}
+
+.stage-detail-info {
+  flex: 1;
+  position: relative;
+}
+
+.stage-detail-info h3 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 0.25rem 0;
+}
+
+.stage-number {
+  font-size: 0.9rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.stage-checkmark {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 24px;
+  height: 24px;
+  background: #10b981;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.stage-detail-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.stage-detail-content h4 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #059669;
+  margin: 0 0 0.8rem 0;
+  line-height: 1.3;
+  height: 2.6rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.stage-detail-content p {
+  color: #64748b;
+  line-height: 1.5;
+  margin: 0;
+  font-size: 0.85rem;
+  flex: 1;
+  overflow-y: auto;
+}
+
+/* Responsive Design for Hospitality Timeline */
+@media (max-width: 1024px) {
+  .stage-details-row {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .growth-timeline-section {
+    padding: 4rem 0;
+  }
+  
+  .timeline-stages {
+    flex-direction: column;
+    gap: 2rem;
+    margin-bottom: 2rem;
+  }
+  
+  .timeline-line {
+    display: none;
+  }
+  
+  .stage-arrow {
+    display: none;
+  }
+  
+  .stage-details {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .stage-details-row {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .stage-detail-card {
+    padding: 1.5rem;
+  }
+  
+  .stage-circle {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .stage-year {
+    font-size: 1rem;
   }
 }
 </style>

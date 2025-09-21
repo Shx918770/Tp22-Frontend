@@ -606,7 +606,9 @@
                   <h3>Facility Name</h3>
                 </div>
                 <div class="header-right">
-                  <h3>Condition Rating</h3>
+                  <div class="rating-header-content">
+                    <h3>Condition Rating</h3>
+                  </div>
                   <!-- Simple scale line with markers -->
                   <div class="simple-scale">
                     <div class="scale-line-simple"></div>
@@ -636,35 +638,103 @@
                 </div>
               </div>
               
-              <!-- Facility Rows -->
-              <div class="assessment-rows">
+              <!-- Facility Rows with Scroll -->
+              <div class="assessment-rows scrollable-facility-container">
                 <div 
                   v-for="(center, index) in communityCenters" 
                   :key="index"
                   class="assessment-row"
                 >
                   <div class="name-column">
-                    <div class="facility-main-info">
-                      <div class="facility-name">{{ center.name || 'Unnamed Community Center' }}</div>
-                      <div class="facility-type" v-if="center.sportsPlayed">
-                        {{ center.sportsPlayed }}
+                    <div class="facility-modern-card">
+                      <div class="facility-avatar">
+                        <div class="avatar-bg"></div>
+                        <span class="avatar-text">{{ (center.name || 'UC').substring(0, 2).toUpperCase() }}</span>
+                      </div>
+                      <div class="facility-details">
+                        <h4 class="facility-title">{{ center.name || 'Unnamed Community Center' }}</h4>
+                        <div class="facility-meta" v-if="center.sportsPlayed">
+                          <span class="meta-chip">{{ center.sportsPlayed }}</span>
+                        </div>
                       </div>
                     </div>
-                    <div class="facility-badge">
-                      <span class="badge-score">{{ getConditionRating(center.conditionOfFacility) }}/5</span>
+                    <div class="score-modern">
+                      <div class="score-ring">
+                        <svg class="score-svg" viewBox="0 0 36 36">
+                          <path class="score-bg" 
+                                d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                                fill="none" stroke="#e2e8f0" stroke-width="2"/>
+                          <path class="score-progress" 
+                                :stroke-dasharray="`${getConditionPercentage(center.conditionOfFacility)}, 100`"
+                                d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                                fill="none" stroke="#10b981" stroke-width="3" stroke-linecap="round"/>
+                        </svg>
+                        <div class="score-text">
+                          <span class="score-value">{{ getConditionRating(center.conditionOfFacility) }}</span>
+                        </div>
+                      </div>
                     </div>
                   </div>
                   <div class="rating-column">
-                    <div class="condition-bar">
-                      <div 
-                        class="condition-fill" 
-                        :style="{ width: `${getConditionPercentage(center.conditionOfFacility)}%` }"
-                        :class="getConditionClass(center.conditionOfFacility)"
-                      ></div>
-                      <div 
-                        class="condition-dot"
-                        :style="{ left: `${getConditionPercentage(center.conditionOfFacility)}%` }"
-                      ></div>
+                    <div class="modern-progress-container">
+                      <!-- Enhanced progress bar aligned with scale -->
+                      <div class="progress-bar-enhanced">
+                        <!-- Background track with subtle segments -->
+                        <div class="progress-track-background">
+                          <div class="track-segment segment-poor"></div>
+                          <div class="track-segment segment-fair"></div>
+                          <div class="track-segment segment-average"></div>
+                          <div class="track-segment segment-good"></div>
+                          <div class="track-segment segment-excellent"></div>
+                        </div>
+                        
+                        <!-- Main progress fill -->
+                        <div 
+                          class="progress-fill-enhanced" 
+                          :style="{ 
+                            width: `${getConditionPercentage(center.conditionOfFacility)}%`,
+                            animationDelay: `${index * 0.2}s`
+                          }"
+                          :class="getConditionClass(center.conditionOfFacility)"
+                        >
+                          <!-- Animated shine effect -->
+                          <div class="progress-shine"></div>
+                          <!-- Gradient overlay -->
+                          <div class="progress-overlay"></div>
+                        </div>
+                        
+                        <!-- Interactive indicator dot with emoji -->
+                        <div 
+                          class="progress-indicator-enhanced"
+                          :style="{ left: `${getConditionPercentage(center.conditionOfFacility)}%` }"
+                          :class="getConditionClass(center.conditionOfFacility)"
+                        >
+                          <div class="indicator-ring"></div>
+                          <div class="indicator-emoji">
+                            <!-- Emoji based on rating -->
+                            <div class="emoji-face" :class="getEmojiClass(center.conditionOfFacility)">
+                              <div class="emoji-eyes">
+                                <div class="eye left-eye"></div>
+                                <div class="eye right-eye"></div>
+                              </div>
+                              <div class="emoji-mouth"></div>
+                            </div>
+                          </div>
+                          
+                          <!-- Tooltip on hover -->
+                          <div class="progress-tooltip">
+                            <div class="tooltip-content">
+                              <div class="tooltip-title">{{ center.name }}</div>
+                              <div class="tooltip-rating" :class="getConditionClass(center.conditionOfFacility)">
+                                {{ getConditionText(center.conditionOfFacility) }}
+                              </div>
+                              <div class="tooltip-score">{{ getConditionRating(center.conditionOfFacility) }}/5</div>
+                            </div>
+                            <div class="tooltip-arrow"></div>
+                          </div>
+                        </div>
+                      </div>
+                      
                     </div>
                   </div>
                 </div>
@@ -1270,6 +1340,18 @@ export default {
       if (rating <= 3) return 'condition-average';
       if (rating <= 4) return 'condition-good';
       return 'condition-excellent';
+    },
+
+    getEmojiClass(condition) {
+      // Return emoji class based on condition rating (5 different states)
+      // LOW SCORES = SAD, HIGH SCORES = HAPPY
+      const rating = this.getConditionRating(condition);
+      
+      if (rating <= 1) return 'emoji-very-happy';       // 1: Very Poor -> Very sad emoji
+      if (rating <= 2) return 'emoji-happy';            // 2: Poor -> Sad emoji
+      if (rating <= 3) return 'emoji-neutral';        // 3: Average -> Neutral emoji
+      if (rating <= 4) return 'emoji-sad';          // 4: Good -> Happy emoji
+      return 'emoji-very-sad';                       // 5: Excellent -> Very happy emoji
     },
 
     getConditionText(condition) {
@@ -4863,6 +4945,8 @@ export default {
   gap: 2rem;
   margin-bottom: 2rem;
   padding-bottom: 1rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
 }
 
 .header-left h3,
@@ -4880,19 +4964,33 @@ export default {
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-/* Simple scale line design */
+/* Header Content Alignment */
+.header-left {
+  padding-left: 0.5rem;
+}
+
+.rating-header-content {
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
+.rating-header-content h3 {
+  margin-bottom: 0.5rem;
+}
+
+/* Simple scale line design - aligned with progress bars */
 .simple-scale {
   position: relative;
   height: 40px;
   margin-top: 1rem;
-  padding: 0 1rem;
+  padding: 0;
 }
 
 .scale-line-simple {
   position: absolute;
   top: 20px;
-  left: 1rem;
-  right: 1rem;
+  left: calc(1rem + 16px);
+  right: calc(1rem + 16px);
   height: 3px;
   background: linear-gradient(90deg, #ef4444 0%, #f59e0b 25%, #fbbf24 50%, #22c55e 75%, #10b981 100%);
   border-radius: 2px;
@@ -4901,6 +4999,8 @@ export default {
 .scale-markers-simple {
   position: relative;
   height: 100%;
+  margin-left: calc(1rem + 16px);
+  margin-right: calc(1rem + 16px);
 }
 
 .marker-simple {
@@ -4931,6 +5031,65 @@ export default {
   flex-direction: column;
   gap: 0;
   margin-top: 1.5rem;
+}
+
+/* Scrollable Facility Container */
+.scrollable-facility-container {
+  max-height: 600px; /* Approximately 5 cards at ~120px each */
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 0.5rem;
+  margin-right: -0.5rem;
+  
+  /* Modern scrollbar styling */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(16, 185, 129, 0.3) rgba(241, 245, 249, 0.5);
+}
+
+/* Webkit scrollbar styling for modern browsers */
+.scrollable-facility-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.scrollable-facility-container::-webkit-scrollbar-track {
+  background: rgba(241, 245, 249, 0.5);
+  border-radius: 10px;
+  margin: 0.5rem 0;
+}
+
+.scrollable-facility-container::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, 
+    rgba(16, 185, 129, 0.4) 0%,
+    rgba(5, 150, 105, 0.6) 100%
+  );
+  border-radius: 10px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
+}
+
+.scrollable-facility-container::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, 
+    rgba(16, 185, 129, 0.6) 0%,
+    rgba(5, 150, 105, 0.8) 100%
+  );
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Fade effect at bottom to indicate more content */
+.scrollable-facility-container::after {
+  content: '';
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 20px;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(248, 250, 252, 0.8) 100%
+  );
+  pointer-events: none;
+  z-index: 1;
 }
 
 .assessment-row {
@@ -4966,102 +5125,591 @@ export default {
   gap: 1rem;
 }
 
-.facility-main-info {
+/* Modern Fancy Facility Card */
+.facility-modern-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex: 1;
+}
+
+.facility-avatar {
+  position: relative;
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.avatar-bg {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 50%, #8b5cf6 100%);
+  opacity: 0.9;
+}
+
+.avatar-text {
+  position: relative;
+  z-index: 1;
+  font-weight: 700;
+  font-size: 0.8rem;
+  color: white;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  letter-spacing: 0.5px;
+}
+
+.facility-details {
   flex: 1;
   display: flex;
   flex-direction: column;
   gap: 0.4rem;
 }
 
-.facility-name {
-  font-weight: 600;
+.facility-title {
+  font-weight: 700;
   font-size: 0.95rem;
-  color: #1e293b;
-  line-height: 1.4;
+  color: #0f172a;
+  line-height: 1.3;
   font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
-  letter-spacing: -0.005em;
-  margin-bottom: 0.3rem;
+  letter-spacing: -0.01em;
+  margin: 0;
+  background: linear-gradient(135deg, #0f172a 0%, #374151 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
-.facility-type {
-  display: inline-block;
-  color: #f59e0b;
-  font-weight: 500;
-  font-size: 0.7rem;
-  background: rgba(251, 191, 36, 0.08);
-  padding: 0.1rem 0.4rem;
-  border-radius: 8px;
-  text-transform: capitalize;
-  letter-spacing: 0.2px;
-  border: 1px solid rgba(251, 191, 36, 0.15);
-  width: fit-content;
+.facility-meta {
+  display: flex;
+  align-items: center;
 }
 
-.facility-badge {
-  background: #10b981;
-  color: white;
-  padding: 0.2rem 0.4rem;
-  border-radius: 6px;
-  text-align: center;
-  box-shadow: 0 1px 3px rgba(16, 185, 129, 0.2);
-  min-width: 35px;
-}
-
-.badge-score {
+.meta-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.65rem;
   font-weight: 600;
-  font-size: 0.7rem;
+  color: #0891b2;
+  background: linear-gradient(135deg, rgba(8, 145, 178, 0.1), rgba(59, 130, 246, 0.08), rgba(139, 92, 246, 0.05));
+  padding: 0.2rem 0.6rem;
+  border-radius: 20px;
+  border: 1px solid rgba(8, 145, 178, 0.2);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  backdrop-filter: blur(10px);
+  position: relative;
+  overflow: hidden;
+}
+
+.meta-chip::before {
+  content: '';
+  width: 4px;
+  height: 4px;
+  background: linear-gradient(135deg, #06b6d4, #3b82f6);
+  border-radius: 50%;
+}
+
+.meta-chip::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: left 0.6s ease;
+}
+
+.meta-chip:hover::after {
+  left: 100%;
+}
+
+.meta-chip:hover {
+  border-color: rgba(8, 145, 178, 0.3);
+  transform: scale(1.02);
+}
+
+/* Modern Circular Score */
+.score-modern {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.score-ring {
+  position: relative;
+  width: 48px;
+  height: 48px;
+}
+
+.score-svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.score-bg {
+  opacity: 0.3;
+}
+
+.score-progress {
+  transition: stroke-dasharray 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  filter: drop-shadow(0 2px 4px rgba(16, 185, 129, 0.2));
+}
+
+.score-text {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.score-value {
+  font-weight: 800;
+  font-size: 0.9rem;
+  color: #10b981;
+  line-height: 1;
+  font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
 }
 
 .rating-column {
   position: relative;
 }
 
-.condition-bar {
+/* Modern Progress Container */
+.modern-progress-container {
+  width: 100%;
+  margin: 0;
+  padding: 0 1rem;
+}
+
+.progress-bar-enhanced {
   position: relative;
+  width: 100%;
   height: 16px;
-  background: #f1f5f9;
-  border-radius: 8px;
-  border: 1px solid #e2e8f0;
-  overflow: hidden;
-  margin: 0 1rem;
 }
 
-.condition-fill {
-  height: 100%;
-  border-radius: 8px;
-  transition: all 0.6s ease;
-}
-
-.condition-dot {
+/* Progress Track Background with Segments */
+.progress-track-background {
   position: absolute;
-  top: -4px;
-  width: 20px;
-  height: 20px;
-  background: #22c55e;
-  border-radius: 50%;
-  border: 3px solid white;
-  box-shadow: 0 3px 10px rgba(34, 197, 94, 0.4);
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 16px;
+  border-radius: 10px;
+  display: flex;
+  overflow: hidden;
+  background: #f8fafc;
+  border: 2px solid #e2e8f0;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.track-segment {
+  flex: 1;
+  opacity: 0.4;
+  transition: opacity 0.3s ease;
+}
+
+.track-segment.segment-poor {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(220, 38, 38, 0.15));
+}
+
+.track-segment.segment-fair {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(217, 119, 6, 0.15));
+}
+
+.track-segment.segment-average {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(217, 119, 6, 0.15));
+}
+
+.track-segment.segment-good {
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(22, 163, 74, 0.15));
+}
+
+.track-segment.segment-excellent {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(5, 150, 105, 0.15));
+}
+
+/* Enhanced Progress Fill */
+.progress-fill-enhanced {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 16px;
+  border-radius: 10px;
+  overflow: hidden;
+  transform-origin: left;
+  animation: progressSlideIn 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  transform: scaleX(0);
+  box-shadow: 
+    0 3px 8px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+@keyframes progressSlideIn {
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/* Progress Fill Colors */
+.progress-fill-enhanced.condition-poor {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 50%, #b91c1c 100%);
+}
+
+.progress-fill-enhanced.condition-average {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 50%, #b45309 100%);
+}
+
+.progress-fill-enhanced.condition-good {
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 50%, #15803d 100%);
+}
+
+.progress-fill-enhanced.condition-excellent {
+  background: linear-gradient(135deg, #10b981 0%, #059669 50%, #047857 100%);
+}
+
+/* Animated Shine Effect */
+.progress-shine {
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.4),
+    transparent
+  );
+  animation: shine 2s infinite;
+}
+
+@keyframes shine {
+  0% { left: -100%; }
+  50% { left: 100%; }
+  100% { left: 100%; }
+}
+
+/* Progress Overlay */
+.progress-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.2) 0%,
+    transparent 50%,
+    rgba(0, 0, 0, 0.1) 100%
+  );
+  pointer-events: none;
+}
+
+/* Enhanced Progress Indicator */
+.progress-indicator-enhanced {
+  position: absolute;
+  top: -8px;
   transform: translateX(-50%);
-  transition: all 0.6s ease;
-  z-index: 1;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  z-index: 10;
 }
 
-/* Condition colors */
-.condition-fill.condition-poor {
-  background: #ef4444;
+.indicator-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 3px solid;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
-.condition-fill.condition-average {
-  background: #f59e0b;
+/* Emoji Indicator */
+.indicator-emoji {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 24px;
+  height: 24px;
+  transition: all 0.3s ease;
 }
 
-.condition-fill.condition-good {
-  background: #22c55e;
+.emoji-face {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  position: relative;
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
 }
 
-.condition-fill.condition-excellent {
+.emoji-eyes {
+  position: absolute;
+  top: 7px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 4px;
+}
+
+.eye {
+  width: 3px;
+  height: 3px;
+  background: #333;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+.emoji-mouth {
+  position: absolute;
+  bottom: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  transition: all 0.3s ease;
+}
+
+/* Emoji States - 5 Different Expressions */
+
+/* 1. Very Sad (Now used for Rating 5 - changed to teal) */
+.emoji-very-sad .emoji-mouth {
+  width: 8px;
+  height: 4px;
+  border: 2px solid #10b981;
+  border-top: none;
+  border-radius: 0 0 8px 8px;
+  background: transparent;
+}
+
+.emoji-very-sad .eye {
   background: #10b981;
+  width: 2px;
+  height: 4px;
+  border-radius: 2px;
 }
+
+.emoji-very-sad .emoji-face {
+  background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+  border-color: #10b981;
+}
+
+/* 2. Sad (Now used for Rating 4 - changed to green) */
+.emoji-sad .emoji-mouth {
+  width: 6px;
+  height: 3px;
+  border: 2px solid #22c55e;
+  border-top: none;
+  border-radius: 0 0 6px 6px;
+  background: transparent;
+}
+
+.emoji-sad .eye {
+  background: #22c55e;
+  width: 3px;
+  height: 3px;
+}
+
+.emoji-sad .emoji-face {
+  background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+  border-color: #22c55e;
+}
+
+/* 3. Neutral (Rating 3) */
+.emoji-neutral .emoji-mouth {
+  width: 6px;
+  height: 1px;
+  background: #6b7280;
+  border-radius: 1px;
+}
+
+.emoji-neutral .eye {
+  background: #6b7280;
+  width: 3px;
+  height: 3px;
+}
+
+.emoji-neutral .emoji-face {
+  background: linear-gradient(135deg, #fafafa, #f5f5f5);
+  border-color: #d1d5db;
+}
+
+/* 4. Happy (Now used for Rating 2 - changed to orange) */
+.emoji-happy .emoji-mouth {
+  width: 8px;
+  height: 4px;
+  border: 2px solid #f59e0b;
+  border-bottom: none;
+  border-radius: 8px 8px 0 0;
+  background: transparent;
+}
+
+.emoji-happy .eye {
+  background: #f59e0b;
+  width: 3px;
+  height: 3px;
+}
+
+.emoji-happy .emoji-face {
+  background: linear-gradient(135deg, #fffbeb, #fef3c7);
+  border-color: #f59e0b;
+}
+
+/* 5. Very Happy (Now used for Rating 1 - changed to red) */
+.emoji-very-happy .emoji-mouth {
+  width: 10px;
+  height: 5px;
+  border: 2px solid #ef4444;
+  border-bottom: none;
+  border-radius: 10px 10px 0 0;
+  background: transparent;
+}
+
+.emoji-very-happy .eye {
+  background: #ef4444;
+  width: 4px;
+  height: 2px;
+  border-radius: 2px;
+  transform: scaleY(0.5);
+}
+
+.emoji-very-happy .emoji-face {
+  background: linear-gradient(135deg, #fef2f2, #fee2e2);
+  border-color: #ef4444;
+}
+
+/* Ring Colors for Different States */
+.progress-indicator-enhanced.condition-poor .indicator-ring {
+  border-color: #ef4444;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+.progress-indicator-enhanced.condition-average .indicator-ring {
+  border-color: #f59e0b;
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+}
+
+.progress-indicator-enhanced.condition-good .indicator-ring {
+  border-color: #22c55e;
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+}
+
+.progress-indicator-enhanced.condition-excellent .indicator-ring {
+  border-color: #10b981;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+/* Hover Effects */
+.progress-indicator-enhanced:hover .indicator-ring {
+  transform: scale(1.2);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+.progress-indicator-enhanced:hover .indicator-emoji {
+  transform: translate(-50%, -50%) scale(1.3);
+}
+
+/* Progress Tooltip */
+.progress-tooltip {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-bottom: 12px;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 100;
+}
+
+.progress-indicator-enhanced:hover .progress-tooltip {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(-4px);
+}
+
+.tooltip-content {
+  background: linear-gradient(135deg, 
+    rgba(15, 23, 42, 0.95) 0%,
+    rgba(30, 41, 59, 0.9) 100%
+  );
+  backdrop-filter: blur(20px);
+  color: white;
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  font-size: 0.875rem;
+  white-space: nowrap;
+  box-shadow: 
+    0 10px 25px rgba(0, 0, 0, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.tooltip-title {
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+  font-size: 0.9rem;
+}
+
+.tooltip-rating {
+  font-size: 0.8rem;
+  font-weight: 500;
+  margin-bottom: 0.25rem;
+  padding: 0.125rem 0.5rem;
+  border-radius: 6px;
+  text-align: center;
+}
+
+.tooltip-rating.condition-poor {
+  color: #fecaca;
+  background: rgba(239, 68, 68, 0.2);
+}
+
+.tooltip-rating.condition-average {
+  color: #fed7aa;
+  background: rgba(245, 158, 11, 0.2);
+}
+
+.tooltip-rating.condition-good {
+  color: #bbf7d0;
+  background: rgba(34, 197, 94, 0.2);
+}
+
+.tooltip-rating.condition-excellent {
+  color: #a7f3d0;
+  background: rgba(16, 185, 129, 0.2);
+}
+
+.tooltip-score {
+  font-weight: 700;
+  font-size: 1rem;
+  color: #22c55e;
+  text-align: center;
+}
+
+.tooltip-arrow {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 6px solid rgba(15, 23, 42, 0.95);
+}
+
 
 .conditions-header {
   display: grid;

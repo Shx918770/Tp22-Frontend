@@ -130,34 +130,59 @@
     </div>
 
     <!-- Public Transport Facilities Section -->
-    <section id = "public-transport-detail" class = "public-transport-detail">
-      <div class = "container">
-        <div class = "detail-header">
+    <section id="public-transport-detail" class="public-transport-detail">
+      <div class="container">
+        <div class="detail-header">
           <h2>Public Transport Facilities</h2>
-          <p>...</p>
+          <p>Comprehensive overview of transport modes and stops in the suburb</p>
         </div>
-        <div class="public-transport-grid">
-          <!--Section 1: radio bar graph-->
-          <div class="facility-card">
-            <div class = "card-header">
-              <h3>Transport Mode Distribution</h3>
+
+        <!-- Three-section layout -->
+        <div class="transport-grid">
+          <!-- Section 1: Mode Distribution -->
+          <div class="transport-section pie-chart-section">
+            <div class="section-header">
+              <div class="section-icon">
+                <!-- Transport icon -->
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                  <path d="M3 7V5C3 3.9 3.9 3 5 3H19C20.1 3 21 3.9 21 5V7" stroke="currentColor" stroke-width="2"/>
+                  <path d="M3 7L5 19C5 20.1 5.9 21 7 21H17C18.1 21 19 20.1 19 19L21 7H3Z" stroke="currentColor" stroke-width="2"/>
+                </svg>
+              </div>
+              <h3>Mode Distribution</h3>
             </div>
-            <div class="chart-container">
-              <canvas id="transportChart"></canvas>
+            <div class="section-content">
+              <div class="pie-chart-container">
+                <canvas id="transportChart"></canvas>
+              </div>
             </div>
           </div>
-          <!--Section 2: Stop List-->
-          <div class = "facility-card">
-            <div class = "card-header">
+
+          <!-- Section 2: Stops List -->
+          <div class="transport-section stop-list-section">
+            <div class="section-header">
+              <div class="section-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                  <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+                  <path d="M12 6V12L16 14" stroke="currentColor" stroke-width="2"/>
+                </svg>
+              </div>
               <h3>List of Stops</h3>
+              <select v-model="stopFilter" class="transport-filter">
+                <option value="all">All Modes</option>
+                <option value="TRAIN">Train</option>
+                <option value="TRAM">Tram</option>
+                <option value="BUS">Bus</option>
+              </select>
             </div>
-            <div class="stops-list">
-              <ul>
-                <li v-for="(stop, index) in stats.transport.stops || []" :key="index">
-                  <strong>{{ stop.STOP_NAME }}</strong><br/>
-                  {{ stop.MODE }} - {{ stop.LOCALITY }}
-                </li>
-              </ul>
+            <div class="section-content">
+              <div class="stop-list">
+                <div v-for="stop in filteredStops" :key="stop.STOP_ID" class="stop-item">
+                  <div class="stop-name">{{ stop.STOP_NAME }}</div>
+                  <div class="stop-type">{{ stop.MODE }}</div>
+                  <div class="stop-locality">{{ stop.LOCALITY }}</div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -193,6 +218,7 @@ export default {
       },
       visibleLayers: { transport: true, bicycle: true, parking: true },
       currentFilter: 'all',
+      stopFilter: 'all',
       loading: false,
       error: null
     }
@@ -200,7 +226,12 @@ export default {
   computed: {
     selectedSuburb() {
       return this.$route?.query?.suburb || ''
-    }
+    },
+    filteredStops() {
+      if (!this.stats.transport.stops) return [];
+      if (this.stopFilter === 'all') return this.stats.transport.stops;
+      return this.stats.transport.stops.filter(s => s.MODE?.toUpperCase().includes(this.stopFilter));
+    },
   },
   mounted() {
     console.log("Loaded plugins:", Chart.registry.plugins);
@@ -436,6 +467,7 @@ export default {
         options: {
           responsive: true,
           maintainAspectRatio: false,
+          layout: { padding: {top: -60}},
           rotation: 0,
           circumference: 270,
           plugins: {
@@ -456,8 +488,19 @@ export default {
             beforeDraw(chart) {
               const { ctx, chartArea: { width, height } } = chart;
               ctx.save();
-              ctx.clearRect(width / 2 - 100, height / 2 - 40, 200, 120);
+              ctx.clearRect(width / 2 - 200, height / 2 - 40, 400, 120);
               ctx.restore();
+            }
+          },
+          {
+            id: 'moveUp',
+            beforeDraw(chart) {
+              const { ctx, chartArea: { width, height } } = chart;
+              ctx.save();
+              ctx.translate(0, -170);
+            },
+            afterDraw(chart) {
+              chart.ctx.restore();
             }
           },
           // only show Total: xxx
@@ -470,7 +513,7 @@ export default {
               ctx.fillStyle = '#111';
               ctx.textAlign = 'center';
               ctx.textBaseline = 'middle';
-              ctx.fillText(`Total: ${total}`, width / 2, height / 2);
+              ctx.fillText(`Total: ${total}`, width / 2, height / 2 -170);
               ctx.restore();
             }
           },
@@ -478,40 +521,32 @@ export default {
           {
             id: 'customLegend',
             afterDraw: (chart) => {
-              const { ctx, chartArea: { width, top } } = chart;
+              const { ctx, chartArea: { width, height } } = chart;
               ctx.save();
               ctx.font = '12px Inter';
               ctx.textAlign = 'right';
               ctx.textBaseline = 'middle';
 
-              const legendX = width / 2 - 20;
-              const datasets = chart.data.datasets;
+              const centerX = width / 2 - 10;
+              const centerY = height / 2 -150;
 
-              // each line height
-              const lineHeight = 22;
-
-              // legend start position
-              let startY = top + 40;
-
-              datasets.slice().reverse().forEach((ds, idx) => {
-                // skip if count is 0
+              chart.data.datasets.forEach((ds, datasetIndex) => {
                 if (ds.data[0] === 0) return;
+                const meta = chart.getDatasetMeta(datasetIndex);
+                const arc = meta.data[0];
+                if (!arc) return;
 
-                const yPos = startY + idx * lineHeight;
-                const text = `${ds.label} (${ds.data[0]})`;
-                const textWidth = ctx.measureText(text).width;
-                const dotX = legendX - textWidth - 12;
+                // line angle
+                const angle = arc.startAngle;
+                // line length
+                const r = arc.outerRadius + 15;
 
-
-                // small dot
-                ctx.beginPath();
-                ctx.arc(dotX, yPos, 4, 0, 2 * Math.PI);
-                ctx.fillStyle = ds.backgroundColor[0];
-                ctx.fill();
+                const x = centerX + Math.cos(angle) * r;
+                const y = centerY + Math.sin(angle) * r;
 
                 // text
                 ctx.fillStyle = ds.backgroundColor[0];
-                ctx.fillText(`${ds.label} (${ds.data[0]})`, legendX, yPos);
+                ctx.fillText(`${ds.label} (${ds.data[0]})`, x + 8, y);
               });
 
               ctx.restore();
@@ -964,23 +999,21 @@ export default {
 /* for map end */
 
 /* Public Transport Facilities Section Start */
-
 .public-transport-detail {
   padding: 4rem 0;
   position: relative;
 }
 
-/* Education Grid Layout */
 .public-transport-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-template-rows: auto auto;
   gap: 2rem;
   width: 80%;
+  height: 700px;
   margin: 0 auto;
   grid-template-areas: 
-    "pie-chart school-list"
-    "student-chart student-chart";
+    "pie-chart stop-list"
 }
 
 .detail-header {
@@ -1035,68 +1068,6 @@ export default {
   background: #fff;
   border-radius: 12px;
   padding: 1rem;
-  min-height: 500px;
-  max-height: 500px;
-  overflow-y: auto;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-}
-
-.stops-list h3 {
-  margin-bottom: 1rem;
-  color: #2c3e50;
-  font-weight: 600;
-}
-
-.stops-list ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.stops-list li {
-  padding: 0.8rem;
-  border-bottom: 1px solid #eee;
-  font-size: 0.95rem;
-}
-
-.stops-list li:last-child {
-  border-bottom: none;
-}
-.transport-facilities {
-  width: 80%;
-  margin: 4rem auto;
-  padding: 2rem;
-  border-radius: 20px;
-  background: linear-gradient(135deg, rgba(248, 250, 252, 0.95), rgba(241, 245, 249, 0.9));
-  box-shadow: 0 10px 40px rgba(0,0,0,0.1);
-}
-
-.section-title {
-  font-size: 2rem;
-  font-weight: 700;
-  margin-bottom: 1.5rem;
-  text-align: center;
-  background: linear-gradient(90deg, #2196F3, #4CAF50);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.facilities-content {
-  display: flex;
-  gap: 2rem;
-  align-items: flex-start;
-}
-
-.chart-container {
-  flex: 1;
-  padding: 1rem;
-}
-
-.stops-list {
-  flex: 1;
-  background: #fff;
-  border-radius: 12px;
-  padding: 1rem;
   min-height: 540px;
   max-height: 540px;
   overflow-y: auto;
@@ -1125,14 +1096,25 @@ export default {
   border-bottom: none;
 }
 
-.facility-card {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(245, 247, 250, 0.95));
-  border-radius: 20px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-  border: 1px solid rgba(226, 232, 240, 0.6);
+.section-title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  background: linear-gradient(90deg, #2196F3, #4CAF50);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.facilities-content {
   display: flex;
-  flex-direction: column;
-  height: 600px; 
+  gap: 2rem;
+  align-items: flex-start;
+}
+
+.chart-container {
+  flex: 1;
+  padding: 1rem;
 }
 
 .card-header {
@@ -1144,6 +1126,204 @@ export default {
   font-size: 1.2rem;
   font-weight: 700;
   color: #1f2937;
+}
+
+.transport-grid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 2rem;
+  width: 80%;
+  margin: 0 auto;
+  grid-template-areas: 
+    "pie-chart stop-list";
+}
+
+.transport-section {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 24px;
+  padding: 2rem;
+  backdrop-filter: blur(30px);
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.08),
+    0 8px 25px rgba(0, 0, 0, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.transport-section:hover {
+  transform: translateY(-5px);
+  box-shadow:
+    0 30px 80px rgba(0, 0, 0, 0.12),
+    0 12px 35px rgba(0, 0, 0, 0.08);
+}
+
+.transport-section.pie-chart-section {
+  grid-area: pie-chart;
+  background: linear-gradient(135deg, rgba(248, 250, 252, 0.95), rgba(241, 245, 249, 0.9));
+  border: 1px solid rgba(226, 232, 240, 0.6);
+  height: 700px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+.transport-section.stop-list-section {
+  grid-area: stop-list;
+  background: linear-gradient(135deg, rgba(248, 250, 252, 0.95), rgba(241, 245, 249, 0.9));
+  border: 1px solid rgba(226, 232, 240, 0.6);
+  height: 700px;
+}
+
+.pie-chart-container {
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 1rem;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(248, 250, 252, 0.8));
+  border-radius: 15px;
+  border: 2px solid rgba(59, 130, 246, 0.25);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
+  backdrop-filter: blur(15px);
+}
+
+.pie-chart-container canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid rgba(148, 163, 184, 0.2);
+  padding-bottom: 1rem;
+}
+
+.section-header h3 {
+  flex: 1;
+  color: #1e293b;
+  font-weight: 700;
+  font-size: 1.4rem;
+  font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+  letter-spacing: -0.02em;
+  margin: 0;
+  position: relative;
+}
+
+.section-header h3::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 0;
+  width: 40px;
+  height: 3px;
+  border-radius: 2px;
+  transition: all 0.3s ease;
+}
+
+.pie-chart-section .section-header h3::after {
+  background: linear-gradient(90deg, #3b82f6, #6366f1);
+}
+
+.stop-list-section .section-header h3::after {
+  background: linear-gradient(90deg, #ef4444, #f43f5e);
+}
+
+.section-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.pie-chart-section .section-icon {
+  color: #3b82f6;
+}
+
+.stop-list-section .section-icon {
+  color: #ef4444;
+}
+
+.transport-filter {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 0.4rem 0.6rem;
+  font-size: 0.9rem;
+  color: #374151;
+  transition: all 0.2s ease;
+}
+
+.transport-filter:hover {
+  border-color: #3b82f6;
+}
+
+.stop-list {
+  flex: 1;
+  max-height: 550px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(248, 250, 252, 0.8));
+  border-radius: 15px;
+  padding: 1.5rem;
+  border: 2px solid rgba(239, 68, 68, 0.15);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
+  backdrop-filter: blur(15px);
+  overflow-x: hidden;
+}
+
+.stop-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.75rem;
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.stop-item:hover {
+  background: rgba(255, 255, 255, 0.8);
+  transform: translateX(5px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.stop-name {
+  font-weight: 600;
+  color: #2c3e50;
+}
+.stop-type {
+  color: #666;
+  font-size: 0.9rem;
+}
+.stop-locality {
+  color: #999;
+  font-size: 0.8rem;
+}
+
+.stats-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.stats-list li {
+  margin: 0.6rem 0;
+  font-size: 1rem;
+  font-weight: 500;
 }
 
 /* Public Transport Facilities Section End */

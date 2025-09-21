@@ -40,7 +40,7 @@
           <!-- Header with Total -->
           <div class="facilities-header">
             <div class="total-counter">
-              <div class="counter-number">{{ facilityStats?.totalFacilities || 186 }}</div>
+              <div class="counter-number">{{ totalSocialFacilities }}</div>
               <div class="counter-label">Social Facilities</div>
             </div>
             <div class="header-subtitle">
@@ -1046,6 +1046,20 @@ export default {
     
     communityCenterCount() {
       return this.communityCenters?.length || 0
+    },
+
+    // Calculate total social facilities count from all 8 facility types
+    totalSocialFacilities() {
+      const schools = this.schoolStats?.totalSchools || 0
+      const childcare = this.schoolStats?.totalChildcare || 0
+      const hospitals = this.hospitals?.length || 0
+      const practitioners = this.practitioners?.length || 0
+      const playgrounds = this.playgrounds?.length || 0
+      const communityCenters = this.communityCenters?.length || 0
+      const cafes = this.hospitalityStats?.totalCafes || 0
+      const bars = this.hospitalityStats?.totalBars || 0
+      
+      return schools + childcare + hospitals + practitioners + playgrounds + communityCenters + cafes + bars
     },
     
     sortedSchools() {
@@ -2127,31 +2141,38 @@ export default {
       return { cols: 1, rows: 1 }
     },
 
-    // Improved tile sizing with better differentiation and larger minimum size
+    // Progressive tile sizing with gradual size increases
     getImprovedTileSpans(count) {
       if (!this.processedSportsStats || this.processedSportsStats.length === 0) {
-        return { cols: 2, rows: 2 }
+        return { cols: 3, rows: 1 }
       }
       
-      const max = Math.max(...this.processedSportsStats.map(stat => stat.count))
-      const min = Math.min(...this.processedSportsStats.map(stat => stat.count))
-      const range = max - min
+      // Get max count for reference
+      const maxCount = Math.max(...this.processedSportsStats.map(stat => stat.count))
       
       // If all values are the same, use uniform size
-      if (range === 0) {
+      if (this.processedSportsStats.every(stat => stat.count === count)) {
         return { cols: 4, rows: 2 }
       }
       
-      // Calculate relative position (0-1)
-      const normalizedValue = (count - min) / range
+      // Base size for count = 1 (equivalent to old 4x1 size)
+      const baseSize = { cols: 4, rows: 1 }
       
-      // Horizontal tiles: width > height for better content display
-      if (normalizedValue >= 0.8) return { cols: 7, rows: 2 }      // Largest - very wide
-      if (normalizedValue >= 0.6) return { cols: 6, rows: 2 }      // Large - wide
-      if (normalizedValue >= 0.4) return { cols: 5, rows: 2 }      // Medium-large - wide
-      if (normalizedValue >= 0.25) return { cols: 4, rows: 2 }     // Medium - wide
-      if (normalizedValue >= 0.1) return { cols: 4, rows: 1 }      // Small - horizontal
-      return { cols: 4, rows: 1 }                                  // Minimum horizontal size ensures content visibility
+      // Progressive scaling based on count
+      if (count === 1) {
+        return baseSize  // 100% - original base size
+      } else if (count === 2) {
+        return { cols: 5, rows: 1 }  // 125% wider
+      } else if (count === 3) {
+        return { cols: 6, rows: 1 }  // 150% wider
+      } else if (count <= 5) {
+        return { cols: 6, rows: 2 }  // Add height for medium counts
+      } else if (count <= 10) {
+        return { cols: 7, rows: 2 }  // Larger for higher counts
+      } else {
+        // For very high counts (like 16), increase width slightly
+        return { cols: 8, rows: 2 }  // Maximum size with increased width
+      }
     },
 
     // Handle sports tile click - show tooltip
@@ -2891,9 +2912,10 @@ export default {
 
 .bubble-details {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   gap: 0.4rem;
   justify-content: center;
+  align-items: center;
 }
 
 .detail-pill {

@@ -584,12 +584,12 @@
         </div>
       </section>
 
-      <!-- Community Center Conditions Detail Section -->
+      <!-- Recreation Facilities Overview Section -->
       <section id="community-conditions-detail" class="education-detail">
         <div class="container">
           <div class="detail-header">
-            <h2>Community Center Facility Conditions</h2>
-            <p>Assessment of community center facility conditions in {{ selectedSuburb }}</p>
+            <h2>Recreation Facilities Overview</h2>
+            <p>Comprehensive analysis of recreation facilities conditions and sports infrastructure distribution in {{ selectedSuburb }}</p>
           </div>
           
           <div class="community-conditions-content">
@@ -740,9 +740,74 @@
                 </div>
               </div>
             </div>
+            
+            <!-- Sports & Recreation Facilities -->
+            <div v-if="sportsStats.length > 0" class="sports-chart-redesign sports-chart-expanded">
+              <div class="chart-title-bar">
+                <div class="title-section">
+                  <div class="title-icon sports-title-icon">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+                      <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
+                      <path d="M12 2v4M12 18v4M2 12h4M18 12h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                      <path d="M8.5 8.5L12 12l3.5-3.5M15.5 15.5L12 12l-3.5 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                    </svg>
+                  </div>
+                  <div class="title-content">
+                    <h3 class="main-title">Sports Facilities</h3>
+                    <p class="title-subtitle">Discover local sports venues and activities</p>
+                  </div>
+                </div>
+                <div class="chart-legend">
+                  <div class="legend-item">
+                    <div class="legend-box"></div>
+                    <span class="legend-text">Count</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Expanded layout: Better mosaic grid with dynamic sizing -->
+              <div class="sports-mosaic sports-mosaic-expanded" :style="{ minHeight: dynamicGridHeight }">
+                <div 
+                  class="mosaic-grid mosaic-grid-expanded mosaic-grid-dynamic"
+                  :style="{ 
+                    gridTemplateColumns: `repeat(${optimalGridColumns}, 1fr)`,
+                    minHeight: dynamicGridHeight
+                  }"
+                >
+                  <div 
+                    v-for="(stat, index) in processedSportsStats" 
+                    :key="'tile-'+stat.sport"
+                    class="mosaic-tile mosaic-tile-enhanced clickable-tile"
+                    :style="{ 
+                      gridColumn: 'span ' + getImprovedTileSpans(stat.count).cols,
+                      gridRow: 'span ' + getImprovedTileSpans(stat.count).rows,
+                      backgroundColor: getSportsColor(index) + '15',
+                      borderColor: getSportsColor(index),
+                      '--tile-color': getSportsColor(index)
+                    }"
+                    @click="handleSportsTileClick($event, stat)"
+                  >
+                    <div class="tile-content">
+                      <span class="tile-text">{{ formatSportName(stat.sport) }}</span>
+                      <span class="tile-count">{{ stat.count }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
           </div>
         </div>
       </section>
+
+      <!-- Sports Tooltip -->
+      <div v-if="sportsTooltip.visible" class="sports-tooltip" 
+           :style="{ left: sportsTooltip.x + 'px', top: sportsTooltip.y + 'px' }"
+           @click="hideSportsTooltip">
+        <div class="tooltip-content">
+          {{ sportsTooltip.content }}
+        </div>
+      </div>
 
       <!-- Hospitality Development Detail Section -->
       <section id="hospitality-detail" class="education-detail">
@@ -893,183 +958,6 @@
         </div>
       </section>
 
-      <!-- Service Accessibility - Distance Timeline -->
-      <section class="service-accessibility">
-        <div class="container">
-          <div class="accessibility-header">
-            <h2>Service Accessibility</h2>
-            <p class="section-subtitle">Walking distance to essential services</p>
-          </div>
-          
-          <div class="accessibility-timeline">
-            <!-- Distance Scale -->
-            <div class="distance-scale">
-              <div class="scale-line">
-                <div class="scale-marker" style="left: 0%;">
-                  <div class="marker-line"></div>
-                  <div class="marker-label">0 km</div>
-                </div>
-                <div class="scale-marker" style="left: 25%;">
-                  <div class="marker-line"></div>
-                  <div class="marker-label">0.5 km</div>
-                </div>
-                <div class="scale-marker" style="left: 50%;">
-                  <div class="marker-line"></div>
-                  <div class="marker-label">1.0 km</div>
-                </div>
-                <div class="scale-marker" style="left: 75%;">
-                  <div class="marker-line"></div>
-                  <div class="marker-label">1.5 km</div>
-                </div>
-                <div class="scale-marker" style="left: 100%;">
-                  <div class="marker-line"></div>
-                  <div class="marker-label">2.0 km</div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Service Items -->
-            <div class="service-items">
-              <!-- Public Transport -->
-              <div class="service-item excellent">
-                <div class="service-info">
-                  <div class="service-icon">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                      <path d="M12 2L3 7V11C3 16 6 19 12 22C18 19 21 16 21 11V7L12 2Z" stroke="currentColor" stroke-width="2"/>
-                    </svg>
-                  </div>
-                  <div class="service-details">
-                    <div class="service-name">Public Transport</div>
-                    <div class="service-distance">0.2 km</div>
-                  </div>
-                </div>
-                <div class="distance-bar">
-                  <div class="bar-track"></div>
-                  <div class="bar-progress excellent" style="width: 10%;"></div>
-                  <div class="distance-marker excellent" style="left: 10%;">
-                    <div class="marker-dot"></div>
-                    <div class="marker-tooltip">
-                      <div class="tooltip-content">
-                        <div class="tooltip-distance">0.2 km</div>
-                        <div class="tooltip-rating excellent">Excellent</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Primary School -->
-              <div class="service-item excellent">
-                <div class="service-info">
-                  <div class="service-icon">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                      <path d="M22 10V6C22 4.89543 21.1046 4 20 4H4C2.89543 4 2 4.89543 2 6V10M22 10L12 15L2 10M22 10V18C22 19.1046 21.1046 20 20 20H4C2.89543 20 2 19.1046 2 18V10" stroke="currentColor" stroke-width="2"/>
-                    </svg>
-                  </div>
-                  <div class="service-details">
-                    <div class="service-name">Primary School</div>
-                    <div class="service-distance">0.3 km</div>
-                  </div>
-                </div>
-                <div class="distance-bar">
-                  <div class="bar-track"></div>
-                  <div class="bar-progress excellent" style="width: 15%;"></div>
-                  <div class="distance-marker excellent" style="left: 15%;">
-                    <div class="marker-dot"></div>
-                    <div class="marker-tooltip">
-                      <div class="tooltip-content">
-                        <div class="tooltip-distance">0.3 km</div>
-                        <div class="tooltip-rating excellent">Excellent</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Healthcare -->
-              <div class="service-item good">
-                <div class="service-info">
-                  <div class="service-icon">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                      <path d="M19 14C20.49 12.54 22 10.79 22 8.5C22 7.04131 21.4205 5.64236 20.3891 4.61091C19.3576 3.57946 17.9587 3 16.5 3C15.74 3 15.04 3.16 14.38 3.46L12 5.5L9.62 3.46C8.96 3.16 8.26 3 7.5 3C6.04131 3 4.64236 3.57946 3.61091 4.61091C2.57946 5.64236 2 7.04131 2 8.5C2 10.79 3.51 12.54 5 14L12 21L19 14Z" stroke="currentColor" stroke-width="2"/>
-                    </svg>
-                  </div>
-                  <div class="service-details">
-                    <div class="service-name">Healthcare</div>
-                    <div class="service-distance">0.8 km</div>
-                  </div>
-                </div>
-                <div class="distance-bar">
-                  <div class="bar-track"></div>
-                  <div class="bar-progress good" style="width: 40%;"></div>
-                  <div class="distance-marker good" style="left: 40%;">
-                    <div class="marker-dot"></div>
-                    <div class="marker-tooltip">
-                      <div class="tooltip-content">
-                        <div class="tooltip-distance">0.8 km</div>
-                        <div class="tooltip-rating good">Good</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Shopping Center -->
-              <div class="service-item fair">
-                <div class="service-info">
-                  <div class="service-icon">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                      <path d="M3 7V5C3 3.89543 3.89543 3 5 3H19C20.1046 3 21 3.89543 21 5V7M3 7L5 19C5 20.1046 5.89543 21 7 21H17C18.1046 21 19 20.1046 19 19L21 7M3 7H21M9 11V17M15 11V17" stroke="currentColor" stroke-width="2"/>
-                    </svg>
-                  </div>
-                  <div class="service-details">
-                    <div class="service-name">Shopping Center</div>
-                    <div class="service-distance">1.2 km</div>
-                  </div>
-                </div>
-                <div class="distance-bar">
-                  <div class="bar-track"></div>
-                  <div class="bar-progress fair" style="width: 60%;"></div>
-                  <div class="distance-marker fair" style="left: 60%;">
-                    <div class="marker-dot"></div>
-                    <div class="marker-tooltip">
-                      <div class="tooltip-content">
-                        <div class="tooltip-distance">1.2 km</div>
-                        <div class="tooltip-rating fair">Fair</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Accessibility Summary -->
-            <div class="accessibility-summary">
-              <div class="summary-item excellent">
-                <div class="summary-icon"></div>
-                <div class="summary-text">
-                  <span class="summary-label">Excellent Access</span>
-                  <span class="summary-description">0-0.5 km walking distance</span>
-                </div>
-              </div>
-              <div class="summary-item good">
-                <div class="summary-icon"></div>
-                <div class="summary-text">
-                  <span class="summary-label">Good Access</span>
-                  <span class="summary-description">0.5-1.0 km walking distance</span>
-                </div>
-              </div>
-              <div class="summary-item fair">
-                <div class="summary-icon"></div>
-                <div class="summary-text">
-                  <span class="summary-label">Fair Access</span>
-                  <span class="summary-description">1.0+ km walking distance</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
     </main>
 
     <!-- Back to Top Button -->
@@ -1096,7 +984,6 @@ export default {
     return {
       facilityStats: null,
       facilities: [],
-      accessibilityData: [],
       schools: [],
       childCares: [],
       hospitals: [],
@@ -1117,9 +1004,17 @@ export default {
       bars: [],
       playgrounds: [],
       communityCenters: [],
+      sportsStats: [],
       growthData: [],
       loading: false,
       error: null,
+      // Sports tile tooltip
+      sportsTooltip: {
+        visible: false,
+        x: 0,
+        y: 0,
+        content: ''
+      },
       selectedSchool: null,
       sortSchoolsAlphabetically: false,
       showBackToTop: false,
@@ -1135,7 +1030,9 @@ export default {
       },
       healthcareFilter: 'all', // 'all', 'public', 'private', 'practitioner'
       schoolFilter: 'all', // 'all', 'primary', 'secondary', 'special', 'childcare'
-      maxGauge: 8
+      maxGauge: 8,
+      showAllChips: false,
+      chipDisplayLimit: 12
     }
   },
   computed: {
@@ -1237,6 +1134,117 @@ export default {
           description: yearData ? yearData.description : `No development data available for ${year}`
         }
       })
+    },
+
+    // Sports statistics computed properties
+    processedSportsStats() {
+      if (!this.sportsStats || this.sportsStats.length === 0) return []
+      
+      // Group by sports type and sum counts
+      const groupedStats = {}
+      this.sportsStats.forEach(stat => {
+        const sport = stat.sportsPlayed || stat.SPORTS_PLAYED || 'Unknown'
+        const count = parseInt(stat.count || stat.Count || 0)
+        
+        if (groupedStats[sport]) {
+          groupedStats[sport] += count
+        } else {
+          groupedStats[sport] = count
+        }
+      })
+      
+      // Convert to array and sort by count
+      return Object.entries(groupedStats)
+        .map(([sport, count]) => ({ sport, count }))
+        .sort((a, b) => b.count - a.count)
+    },
+
+    totalSportsFacilities() {
+      return this.processedSportsStats.reduce((total, stat) => total + stat.count, 0)
+    },
+
+    uniqueSportsTypes() {
+      return this.processedSportsStats.length
+    },
+
+    mostPopularSport() {
+      if (this.processedSportsStats.length === 0) return 'N/A'
+      return this.formatSportName(this.processedSportsStats[0].sport)
+    },
+
+    maxSportsCount() {
+      if (this.processedSportsStats.length === 0) return 10
+      return Math.max(...this.processedSportsStats.map(stat => stat.count))
+    },
+
+    // Calculate optimal grid columns based on content
+    optimalGridColumns() {
+      if (!this.processedSportsStats || this.processedSportsStats.length === 0) return 12
+      
+      const itemCount = this.processedSportsStats.length
+      
+      // Calculate the maximum width needed by any single tile
+      const maxTileWidth = Math.max(...this.processedSportsStats.map(stat => 
+        this.getImprovedTileSpans(stat.count).cols
+      ))
+      
+      // Base columns calculation on item count and max tile width (for horizontal tiles)
+      let baseColumns = 16
+      if (itemCount <= 2) baseColumns = Math.max(maxTileWidth * 1.5, 12)
+      else if (itemCount <= 4) baseColumns = Math.max(maxTileWidth * 2, 16)
+      else if (itemCount <= 8) baseColumns = Math.max(maxTileWidth * 2.5, 20)
+      else if (itemCount <= 12) baseColumns = Math.max(maxTileWidth * 3, 24)
+      else baseColumns = Math.max(maxTileWidth * 3.5, 28)
+      
+      // Ensure we don't exceed reasonable limits
+      return Math.min(baseColumns, 32)
+    },
+
+    // Calculate dynamic grid height based on content
+    dynamicGridHeight() {
+      if (!this.processedSportsStats || this.processedSportsStats.length === 0) return '200px'
+      
+      const gridCols = this.optimalGridColumns
+      const rowHeight = 60 // base row height
+      const gap = 14 // gap between tiles
+      const padding = 48 // top and bottom padding (1.5rem * 2)
+      
+      // Calculate total area needed for all tiles
+      let totalArea = 0
+      let maxRowsNeeded = 0
+      
+      this.processedSportsStats.forEach(stat => {
+        const spans = this.getImprovedTileSpans(stat.count)
+        totalArea += spans.cols * spans.rows
+        maxRowsNeeded = Math.max(maxRowsNeeded, spans.rows)
+      })
+      
+      // Estimate rows needed based on grid layout
+      const estimatedRows = Math.ceil(totalArea / gridCols)
+      const actualRowsNeeded = Math.max(estimatedRows, maxRowsNeeded)
+      
+      // Calculate height: rows * rowHeight + gaps + padding
+      const calculatedHeight = (actualRowsNeeded * rowHeight) + ((actualRowsNeeded - 1) * gap) + padding
+      
+      // Add some buffer but keep it reasonable
+      return Math.min(Math.max(calculatedHeight, 180), 500) + 'px'
+    },
+
+    getYAxisTicks() {
+      const max = this.maxSportsCount
+      const tickCount = 5
+      const step = Math.ceil(max / tickCount)
+      const ticks = []
+      
+      for (let i = 0; i <= tickCount; i++) {
+        ticks.push(i * step)
+      }
+      
+      return ticks.reverse()
+    },
+    // Mosaic tile spans based on count distribution
+    maxTileCount() {
+      return this.maxSportsCount
     }
   },
   watch: {
@@ -1252,10 +1260,12 @@ export default {
   mounted() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
     window.addEventListener('scroll', this.handleScroll);
+    document.addEventListener('click', this.handleDocumentClick);
   },
   
   beforeUnmount() {
     window.removeEventListener('scroll', this.handleScroll);
+    document.removeEventListener('click', this.handleDocumentClick);
   },
   methods: {
     scrollToHealthDetail() {
@@ -1279,6 +1289,16 @@ export default {
     },
 
     scrollToCommunityConditionsDetail() {
+      const el = document.getElementById('community-conditions-detail')
+      if (el) {
+        // Scroll with offset to avoid covering the title
+        const yOffset = -80; // Adjust this value as needed
+        const y = el.getBoundingClientRect().top + window.pageYOffset + yOffset;
+        window.scrollTo({ top: y, behavior: 'smooth' });
+      }
+    },
+
+    scrollToSportsStatsDetail() {
       const el = document.getElementById('community-conditions-detail')
       if (el) {
         // Scroll with offset to avoid covering the title
@@ -1347,11 +1367,11 @@ export default {
       // LOW SCORES = SAD, HIGH SCORES = HAPPY
       const rating = this.getConditionRating(condition);
       
-      if (rating <= 1) return 'emoji-very-happy';       // 1: Very Poor -> Very sad emoji
-      if (rating <= 2) return 'emoji-happy';            // 2: Poor -> Sad emoji
-      if (rating <= 3) return 'emoji-neutral';        // 3: Average -> Neutral emoji
-      if (rating <= 4) return 'emoji-sad';          // 4: Good -> Happy emoji
-      return 'emoji-very-sad';                       // 5: Excellent -> Very happy emoji
+      if (rating <= 1) return 'emoji-very-happy';       
+      if (rating <= 2) return 'emoji-happy';           
+      if (rating <= 3) return 'emoji-neutral';        
+      if (rating <= 4) return 'emoji-sad';          
+      return 'emoji-very-sad';                       
     },
 
     getConditionText(condition) {
@@ -1500,10 +1520,9 @@ export default {
       
       try {
         // Load all social data in parallel
-        const [statsResponse, facilitiesResponse, accessibilityResponse, schoolsResponse, childCareResponse, educationStatsResponse, hospitalsResp, practitionersResp, bedsResp, hospitalityStatsResp, cafesResp, barsResp, growthDataResp, playgroundsResp, communityCentersResp] = await Promise.allSettled([
+        const [statsResponse, facilitiesResponse, schoolsResponse, childCareResponse, educationStatsResponse, hospitalsResp, practitionersResp, bedsResp, hospitalityStatsResp, cafesResp, barsResp, growthDataResp, playgroundsResp, communityCentersResp, sportsStatsResp] = await Promise.allSettled([
           socialApi.getFacilityStats(suburb),
           socialApi.getFacilities(suburb),
-          socialApi.getFacilityAccessibility(suburb),
           schoolApi.getSchoolsBySuburb(suburb),
           childCareApi.getChildCareBySuburb(suburb),
           schoolApi.getEducationStatsBySuburb(suburb),
@@ -1515,7 +1534,8 @@ export default {
           hospitalityApi.getBarsBySuburb(suburb),
           hospitalityApi.getAllGrowthData(),
           recreationApi.getPlaygroundsBySuburb(suburb),
-          recreationApi.getCommunityCentersBySuburb(suburb)
+          recreationApi.getCommunityCentersBySuburb(suburb),
+          recreationApi.getCommunityCenterStatsBySuburb(suburb)
         ])
 
         // Handle facility stats
@@ -1538,13 +1558,6 @@ export default {
           }
         }
 
-        // Handle accessibility
-        if (accessibilityResponse.status === 'fulfilled') {
-          const accessibilityResult = apiUtils.extractData(accessibilityResponse.value)
-          if (accessibilityResult.success) {
-            this.accessibilityData = accessibilityResult.data || []
-          }
-        }
 
         // Handle schools
         if (schoolsResponse.status === 'fulfilled') {
@@ -1684,6 +1697,25 @@ export default {
         } else {
           console.error('Community Centers API call failed:', communityCentersResp.reason)
           this.communityCenters = []
+        }
+
+        // Handle sports statistics
+        if (sportsStatsResp.status === 'fulfilled') {
+          const r = apiUtils.extractData(sportsStatsResp.value)
+          if (r.success) {
+            this.sportsStats = r.data || []
+            console.log('Sports Statistics loaded:', this.sportsStats.length, 'sports stats for', suburb)
+            if (this.sportsStats.length > 0) {
+              console.log('Sample sports stats data:', this.sportsStats[0])
+              console.log('Available sports types:', this.sportsStats.map(s => s.sportsPlayed || s.SPORTS_PLAYED))
+            }
+          } else {
+            console.error('Failed to load sports statistics:', r.message)
+            this.sportsStats = []
+          }
+        } else {
+          console.error('Sports Statistics API call failed:', sportsStatsResp.reason)
+          this.sportsStats = []
         }
 
       } catch (error) {
@@ -1987,6 +2019,162 @@ export default {
       return {
         x: 100 + radius * Math.cos(childcareAngle - Math.PI/2),
         y: 100 + radius * Math.sin(childcareAngle - Math.PI/2)
+      }
+    },
+
+    // Sports statistics methods
+    getBarHeight(count) {
+      if (this.maxSportsCount === 0) return 0
+      return Math.max((count / this.maxSportsCount) * 100, 5) // Minimum 5% height for visibility
+    },
+
+    getSportsColor(index) {
+      const colors = [
+        '#3b82f6', // Blue
+        '#ef4444', // Red
+        '#10b981', // Green
+        '#f59e0b', // Amber
+        '#8b5cf6', // Purple
+        '#06b6d4', // Cyan
+        '#84cc16', // Lime
+        '#f97316', // Orange
+        '#ec4899', // Pink
+        '#6b7280'  // Gray
+      ]
+      return colors[index % colors.length]
+    },
+
+    formatSportName(sport) {
+      if (!sport || sport === 'Unknown') return 'Unknown'
+      
+      // Handle specific sport name formatting
+      const sportMappings = {
+        'FITNESS / GYMNASIUM WORKOUTS': 'Fitness/Gym',
+        'BADMINTON': 'Badminton',
+        'BASKETBALL': 'Basketball',
+        'GYMNASTICS': 'Gymnastics',
+        'HOCKEY': 'Hockey',
+        'NETBALL (INDOOR)': 'Netball',
+        'SOCCER (INDOOR SOCCER / FUTSAL': 'Soccer/Futsal',
+        'SWIMMING': 'Swimming',
+        'TEAM NETBALL': 'Team Netball',
+        'VOLLEYBALL': 'Volleyball',
+        'SAILING': 'Sailing',
+        'AUSTRALIAN RULES FOOTBALL': 'AFL',
+        'CRICKET': 'Cricket',
+        'BMX': 'BMX'
+      }
+      
+      return sportMappings[sport.toUpperCase()] || sport
+    },
+
+    getBarPercentage(count) {
+      if (this.maxSportsCount === 0) return 10
+      return Math.max((count / this.maxSportsCount) * 100, 15) // Minimum 15% for visibility
+    },
+
+    getShortSportName(sport) {
+      if (!sport || sport === 'Unknown') return '?'
+      
+      // Create very short abbreviations for display
+      const shortMappings = {
+        'FITNESS / GYMNASIUM WORKOUTS': 'Gym',
+        'BADMINTON': 'Bad',
+        'BASKETBALL': 'Bask',
+        'GYMNASTICS': 'Gym',
+        'HOCKEY': 'Hock',
+        'NETBALL (INDOOR)': 'Net',
+        'SOCCER (INDOOR SOCCER / FUTSAL': 'Soc',
+        'SWIMMING': 'Swim',
+        'TEAM NETBALL': 'T.Net',
+        'VOLLEYBALL': 'Vol',
+        'SAILING': 'Sail',
+        'AUSTRALIAN RULES FOOTBALL': 'AFL',
+        'CRICKET': 'Cric',
+        'BMX': 'BMX',
+        'TENNIS (OUTDOOR)': 'Ten',
+        'LAWN BOWLS': 'Bowl',
+        'RUGBY LEAGUE': 'Rug',
+        'RUGBY UNION': 'Rug',
+        'MARTIAL ARTS': 'MA',
+        'CYCLING': 'Cyc',
+        'SQUASH / RACQUETBALL': 'Sq'
+      }
+      
+      return shortMappings[sport.toUpperCase()] || sport.substring(0, 3)
+    },
+
+    showTooltip(event, stat, index) {
+      const rect = event.currentTarget.getBoundingClientRect()
+      this.tooltip = {
+        visible: true,
+        x: rect.left + rect.width / 2,
+        y: rect.top - 10,
+        name: this.formatSportName(stat.sport),
+        count: stat.count
+      }
+    },
+
+    // Convert count to grid span; bigger count => larger tile (original method)
+    getTileSpans(count) {
+      const max = Math.max(this.maxTileCount || 1, 1)
+      const ratio = count / max
+      // tiers for compact grid (col/row spans 1-3)
+      if (ratio >= 0.75) return { cols: 3, rows: 3 }
+      if (ratio >= 0.45) return { cols: 3, rows: 2 }
+      if (ratio >= 0.25) return { cols: 2, rows: 2 }
+      if (ratio >= 0.12) return { cols: 2, rows: 1 }
+      return { cols: 1, rows: 1 }
+    },
+
+    // Improved tile sizing with better differentiation and larger minimum size
+    getImprovedTileSpans(count) {
+      if (!this.processedSportsStats || this.processedSportsStats.length === 0) {
+        return { cols: 2, rows: 2 }
+      }
+      
+      const max = Math.max(...this.processedSportsStats.map(stat => stat.count))
+      const min = Math.min(...this.processedSportsStats.map(stat => stat.count))
+      const range = max - min
+      
+      // If all values are the same, use uniform size
+      if (range === 0) {
+        return { cols: 4, rows: 2 }
+      }
+      
+      // Calculate relative position (0-1)
+      const normalizedValue = (count - min) / range
+      
+      // Horizontal tiles: width > height for better content display
+      if (normalizedValue >= 0.8) return { cols: 7, rows: 2 }      // Largest - very wide
+      if (normalizedValue >= 0.6) return { cols: 6, rows: 2 }      // Large - wide
+      if (normalizedValue >= 0.4) return { cols: 5, rows: 2 }      // Medium-large - wide
+      if (normalizedValue >= 0.25) return { cols: 4, rows: 2 }     // Medium - wide
+      if (normalizedValue >= 0.1) return { cols: 4, rows: 1 }      // Small - horizontal
+      return { cols: 4, rows: 1 }                                  // Minimum horizontal size ensures content visibility
+    },
+
+    // Handle sports tile click - show tooltip
+    handleSportsTileClick(event, stat) {
+      event.stopPropagation()
+      const rect = event.currentTarget.getBoundingClientRect()
+      this.sportsTooltip = {
+        visible: true,
+        x: rect.left + rect.width / 2,
+        y: rect.top - 10,
+        content: this.formatSportName(stat.sport)
+      }
+    },
+
+    // Hide sports tooltip
+    hideSportsTooltip() {
+      this.sportsTooltip.visible = false
+    },
+
+    // Handle document click to hide tooltip
+    handleDocumentClick() {
+      if (this.sportsTooltip.visible) {
+        this.hideSportsTooltip()
       }
     }
   }
@@ -2786,317 +2974,10 @@ export default {
 }
 
 
-/* Service Accessibility - Distance Timeline */
-.service-accessibility {
-  padding: 6rem 0;
-}
 
-.accessibility-header {
-  text-align: center;
-  margin-bottom: 4rem;
-}
 
-.accessibility-header h2 {
-  font-size: 2.5rem;
-  font-weight: 700;
-  color: #2c3e50;
-  margin-bottom: 1rem;
-  background: linear-gradient(135deg, #2c3e50, #4CAF50);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
 
-.section-subtitle {
-  color: rgba(44, 62, 80, 0.7);
-  font-size: 1.2rem;
-}
 
-.accessibility-timeline {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.95));
-  backdrop-filter: blur(30px);
-  border-radius: 30px;
-  padding: 3rem;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  max-width: 1000px;
-  margin: 0 auto;
-}
-
-.distance-scale {
-  margin-bottom: 3rem;
-}
-
-.scale-line {
-  position: relative;
-  height: 2px;
-  background: linear-gradient(90deg, #4CAF50, #2196F3, #FF9800, #f44336);
-  border-radius: 1px;
-  margin: 2rem 0;
-}
-
-.scale-marker {
-  position: absolute;
-  transform: translateX(-50%);
-}
-
-.marker-line {
-  width: 2px;
-  height: 20px;
-  background: rgba(44, 62, 80, 0.3);
-  margin: 0 auto;
-  margin-bottom: 0.5rem;
-}
-
-.marker-label {
-  font-size: 0.9rem;
-  color: #666;
-  font-weight: 500;
-  text-align: center;
-}
-
-.service-items {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-  margin-bottom: 3rem;
-}
-
-.service-item {
-  display: flex;
-  align-items: center;
-  gap: 2rem;
-  padding: 1.5rem;
-  background: rgba(255, 255, 255, 0.5);
-  border-radius: 15px;
-  backdrop-filter: blur(15px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  transition: all 0.3s ease;
-}
-
-.service-item:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
-  background: rgba(255, 255, 255, 0.7);
-}
-
-.service-info {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  min-width: 200px;
-}
-
-.service-icon {
-  width: 50px;
-  height: 50px;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-}
-
-.service-item.excellent .service-icon {
-  background: rgba(76, 175, 80, 0.2);
-  color: #4CAF50;
-}
-
-.service-item.good .service-icon {
-  background: rgba(33, 150, 243, 0.2);
-  color: #2196F3;
-}
-
-.service-item.fair .service-icon {
-  background: rgba(255, 152, 0, 0.2);
-  color: #FF9800;
-}
-
-.service-name {
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: #2c3e50;
-  margin-bottom: 0.2rem;
-}
-
-.service-distance {
-  font-size: 0.95rem;
-  color: #666;
-  font-weight: 500;
-}
-
-.distance-bar {
-  flex: 1;
-  position: relative;
-  height: 8px;
-  margin: 0 1rem;
-}
-
-.bar-track {
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.1);
-  border-radius: 4px;
-}
-
-.bar-progress {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  border-radius: 4px;
-  transition: width 0.6s ease;
-}
-
-.bar-progress.excellent {
-  background: linear-gradient(90deg, #4CAF50, #45a049);
-}
-
-.bar-progress.good {
-  background: linear-gradient(90deg, #2196F3, #1976D2);
-}
-
-.bar-progress.fair {
-  background: linear-gradient(90deg, #FF9800, #F57C00);
-}
-
-.distance-marker {
-  position: absolute;
-  top: 50%;
-  transform: translate(-50%, -50%);
-}
-
-.marker-dot {
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  border: 3px solid white;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.distance-marker.excellent .marker-dot {
-  background: #4CAF50;
-}
-
-.distance-marker.good .marker-dot {
-  background: #2196F3;
-}
-
-.distance-marker.fair .marker-dot {
-  background: #FF9800;
-}
-
-.marker-dot:hover {
-  transform: scale(1.2);
-}
-
-.marker-tooltip {
-  position: absolute;
-  bottom: 30px;
-  left: 50%;
-  transform: translateX(-50%);
-  opacity: 0;
-  visibility: hidden;
-  transition: all 0.3s ease;
-  z-index: 10;
-}
-
-.distance-marker:hover .marker-tooltip {
-  opacity: 1;
-  visibility: visible;
-  bottom: 35px;
-}
-
-.tooltip-content {
-  background: rgba(0, 0, 0, 0.9);
-  color: white;
-  padding: 0.8rem 1rem;
-  border-radius: 8px;
-  font-size: 0.85rem;
-  text-align: center;
-  white-space: nowrap;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-}
-
-.tooltip-distance {
-  font-weight: 600;
-  margin-bottom: 0.2rem;
-}
-
-.tooltip-rating {
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.tooltip-rating.excellent {
-  color: #4CAF50;
-}
-
-.tooltip-rating.good {
-  color: #2196F3;
-}
-
-.tooltip-rating.fair {
-  color: #FF9800;
-}
-
-.accessibility-summary {
-  display: flex;
-  justify-content: center;
-  gap: 2rem;
-  flex-wrap: wrap;
-}
-
-.summary-item {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  padding: 1rem 1.5rem;
-  background: rgba(255, 255, 255, 0.5);
-  border-radius: 12px;
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  min-width: 200px;
-}
-
-.summary-icon {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-}
-
-.summary-item.excellent .summary-icon {
-  background: #4CAF50;
-}
-
-.summary-item.good .summary-icon {
-  background: #2196F3;
-}
-
-.summary-item.fair .summary-icon {
-  background: #FF9800;
-}
-
-.summary-text {
-  display: flex;
-  flex-direction: column;
-}
-
-.summary-label {
-  font-weight: 600;
-  color: #2c3e50;
-  font-size: 0.95rem;
-  margin-bottom: 0.2rem;
-}
-
-.summary-description {
-  font-size: 0.85rem;
-  color: #666;
-}
 
 /* SVG Gradients */
 .prediction-waves svg defs,
@@ -3185,8 +3066,7 @@ export default {
     padding: 0.4rem 0.6rem;
   }
   
-  .prediction-waves,
-  .accessibility-timeline {
+  .prediction-waves {
     padding: 2rem 1rem;
   }
   
@@ -3216,15 +3096,6 @@ export default {
     margin: 1rem 0;
   }
   
-  .accessibility-summary {
-    flex-direction: column;
-    gap: 1rem;
-  }
-  
-  .summary-item {
-    min-width: auto;
-    justify-content: center;
-  }
 }
 
 @media (max-width: 480px) {
@@ -3236,8 +3107,7 @@ export default {
     font-size: 2rem;
   }
   
-  .prediction-header h2,
-  .accessibility-header h2 {
+  .prediction-header h2 {
     font-size: 2rem;
   }
   
@@ -3284,8 +3154,7 @@ export default {
     padding: 0.3rem 0.5rem;
   }
   
-  .prediction-waves,
-  .accessibility-timeline {
+  .prediction-waves {
     padding: 1.5rem 1rem;
   }
   
@@ -5992,5 +5861,936 @@ export default {
   .condition-scale {
     margin-top: 1rem;
   }
+}
+
+/* Sports Statistics Styles */
+.sports-stats-content {
+  padding: 2rem 0;
+}
+
+.sports-chart-container {
+  background: linear-gradient(135deg, rgba(248, 250, 252, 0.95), rgba(241, 245, 249, 0.9));
+  border: 1px solid rgba(226, 232, 240, 0.6);
+  border-radius: 16px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.chart-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.chart-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.title-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  border-radius: 12px;
+  color: white;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.chart-title h3 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0;
+}
+
+.chart-subtitle {
+  font-size: 1rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.sports-bar-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 2rem;
+  min-height: 400px;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 12px;
+  margin-bottom: 2rem;
+}
+
+.chart-y-axis {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 350px;
+  position: relative;
+}
+
+.y-axis-label {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  font-weight: 600;
+  color: #374151;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.y-axis-ticks {
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: space-between;
+  height: 300px;
+  padding-right: 1rem;
+}
+
+.y-axis-ticks .tick {
+  font-size: 0.8rem;
+  color: #6b7280;
+  font-weight: 500;
+  position: relative;
+}
+
+.y-axis-ticks .tick::after {
+  content: '';
+  position: absolute;
+  left: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 8px;
+  height: 1px;
+  background: #d1d5db;
+}
+
+.chart-bars-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 350px;
+}
+
+.chart-bars {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-around;
+  height: 300px;
+  padding: 0 1rem;
+  position: relative;
+}
+
+.chart-bars::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: #d1d5db;
+}
+
+.bar-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 60px;
+  max-width: 100px;
+  flex: 1;
+}
+
+.bar {
+  width: 100%;
+  min-height: 20px;
+  border-radius: 8px 8px 0 0;
+  position: relative;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 8px;
+}
+
+.bar:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.1);
+}
+
+.bar-value {
+  color: white;
+  font-weight: 700;
+  font-size: 0.85rem;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.bar-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #374151;
+  text-align: center;
+  line-height: 1.2;
+  max-width: 80px;
+  word-wrap: break-word;
+}
+
+.chart-x-axis {
+  text-align: center;
+  padding-top: 1rem;
+}
+
+.x-axis-label {
+  font-weight: 600;
+  color: #374151;
+  font-size: 0.9rem;
+}
+
+.stats-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.summary-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 12px;
+  border: 1px solid rgba(226, 232, 240, 0.6);
+  transition: all 0.3s ease;
+}
+
+.summary-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.summary-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
+  border-radius: 12px;
+  color: #374151;
+}
+
+.summary-content {
+  flex: 1;
+}
+
+.summary-number {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #1e293b;
+  line-height: 1;
+}
+
+.summary-label {
+  font-size: 0.9rem;
+  color: #64748b;
+  font-weight: 500;
+  margin-top: 0.25rem;
+}
+
+.no-data-message {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: #6b7280;
+}
+
+.no-data-icon {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+  color: #d1d5db;
+}
+
+.no-data-message h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 0.5rem;
+}
+
+.no-data-message p {
+  font-size: 1rem;
+  color: #6b7280;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .sports-bar-chart {
+    flex-direction: column;
+    gap: 1rem;
+    min-height: auto;
+  }
+
+  .chart-y-axis {
+    flex-direction: row;
+    height: auto;
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .y-axis-label {
+    writing-mode: horizontal-tb;
+    text-orientation: mixed;
+    margin-bottom: 0;
+    margin-right: 1rem;
+  }
+
+  .y-axis-ticks {
+    flex-direction: row;
+    height: auto;
+    width: 100%;
+    padding-right: 0;
+    padding-bottom: 1rem;
+  }
+
+  .y-axis-ticks .tick::after {
+    left: 50%;
+    top: 100%;
+    transform: translateX(-50%);
+    width: 1px;
+    height: 8px;
+  }
+
+  .chart-bars {
+    height: 250px;
+  }
+
+  .stats-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .chart-title {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .chart-title h3 {
+    font-size: 1.5rem;
+  }
+}
+
+/* Sports Chart Redesign - Compact Vertical Bars */
+.sports-chart-redesign {
+  margin-top: 3rem;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.9));
+  border: 1px solid rgba(226, 232, 240, 0.6);
+  border-radius: 16px;
+  padding: 1.5rem;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  position: relative;
+}
+
+/* Expanded Sports Chart */
+.sports-chart-expanded {
+  margin-top: 3rem;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(248, 250, 252, 0.95));
+  border: 2px solid rgba(99, 102, 241, 0.2);
+  border-radius: 20px;
+  padding: 2.5rem;
+  backdrop-filter: blur(15px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(99, 102, 241, 0.1);
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.chart-title-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(226, 232, 240, 0.4);
+}
+
+.title-section {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.title-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  border-radius: 12px;
+  color: white;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25);
+}
+
+/* Enhanced sports title icon */
+.sports-title-icon {
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  border-radius: 16px;
+  box-shadow: 0 6px 20px rgba(240, 147, 251, 0.4);
+  transition: all 0.3s ease;
+}
+
+.sports-title-icon:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(240, 147, 251, 0.5);
+}
+
+.title-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.main-title {
+  font-size: 1.4rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.title-subtitle {
+  font-size: 0.85rem;
+  color: #64748b;
+  font-weight: 500;
+  margin: 0;
+  font-style: italic;
+}
+
+.chart-title-bar h3 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0;
+}
+
+.facility-count {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #6366f1;
+  background: rgba(99, 102, 241, 0.1);
+  padding: 0.4rem 0.8rem;
+  border-radius: 10px;
+  border: 1px solid rgba(99, 102, 241, 0.2);
+}
+
+/* Chart Legend */
+.chart-legend {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: rgba(248, 250, 252, 0.8);
+  border: 1px solid rgba(226, 232, 240, 0.6);
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+}
+
+.legend-box {
+  width: 20px;
+  height: 20px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 2px solid #64748b;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.legend-text {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #475569;
+}
+
+.vertical-chart-area {
+  position: relative;
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 12px;
+  padding: 1rem 0.5rem;
+  border: 1px solid rgba(226, 232, 240, 0.3);
+}
+
+.sports-mosaic { 
+  display: grid; 
+  grid-template-columns: 1fr; 
+}
+
+/* Expanded mosaic layout */
+.sports-mosaic-expanded {
+  display: grid;
+  grid-template-columns: 1fr;
+  min-height: 400px;
+}
+
+.mosaic-grid { 
+  display: grid; 
+  grid-template-columns: repeat(12, 1fr); 
+  grid-auto-rows: 36px; 
+  gap: 8px; 
+}
+
+/* Expanded grid with more space */
+.mosaic-grid-expanded {
+  display: grid;
+  grid-template-columns: repeat(16, 1fr);
+  grid-auto-rows: 55px;
+  gap: 12px;
+  min-height: 350px;
+  padding: 1rem;
+}
+
+/* Dynamic grid that adapts to content */
+.mosaic-grid-dynamic {
+  display: grid;
+  grid-auto-rows: 60px;
+  gap: 14px;
+  padding: 1.5rem;
+  align-content: start;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.mosaic-tile { 
+  position: relative; 
+  background: linear-gradient(180deg, rgba(255,255,255,.96), rgba(248,250,252,.92)); 
+  border: 1px solid #e2e8f0; 
+  border-radius: 12px; 
+  padding: 8px 10px; 
+  display: flex; 
+  align-items: center; 
+  justify-content: space-between; 
+  overflow: hidden; 
+  transition: transform .15s ease, box-shadow .2s ease; 
+}
+
+.mosaic-tile:hover { 
+  transform: translateY(-1px); 
+  box-shadow: 0 6px 20px rgba(15,23,42,.08); 
+}
+
+/* Enhanced tiles with better styling */
+.mosaic-tile-enhanced {
+  position: relative;
+  background: linear-gradient(135deg, rgba(255,255,255,0.98), rgba(248,250,252,0.95));
+  border: 2px solid var(--tile-color, #e2e8f0);
+  border-radius: 16px;
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+.mosaic-tile-enhanced:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12), 0 2px 8px var(--tile-color, #e2e8f0);
+  border-color: var(--tile-color, #e2e8f0);
+}
+
+/* Clickable tile cursor */
+.clickable-tile {
+  cursor: pointer;
+}
+
+.clickable-tile:active {
+  transform: translateY(-1px) scale(1.01);
+}
+
+.mosaic-tile-enhanced::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--tile-color, #e2e8f0), transparent);
+  border-radius: 16px 16px 0 0;
+}
+
+.tile-content {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  text-align: left;
+  height: 100%;
+  width: 100%;
+  gap: 8px;
+  padding: 0 4px;
+}
+
+.tile-text { 
+  font-size: 13px; 
+  color: #1e293b; 
+  font-weight: 600;
+  line-height: 1.2; 
+  text-align: center;
+  word-break: break-word;
+  hyphens: auto;
+}
+
+.mosaic-tile-enhanced .tile-text {
+  font-size: 12px;
+  color: #0f172a;
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 0;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
+  flex: 1;
+  text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding-right: 4px;
+}
+
+.tile-count { 
+  font-size: 12px; 
+  font-weight: 800; 
+  color: #475569; 
+  margin-left: 10px; 
+}
+
+.mosaic-tile-enhanced .tile-count {
+  font-size: 14px;
+  font-weight: 900;
+  color: var(--tile-color, #475569);
+  margin-left: 0;
+  padding: 3px 7px;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 10px;
+  border: 1.5px solid var(--tile-color, #e2e8f0);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+  min-width: 26px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+@media (max-width: 900px) {
+  .mosaic-grid { 
+    grid-template-columns: repeat(8, 1fr); 
+    grid-auto-rows: 34px; 
+  }
+  
+  .mosaic-grid-expanded {
+    grid-template-columns: repeat(10, 1fr);
+    grid-auto-rows: 50px;
+    gap: 10px;
+    padding: 0.75rem;
+  }
+  
+  .mosaic-grid-dynamic {
+    grid-auto-rows: 55px;
+    gap: 12px;
+    padding: 1rem;
+  }
+  
+  .sports-chart-expanded {
+    padding: 1.5rem;
+  }
+}
+
+.chart-grid {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-evenly;
+  gap: 0.2rem;
+  min-height: 180px;
+  padding: 0.5rem 0;
+  position: relative;
+}
+
+.base-line {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, rgba(203, 213, 225, 0.5), #cbd5e1, rgba(203, 213, 225, 0.5));
+  border-radius: 1px;
+}
+
+.chart-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  min-width: 20px;
+  max-width: 28px;
+  flex: 1;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.chart-column:hover {
+  transform: translateY(-3px);
+}
+
+.column-bar {
+  width: 100%;
+  min-height: 20px;
+  border-radius: 6px 6px 2px 2px;
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  overflow: hidden;
+}
+
+.column-bar:hover {
+  transform: scale(1.15);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+}
+
+.bar-highlight {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 40%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.6) 0%, transparent 100%);
+  border-radius: 6px 6px 0 0;
+}
+
+.value-label {
+  color: white;
+  font-weight: 700;
+  font-size: 0.65rem;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  z-index: 2;
+  position: relative;
+}
+
+.axis-label {
+  font-size: 0.55rem;
+  font-weight: 600;
+  color: #64748b;
+  text-align: center;
+  line-height: 1;
+  padding: 0.2rem 0.05rem;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 3px;
+  border: 1px solid rgba(226, 232, 240, 0.5);
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.chart-column:hover .axis-label {
+  background: rgba(255, 255, 255, 1);
+  color: #1e293b;
+  border-color: rgba(99, 102, 241, 0.4);
+  transform: scale(1.1);
+}
+
+/* Tooltip styles removed as per requirements */
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .sports-chart-redesign {
+    padding: 1rem;
+    margin-top: 2rem;
+  }
+  
+  .sports-chart-expanded {
+    padding: 1.25rem;
+    margin-top: 2rem;
+  }
+
+  .chart-title-bar {
+    flex-direction: column;
+    gap: 0.75rem;
+    text-align: center;
+  }
+
+  .chart-title-bar h3 {
+    font-size: 1.1rem;
+  }
+  
+  .mosaic-grid-expanded {
+    grid-template-columns: repeat(6, 1fr);
+    grid-auto-rows: 45px;
+    gap: 8px;
+    padding: 0.5rem;
+    min-height: 280px;
+  }
+  
+  .mosaic-grid-dynamic {
+    grid-auto-rows: 50px;
+    gap: 10px;
+    padding: 0.75rem;
+  }
+  
+  .sports-mosaic-expanded {
+    min-height: 320px;
+  }
+  
+  .mosaic-tile-enhanced .tile-text {
+    font-size: 11px;
+  }
+  
+  .mosaic-tile-enhanced .tile-count {
+    font-size: 13px;
+    padding: 2px 6px;
+    min-width: 24px;
+  }
+
+  .vertical-chart-area {
+    padding: 0.75rem 0.25rem;
+  }
+
+  .chart-grid {
+    gap: 0.15rem;
+    min-height: 140px;
+    padding: 0.4rem 0;
+  }
+
+  .chart-column {
+    min-width: 18px;
+    max-width: 24px;
+    gap: 0.3rem;
+  }
+
+  .column-bar {
+    min-height: 16px;
+    padding-top: 3px;
+  }
+
+  .value-label {
+    font-size: 0.6rem;
+  }
+
+  .axis-label {
+    font-size: 0.5rem;
+    padding: 0.15rem 0.05rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .chart-grid {
+    gap: 0.1rem;
+    min-height: 120px;
+    padding: 0.3rem 0;
+  }
+
+  .chart-column {
+    min-width: 16px;
+    max-width: 22px;
+  }
+
+  .column-bar {
+    min-height: 14px;
+    padding-top: 2px;
+  }
+
+  .value-label {
+    font-size: 0.55rem;
+  }
+
+  .axis-label {
+    font-size: 0.45rem;
+    padding: 0.1rem 0.03rem;
+  }
+
+  .title-icon {
+    width: 36px;
+    height: 36px;
+  }
+
+  .chart-title-bar h3 {
+    font-size: 1rem;
+  }
+  
+  .main-title {
+    font-size: 1.2rem;
+  }
+  
+  .title-subtitle {
+    font-size: 0.8rem;
+  }
+  
+  .sports-title-icon {
+    width: 42px;
+    height: 42px;
+  }
+
+  .facility-count {
+    font-size: 0.75rem;
+    padding: 0.3rem 0.6rem;
+  }
+}
+
+/* Sports Tooltip Styles */
+.sports-tooltip {
+  position: fixed;
+  z-index: 1000;
+  pointer-events: none;
+  transform: translateX(-50%) translateY(-100%);
+  margin-top: -8px;
+  animation: tooltipFadeIn 0.2s ease-out;
+}
+
+@keyframes tooltipFadeIn {
+  from { 
+    opacity: 0; 
+    transform: translateX(-50%) translateY(-100%) scale(0.9);
+  }
+  to { 
+    opacity: 1; 
+    transform: translateX(-50%) translateY(-100%) scale(1);
+  }
+}
+
+.tooltip-content {
+  background: rgba(15, 23, 42, 0.95);
+  color: white;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  white-space: nowrap;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  min-width: fit-content;
+  max-width: 300px;
+  text-align: center;
+  word-break: keep-all;
+  overflow-wrap: normal;
 }
 </style>

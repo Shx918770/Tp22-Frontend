@@ -128,6 +128,41 @@
           </div>
         </div>
     </div>
+
+    <!-- Public Transport Facilities Section -->
+    <section id = "public-transport-detail" class = "public-transport-detail">
+      <div class = "container">
+        <div class = "detail-header">
+          <h2>Public Transport Facilities</h2>
+          <p>...</p>
+        </div>
+        <div class="public-transport-grid">
+          <!--Section 1: radio bar graph-->
+          <div class="facility-card">
+            <div class = "card-header">
+              <h3>Transport Mode Distribution</h3>
+            </div>
+            <div class="chart-container">
+              <canvas id="transportChart"></canvas>
+            </div>
+          </div>
+          <!--Section 2: Stop List-->
+          <div class = "facility-card">
+            <div class = "card-header">
+              <h3>List of Stops</h3>
+            </div>
+            <div class="stops-list">
+              <ul>
+                <li v-for="(stop, index) in stats.transport.stops || []" :key="index">
+                  <strong>{{ stop.STOP_NAME }}</strong><br/>
+                  {{ stop.MODE }} - {{ stop.LOCALITY }}
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
   </div>
 </template>
 
@@ -136,6 +171,7 @@ import Header from "@/components/header/Header.vue";
 import { infrastructureApi, apiUtils } from '../../services/api.js'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
+import Chart from 'chart.js/auto'
 
 export default {
   name: "InfrastructurePage",
@@ -167,6 +203,7 @@ export default {
     }
   },
   mounted() {
+    console.log("Loaded plugins:", Chart.registry.plugins);
     this.initMap()
     this.loadData()
   },
@@ -193,6 +230,12 @@ export default {
         if (transportRes.status === 'fulfilled') {
             const rows = apiUtils.extractData(transportRes.value).data || []
 
+            const modeCounts = {}
+            rows.forEach(r => {
+              const mode = r.MODE?.toUpperCase() || 'UNKNOWN'
+              modeCounts[mode] = (modeCounts[mode] || 0) + 1
+            })
+
             this.stats.transport = {
                 total: rows.length,
                 trainStations: rows.filter(r => 
@@ -203,8 +246,11 @@ export default {
                 ).length,
                 busStops: rows.filter(r => 
                 r.MODE && /(BUS|COACH)/i.test(r.MODE) // METRO BUS, SKYBUS, REGIONAL COACH
-                ).length
+                ).length,
+                modes: modeCounts,
+                stops: rows
             }
+            this.renderTransportChart()
         }
         if (cyclingRes.status === 'fulfilled') {
             const rows = apiUtils.extractData(cyclingRes.value).data || []
@@ -323,6 +369,156 @@ export default {
       } else {
         if (this.layers[type]) this.map.removeLayer(this.layers[type])
       }
+    },
+    renderTransportChart() {
+      const ctx = document.getElementById('transportChart').getContext('2d');
+
+      const allModes = [
+        "INTERSTATE TRAIN",
+        "METRO BUS",
+        "METRO TRAIN",
+        "METRO TRAM",
+        "REGIONAL COACH",
+        "REGIONAL TRAIN",
+        "SKYBUS"
+      ];
+
+      const colors = {
+        "INTERSTATE TRAIN": "#9C27B0",
+        "METRO BUS": "#8BC34A",
+        "METRO TRAIN": "#4CAF50",
+        "METRO TRAM": "#FF9800",
+        "REGIONAL COACH": "#FF5722",
+        "REGIONAL TRAIN": "#2196F3",
+        "SKYBUS": "#795548"
+      };
+
+      let modes = allModes.map(mode => ({
+        mode,
+        count: this.stats.transport.modes?.[mode] || 0,
+        color: colors[mode]
+      }));
+
+      // odrer by count descending
+      modes.sort((a, b) => b.count - a.count);
+
+      const total = modes.reduce((sum, m) => sum + m.count, 0);
+      const maxValue = Math.max(...modes.map(m => m.count), 1);
+
+      const ringWidth = 20;
+      const ringGap = 8;
+      const baseCutout = 65;
+
+      const datasets = modes.map((m, i) => {
+        const inner = baseCutout + i * (ringWidth + ringGap);
+        const outer = inner + ringWidth;
+        return {
+          label: m.mode,
+          data: [m.count, total - m.count],
+          backgroundColor: [
+            m.count > 0 ? m.color : "#E0E0E0", 
+            "rgba(0,0,0,0.05)"
+          ],
+          borderWidth: 0,
+          cutout: inner,
+          radius: outer
+        };
+      });
+
+      // if chart already exists, destroy it first
+      if (this.transportChart) {
+        this.transportChart.destroy();
+      }
+
+      this.transportChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: { datasets },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          rotation: 0,
+          circumference: 270,
+          plugins: {
+            legend: { display: false },
+            tooltip: { enabled: false },
+            // stop showing values on segments
+            datalabels: { display: false },
+            doughnutlabel: { labels: [] },
+          },
+          elements: {
+            arc: { borderWidth: 0 }
+          }
+        },
+        plugins: [
+          // clean center
+          {
+            id: 'clearCenter',
+            beforeDraw(chart) {
+              const { ctx, chartArea: { width, height } } = chart;
+              ctx.save();
+              ctx.clearRect(width / 2 - 100, height / 2 - 40, 200, 120);
+              ctx.restore();
+            }
+          },
+          // only show Total: xxx
+          {
+            id: 'centerText',
+            afterDraw: (chart) => {
+              const { ctx, chartArea: { width, height } } = chart;
+              ctx.save();
+              ctx.font = 'bold 22px Inter';
+              ctx.fillStyle = '#111';
+              ctx.textAlign = 'center';
+              ctx.textBaseline = 'middle';
+              ctx.fillText(`Total: ${total}`, width / 2, height / 2);
+              ctx.restore();
+            }
+          },
+          //  legend
+          {
+            id: 'customLegend',
+            afterDraw: (chart) => {
+              const { ctx, chartArea: { width, top } } = chart;
+              ctx.save();
+              ctx.font = '12px Inter';
+              ctx.textAlign = 'right';
+              ctx.textBaseline = 'middle';
+
+              const legendX = width / 2 - 20;
+              const datasets = chart.data.datasets;
+
+              // each line height
+              const lineHeight = 22;
+
+              // legend start position
+              let startY = top + 40;
+
+              datasets.slice().reverse().forEach((ds, idx) => {
+                // skip if count is 0
+                if (ds.data[0] === 0) return;
+
+                const yPos = startY + idx * lineHeight;
+                const text = `${ds.label} (${ds.data[0]})`;
+                const textWidth = ctx.measureText(text).width;
+                const dotX = legendX - textWidth - 12;
+
+
+                // small dot
+                ctx.beginPath();
+                ctx.arc(dotX, yPos, 4, 0, 2 * Math.PI);
+                ctx.fillStyle = ds.backgroundColor[0];
+                ctx.fill();
+
+                // text
+                ctx.fillStyle = ds.backgroundColor[0];
+                ctx.fillText(`${ds.label} (${ds.data[0]})`, legendX, yPos);
+              });
+
+              ctx.restore();
+            }
+          }
+        ]
+      });
     },
   },
 };
@@ -765,6 +961,191 @@ export default {
     border: 2px solid #fff;
     box-shadow: 0 2px 8px rgba(0,0,0,0.08);
   }
+/* for map end */
 
+/* Public Transport Facilities Section Start */
+
+.public-transport-detail {
+  padding: 4rem 0;
+  position: relative;
+}
+
+/* Education Grid Layout */
+.public-transport-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto auto;
+  gap: 2rem;
+  width: 80%;
+  margin: 0 auto;
+  grid-template-areas: 
+    "pie-chart school-list"
+    "student-chart student-chart";
+}
+
+.detail-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.detail-header h2 {
+  font-size: 3rem;
+  font-weight: 900;
+  color: #1e293b;
+  margin-bottom: 1.5rem;
+  background: linear-gradient(135deg, #1e293b 0%, #3b82f6 30%, #ef4444 60%, #f59e0b 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+  letter-spacing: -0.03em;
+  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  position: relative;
+}
+
+.detail-header h2::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 4px;
+  background: linear-gradient(90deg, #3b82f6, #ef4444, #f59e0b);
+  border-radius: 2px;
+}
+
+.detail-header p {
+  color: #475569;
+  font-size: 1.3rem;
+  font-weight: 500;
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+.chart-container {
+  flex: 1;
+  padding: 1rem;
+  min-height: 500px;
+}
+
+.stops-list {
+  flex: 1;
+  background: #fff;
+  border-radius: 12px;
+  padding: 1rem;
+  min-height: 500px;
+  max-height: 500px;
+  overflow-y: auto;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+}
+
+.stops-list h3 {
+  margin-bottom: 1rem;
+  color: #2c3e50;
+  font-weight: 600;
+}
+
+.stops-list ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.stops-list li {
+  padding: 0.8rem;
+  border-bottom: 1px solid #eee;
+  font-size: 0.95rem;
+}
+
+.stops-list li:last-child {
+  border-bottom: none;
+}
+.transport-facilities {
+  width: 80%;
+  margin: 4rem auto;
+  padding: 2rem;
+  border-radius: 20px;
+  background: linear-gradient(135deg, rgba(248, 250, 252, 0.95), rgba(241, 245, 249, 0.9));
+  box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+}
+
+.section-title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  background: linear-gradient(90deg, #2196F3, #4CAF50);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.facilities-content {
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+}
+
+.chart-container {
+  flex: 1;
+  padding: 1rem;
+}
+
+.stops-list {
+  flex: 1;
+  background: #fff;
+  border-radius: 12px;
+  padding: 1rem;
+  min-height: 540px;
+  max-height: 540px;
+  overflow-y: auto;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+}
+
+.stops-list h3 {
+  margin-bottom: 1rem;
+  color: #2c3e50;
+  font-weight: 600;
+}
+
+.stops-list ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.stops-list li {
+  padding: 0.8rem;
+  border-bottom: 1px solid #eee;
+  font-size: 0.95rem;
+}
+
+.stops-list li:last-child {
+  border-bottom: none;
+}
+
+.facility-card {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(245, 247, 250, 0.95));
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+  border: 1px solid rgba(226, 232, 240, 0.6);
+  display: flex;
+  flex-direction: column;
+  height: 600px; 
+}
+
+.card-header {
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #eee;
+}
+
+.card-header h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+/* Public Transport Facilities Section End */
 
 </style>

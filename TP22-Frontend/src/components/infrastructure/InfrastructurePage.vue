@@ -33,9 +33,9 @@
         </div>
       </section>
     </main>
-    <!-- Infrastructure Cards -->
+    <!-- Infrastructure Cards --><!--Design by HongxiangShao-->
     <div class="facilities-grid">
-      <!-- Public Transport Bubble -->
+      <!-- Public Transport Bubble --><!--Design by HongxiangShao-->
       <div class="facility-bubble transport">
         <div class="bubble-icon">
           <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
@@ -53,7 +53,7 @@
         <div class="bubble-glow"></div>
       </div>
 
-      <!-- Cycling Infrastructure Bubble -->
+      <!-- Cycling Infrastructure Bubble --><!--Design by HongxiangShao-->
       <div class="facility-bubble cycling">
         <div class="bubble-icon">
           <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
@@ -137,13 +137,13 @@
           <p>Comprehensive overview of transport modes and stops in the suburb</p>
         </div>
 
-        <!-- Three-section layout -->
+        <!-- Two-section layout --><!--Design by HongxiangShao-->
         <div class="transport-grid">
-          <!-- Section 1: Mode Distribution -->
+          <!-- Section 1: Mode Distribution --><!--Design by HongxiangShao-->
           <div class="transport-section pie-chart-section">
             <div class="section-header">
               <div class="section-icon">
-                <!-- Transport icon -->
+                <!-- Transport icon --><!--Design by HongxiangShao-->
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                   <path d="M3 7V5C3 3.9 3.9 3 5 3H19C20.1 3 21 3.9 21 5V7" stroke="currentColor" stroke-width="2"/>
                   <path d="M3 7L5 19C5 20.1 5.9 21 7 21H17C18.1 21 19 20.1 19 19L21 7H3Z" stroke="currentColor" stroke-width="2"/>
@@ -158,7 +158,7 @@
             </div>
           </div>
 
-          <!-- Section 2: Stops List -->
+          <!-- Section 2: Stops List --><!--Design by HongxiangShao-->
           <div class="transport-section stop-list-section">
             <div class="section-header">
               <div class="section-icon">
@@ -360,8 +360,6 @@ export default {
             })
             .filter(m => m)
         ).addTo(this.map)
-        console.log("Bicycle API:", bicycleRes.data);
-        console.log("Parking API:", parkingRes.data);
         await this.$nextTick()
         this.setFilter('all')
     },
@@ -488,7 +486,7 @@ export default {
             beforeDraw(chart) {
               const { ctx, chartArea: { width, height } } = chart;
               ctx.save();
-              ctx.clearRect(width / 2 - 200, height / 2 - 40, 400, 120);
+              ctx.clearRect(width / 2 - 200, height / 2 - 40, 400, 200);
               ctx.restore();
             }
           },

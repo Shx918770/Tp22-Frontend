@@ -34,10 +34,10 @@
         </div>
       </section>
 
-      <!-- Social Facilities - Modern Compact Grid -->
+      <!-- Social Facilities - Modern Compact Grid --><!--Design by Rui Wang-->
       <section class="social-facilities">
         <div class="container">
-          <!-- Header with Total -->
+          <!-- Header with Total --><!--Design by Rui Wang-->
           <div class="facilities-header">
             <div class="total-counter">
               <div class="counter-number">{{ totalSocialFacilities }}</div>
@@ -49,20 +49,20 @@
             </div>
           </div>
 
-          <!-- Loading state -->
+          <!-- Loading state --><!--Design by Rui Wang-->
           <div v-if="loading" class="loading-container">
             <div class="loading-spinner"></div>
             <p>Loading facility data...</p>
           </div>
 
-          <!-- Error state -->
+          <!-- Error state --><!--Design by Rui Wang-->
           <div v-else-if="error" class="error-container">
             <div class="error-icon">&#x26A0;&#xFE0F;</div>
             <p>{{ error }}</p>
             <button class="retry-btn" @click="retryLoading">Retry</button>
           </div>
 
-          <!-- Compact Facility Grid -->
+          <!-- Compact Facility Grid --><!--Design by Rui Wang-->
           <div v-else class="facilities-grid">
             <!-- Education Bubble -->
             <div class="facility-bubble education" @click="scrollToEducationDetail">
@@ -225,7 +225,7 @@
 
       
 
-      <!-- Education Detail Section -->
+      <!-- Education Detail Section --><!--Design by Rui Wang-->
       <section id="education-detail" class="education-detail">
         <div class="container">
           <div class="detail-header">
@@ -233,9 +233,9 @@
             <p>Comprehensive overview of educational institutions and childcare services</p>
           </div>
           
-          <!-- Three separate sections layout -->
+          <!-- Three separate sections layout --><!--Design by Rui Wang-->
           <div class="education-grid">
-            <!-- Section 1: School Type Distribution -->
+            <!-- Section 1: School Type Distribution --><!--Design by Rui Wang-->
             <div class="education-section pie-chart-section">
               <div class="section-header">
                 <div class="section-icon">
@@ -250,7 +250,7 @@
                 <div class="section-content">
                   <div class="pie-chart-container">
                     <svg class="pie-chart-svg" viewBox="0 0 200 200">
-                      <!-- Primary Segment -->
+                      <!-- Primary Segment --><!--Design by Rui Wang-->
                       <circle
                         cx="100"
                         cy="100"
@@ -262,7 +262,7 @@
                         stroke-dashoffset="0"
                         transform="rotate(-90 100 100)"
                       />
-                      <!-- Secondary Segment -->
+                      <!-- Secondary Segment --><!--Design by Rui Wang-->
                       <circle
                         cx="100"
                         cy="100"

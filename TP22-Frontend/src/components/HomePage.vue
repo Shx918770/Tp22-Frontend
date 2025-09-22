@@ -92,31 +92,33 @@
 
           <!-- Comparison Results -->
           <div v-if="comparisonData" class="comparison-results">
-            <h3>Comparison Results</h3>
-            <div class="comparison-cards">
-              <div v-for="suburb in comparisonData.suburbs" :key="suburb.id" class="comparison-card">
-                <h4>{{ suburb.name }}</h4>
-                <div class="rating">Rating: {{ suburb.rating }}/5</div>
-                <div class="scores">
-                  <div class="score-item">
-                    <span>Social:</span>
-                    <span>{{ suburb.sustainabilityScores.social.toFixed(1) }}/5</span>
-                  </div>
-                  <div class="score-item">
-                    <span>Environmental:</span>
-                    <span>{{ suburb.sustainabilityScores.environmental.toFixed(1) }}/5</span>
-                  </div>
-                  <div class="score-item">
-                    <span>Economic:</span>
-                    <span>{{ suburb.sustainabilityScores.economic.toFixed(1) }}/5</span>
-                  </div>
-                  <div class="score-item">
-                    <span>Infrastructure:</span>
-                    <span>{{ suburb.sustainabilityScores.infrastructure.toFixed(1) }}/5</span>
+            <section id ="compare-tool" class = "compare-section">
+              <h3>Comparison Results</h3>
+              <div class="comparison-cards">
+                <div v-for="suburb in comparisonData.suburbs" :key="suburb.id" class="comparison-card">
+                  <h4>{{ suburb.name }}</h4>
+                  <div class="rating">Rating: {{ suburb.rating }}/5</div>
+                  <div class="scores">
+                    <div class="score-item">
+                      <span>Social:</span>
+                      <span>{{ suburb.sustainabilityScores.social.toFixed(1) }}/5</span>
+                    </div>
+                    <div class="score-item">
+                      <span>Environmental:</span>
+                      <span>{{ suburb.sustainabilityScores.environmental.toFixed(1) }}/5</span>
+                    </div>
+                    <div class="score-item">
+                      <span>Economic:</span>
+                      <span>{{ suburb.sustainabilityScores.economic.toFixed(1) }}/5</span>
+                    </div>
+                    <div class="score-item">
+                      <span>Infrastructure:</span>
+                      <span>{{ suburb.sustainabilityScores.infrastructure.toFixed(1) }}/5</span>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
+            </section>
           </div>
         </div>
       </div>
@@ -198,11 +200,6 @@
             <p class="footer-mission">
               Empowering Melbourne families with sustainability insights for better housing decisions.
             </p>
-            <!-- <div class="social-icons">
-              <a href="#" class="social-icon">🐦</a>
-              <a href="#" class="social-icon">📘</a>
-              <a href="#" class="social-icon">💼</a>
-            </div> -->
           </div>
 
           <!-- Middle Columns - Navigation -->
@@ -210,9 +207,8 @@
             <div class="nav-column">
               <h4>Platform</h4>
               <ul>
-                <li><a href="#">🔍 Search Suburbs</a></li>
-                <li><a href="#">⚖️ Compare Tool</a></li>
-                <li><a href="#">📊 Sustainability Metrics</a></li>
+                <li><a href="#">🔍 All Suburbs</a></li>
+                <li><a href="/#compare-section">⚖️ Compare Tool</a></li>
                 <li><a href="#">📄 Data Sources</a></li>
               </ul>
             </div>
@@ -220,10 +216,10 @@
             <div class="nav-column">
               <h4>Support</h4>
               <ul>
-                <li><a href="#">❓ Help Center</a></li>
-                <li><a href="#">✉️ Contact Us</a></li>
-                <li><a href="#">📄 Privacy Policy</a></li>
-                <li><a href="#">📄 Terms of Service</a></li>
+                <!-- <li><a href="#">❓ Help Center</a></li> -->
+                <li><a href="#"><router-link to="extraservice#contact">✉️ Contact Us</router-link></a></li>
+                <li><a href="#"><router-link to="extraservice#privacy">📄 Privacy Policy</router-link></a></li>
+                <li><a href="#"><router-link to="extraservice#terms">📄 Terms of Service</router-link></a></li>
               </ul>
             </div>
           </div>

@@ -4,6 +4,7 @@ import SocialPage from '../components/social/SocialPage.vue'
 import EnvironmentPage from '../components/environment/EnvironmentPage.vue'
 import PasswordGate from '../components/PasswordGate.vue'
 import InfrastructurePage from '@/components/infrastructure/InfrastructurePage.vue'
+import ExtralService from '@/components/extralservice/ExtralService.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -32,8 +33,19 @@ const router = createRouter({
       path: '/infrastructure',
       name: 'infrastructure',
       component: InfrastructurePage
-    }
+    },
+    {
+      path: '/extraservice',
+      name: 'extraservice',
+      component: ExtralService
+    },
   ],
+  scrollBehavior(to, from, savedPosition) {
+      if (to.hash) {
+        return{ el: to.hash, behavior: 'smooth' };
+      }
+      return { top: 0 };
+    },
 })
 
 router.beforeEach((to, from, next) => {
@@ -45,4 +57,6 @@ router.beforeEach((to, from, next) => {
   }
 })
 
+
+    
 export default router

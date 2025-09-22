@@ -234,7 +234,6 @@ export default {
     },
   },
   mounted() {
-    console.log("Loaded plugins:", Chart.registry.plugins);
     this.initMap()
     this.loadData()
   },
@@ -252,9 +251,10 @@ export default {
     async loadStats(suburb) {
       this.loading = true
       try {
-        const [transportRes, cyclingRes, parkingRes] = await Promise.allSettled([
+        const [transportRes, cyclingRes, cyclingLen, parkingRes] = await Promise.allSettled([
           infrastructureApi.getTransportStats(suburb),
           infrastructureApi.getCyclingStats(suburb),
+          infrastructureApi.getCyclingLenth(suburb),
           infrastructureApi.getParkingStats(suburb)
         ])
 
@@ -283,14 +283,17 @@ export default {
             }
             this.renderTransportChart()
         }
-        if (cyclingRes.status === 'fulfilled') {
-            const rows = apiUtils.extractData(cyclingRes.value).data || []
-            this.stats.cycling = {
-                total: rows.length,
-                bikeLanes: rows.reduce((sum, r) => sum + (parseFloat(r.length_km) || 0), 0),
-                bikeRacks: 0,
-                repairStations: 0
-            }
+        if (cyclingRes.status === 'fulfilled' && cyclingLen.status === 'fulfilled') {
+          const rows = apiUtils.extractData(cyclingRes.value).data || []
+
+          const totalKm = cyclingLen.value?.data?.bike_km_total || 0
+
+          this.stats.cycling = {
+              total: rows.length,
+              bikeLanes: totalKm,
+              bikeRacks: 0,
+              repairStations: 0
+          }
         }
         if (parkingRes.status === 'fulfilled') {
             const rows = apiUtils.extractData(parkingRes.value).data || []
@@ -319,7 +322,7 @@ export default {
         const suburb = this.selectedSuburb
         if (!suburb) return
 
-        const [transportRes, bicycleRes, parkingRes] = await Promise.all([
+        const [transportRes, bicycleRes,parkingRes] = await Promise.all([
             infrastructureApi.getTransportStats(suburb),
             infrastructureApi.getCyclingStats(suburb),
             infrastructureApi.getParkingStats(suburb),

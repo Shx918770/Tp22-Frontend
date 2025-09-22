@@ -238,6 +238,8 @@ export const infrastructureApi = {
     api.get(`/infrastructure/publicTransport`, { params: { suburb } }),
   getCyclingStats: (suburb) =>
     api.get(`/infrastructure/bicycle`, { params: { suburb } }),
+  getCyclingLenth: (suburb) =>
+    api.get(`/infrastructure/bicycle/card`, { params: { suburb } }),
   getParkingStats: (suburb) =>
     api.get(`/infrastructure/parking`, { params: { suburb } }),
 }

@@ -244,6 +244,8 @@ export const infrastructureApi = {
     api.get(`/infrastructure/parking`, { params: { suburb } }),
 }
 
+
+
 // General suburb API
 export const suburbApi = {
   // Get all suburbs
@@ -695,5 +697,11 @@ export const hospitalityApi = {
     return api.get('/hospitality/cafes?limit=1')
   }
 }
+
+export const aiApi = {
+  chat(message) {
+    return api.post('/ai/chat', { message });
+  }
+};
 
 export default api

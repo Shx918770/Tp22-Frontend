@@ -5,6 +5,7 @@ import EnvironmentPage from '../components/environment/EnvironmentPage.vue'
 import PasswordGate from '../components/PasswordGate.vue'
 import InfrastructurePage from '@/components/infrastructure/InfrastructurePage.vue'
 import ExtralService from '@/components/extralservice/ExtralService.vue'
+import AIChatbox from '@/components/aichatbox/AIChatbox.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -38,6 +39,11 @@ const router = createRouter({
       path: '/extraservice',
       name: 'extraservice',
       component: ExtralService
+    },
+    {
+      path: '/aichatbox',
+      name: 'aichatbox',
+      component: AIChatbox
     },
   ],
   scrollBehavior(to, from, savedPosition) {

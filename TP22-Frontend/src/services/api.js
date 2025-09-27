@@ -242,6 +242,15 @@ export const infrastructureApi = {
     api.get(`/infrastructure/bicycle/card`, { params: { suburb } }),
   getParkingStats: (suburb) =>
     api.get(`/infrastructure/parking`, { params: { suburb } }),
+
+  getPtDemand: (suburb, year = null) =>
+    api.get('/infrastructure/demand/pt', { params: { suburb, ...(year ? { year } : {}) } }),
+
+  getCyclingDemand: (suburb, year = null) =>
+    api.get('/infrastructure/demand/cycling', { params: { suburb, ...(year ? { year } : {}) } }),
+
+  getParkingDemand: (suburb, year = null) =>
+    api.get('/infrastructure/demand/parking', { params: { suburb, ...(year ? { year } : {}) } }),
 }
 
 

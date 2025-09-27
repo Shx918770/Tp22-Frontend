@@ -188,6 +188,74 @@
         </div>
       </div>
     </section>
+    <!-- PT Demand Trend Section -->
+    <section class="pt-trend">
+      <div class="container pt-trend-container">
+        <div class="pt-trend-header">
+          <h2>Public Transport Demand Trend</h2>
+          <p>Demand ratio over time and the latest insight for this suburb</p>
+        </div>
+
+        <div class="pt-trend-grid">
+          <!-- Left: Line Chart -->
+          <div class="pt-trend-card chart-card">
+            <div class="card-head">
+              <div class="head-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+                  <path d="M4 19V5M4 19H20M8 15L12 11L15 13L20 8" stroke="currentColor" stroke-width="2" />
+                </svg>
+              </div>
+              <h3>Demand Ratio (2021–2036)</h3>
+            </div>
+            <div class="card-body">
+              <canvas id="ptTrendChart"></canvas>
+            </div>
+          </div>
+
+          <!-- Right: Insight -->
+          <div class="pt-trend-card insight-card">
+            <div class="card-head">
+              <div class="head-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+                  <path d="M12 3V5M12 19V21M4.22 4.22L5.64 5.64M18.36 18.36L19.78 19.78M3 12H5M19 12H21M4.22 19.78L5.64 18.36M18.36 5.64L19.78 4.22" stroke="currentColor" stroke-width="2"/>
+                </svg>
+              </div>
+              <h3>Suburb Insight</h3>
+            </div>
+
+            <div class="card-body insight-body">
+              <!-- 上半：固定洞察 -->
+              <p v-if="ptTrend.insight" class="insight-text">{{ ptTrend.insight }}</p>
+              <p v-else class="insight-empty">No insight available.</p>
+
+              <div class="insight-divider"></div>
+
+              <!-- 下半：按年份详情 -->
+              <div class="year-detail-head">
+                <span class="detail-title">Details by year</span>
+                <div class="year-switch">
+                  <button
+                    v-for="y in [2021, 2026, 2031, 2036]"
+                    :key="y"
+                    class="year-chip"
+                    :class="{ active: selectedYear === y, disabled: !ptTrend.byYear[y] }"
+                    :disabled="!ptTrend.byYear[y]"
+                    @click="selectedYear = y"
+                  >{{ y }}</button>
+                </div>
+              </div>
+
+              <ul class="insight-metrics" v-if="selectedYearData">
+                <li><span>Population (est.)</span><b>{{ selectedYearData.population_est?.toLocaleString?.() || selectedYearData.population_est || '-' }}</b></li>
+                <li><span>PT Stops Total</span><b>{{ selectedYearData.pt_stops_total ?? '-' }}</b></li>
+                <li><span>Demand Ratio</span><b>{{ selectedYearData.demand_ratio ?? '-' }}</b></li>
+              </ul>
+              <p v-else class="insight-empty">No data for the selected year.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
   </div>
 </template>
 
@@ -196,7 +264,10 @@ import Header from "@/components/header/Header.vue";
 import { infrastructureApi, apiUtils } from '../../services/api.js'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
-import Chart from 'chart.js/auto'
+// import {Chart, ArcElement, DoughnutController, LineController, LineElement, PointElement, CategoryScale, LinearScale, Tooltip, Legend, Filler,} from 'chart.js'
+
+// Chart.register(ArcElement, DoughnutController, LineController, LineElement, PointElement, CategoryScale, LinearScale, Tooltip, Legend, Filler);
+import Chart from 'chart.js/auto';
 
 export default {
   name: "InfrastructurePage",
@@ -217,6 +288,15 @@ export default {
         parking: null,
       },
       visibleLayers: { transport: true, bicycle: true, parking: true },
+      ptTrend: {
+        points: [],
+        year: null,
+        insight: '',
+        latest: null,
+        byYear: {}
+      },
+      selectedYear: 2021,
+      ptTrendChart: null,
       currentFilter: 'all',
       stopFilter: 'all',
       loading: false,
@@ -232,6 +312,9 @@ export default {
       if (this.stopFilter === 'all') return this.stats.transport.stops;
       return this.stats.transport.stops.filter(s => s.MODE?.toUpperCase().includes(this.stopFilter));
     },
+    selectedYearData() {
+      return this.ptTrend.byYear?.[this.selectedYear] || null;
+    },
   },
   mounted() {
     this.initMap()
@@ -243,6 +326,7 @@ export default {
       handler(newSuburb) {
         if (newSuburb) {
           this.loadStats(newSuburb)
+          this.loadPtTrend(newSuburb)
         }
       }
     }
@@ -403,7 +487,10 @@ export default {
       }
     },
     renderTransportChart() {
-      const ctx = document.getElementById('transportChart').getContext('2d');
+      const canvas = document.getElementById('transportChart');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
 
       const allModes = [
         "INTERSTATE TRAIN",
@@ -458,9 +545,8 @@ export default {
       });
 
       // if chart already exists, destroy it first
-      if (this.transportChart) {
-        this.transportChart.destroy();
-      }
+      if (this.transportChart) { this.transportChart.stop(); this.transportChart.destroy(); }
+      this.transportChart = null;
 
       this.transportChart = new Chart(ctx, {
         type: 'doughnut',
@@ -474,9 +560,6 @@ export default {
           plugins: {
             legend: { display: false },
             tooltip: { enabled: false },
-            // stop showing values on segments
-            datalabels: { display: false },
-            doughnutlabel: { labels: [] },
           },
           elements: {
             arc: { borderWidth: 0 }
@@ -496,12 +579,13 @@ export default {
           {
             id: 'moveUp',
             beforeDraw(chart) {
-              const { ctx, chartArea: { width, height } } = chart;
+              const { ctx } = chart;
+              if (!ctx) return;
               ctx.save();
               ctx.translate(0, -170);
             },
             afterDraw(chart) {
-              chart.ctx.restore();
+              if (chart?.ctx) chart.ctx.restore();
             }
           },
           // only show Total: xxx
@@ -555,6 +639,111 @@ export default {
           }
         ]
       });
+    },
+
+    async loadPtTrend(suburb) {
+      if (!suburb) return
+      const years = [2021, 2026, 2031, 2036]
+
+      const calls = years.map(y => infrastructureApi.getPtDemand(suburb, y))
+      const results = await apiUtils.safeBatchApiCalls(calls)
+
+      const rows = []
+      results.forEach(res => {
+        if (!res.success) return
+        const r = res.data?.data || res.data || null
+        if (!r) return
+
+        // 统一字段：后端多半是小写；若不是则用大写兜底
+        const norm = {
+          year: r.year ?? r.Year,
+          demand_ratio: Number((r.demand_ratio ?? r.Demand_ratio)),
+          suburb_insight: r.suburb_insight ?? r.Suburb_Insight ?? '',
+          population_est: r.population_est ?? r.Population_est,
+          pt_stops_total: r.pt_stops_total ?? r.PT_stops_total
+        }
+
+        if (!Number.isNaN(norm.demand_ratio) && norm.year) {
+          rows.push(norm)
+        }
+      })
+
+      rows.sort((a, b) => a.year - b.year)
+
+      this.ptTrend.byYear = rows.reduce((acc, r) => {
+        acc[r.year] = r
+        return acc
+      }, {})
+
+      this.selectedYear = this.ptTrend.byYear[2021] ? 2021 : (rows[0]?.year ?? null)
+
+      const latest = rows.length ? rows[rows.length - 1] : null
+
+      this.ptTrend.points = rows.map(r => ({ year: r.year, ratio: r.demand_ratio }))
+      this.ptTrend.year = latest?.year || null
+      this.ptTrend.insight = latest?.suburb_insight || ''
+      this.ptTrend.latest = latest || null
+
+      this.renderPtTrendChart()
+    },
+
+    renderPtTrendChart() {
+      const canvas = document.getElementById('ptTrendChart');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+
+      // destroy existing chart if any
+      if (this.ptTrendChart) { this.ptTrendChart.stop(); this.ptTrendChart.destroy(); }
+      this.ptTrendChart = null;
+
+      if (!this.ptTrend.points?.length) {
+        return;
+      }
+
+      const labels = this.ptTrend.points.map(p => p.year)
+      const data = this.ptTrend.points.map(p => p.ratio)
+
+      this.ptTrendChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels,
+          datasets: [{
+            label: 'Demand Ratio',
+            data,
+            tension: 0.35,
+            borderColor: '#3b82f6',
+            backgroundColor: 'transparent',
+            fill: false,
+            borderWidth: 2.5,
+            pointRadius: 4,
+            pointHoverRadius: 6,
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: (ctx) => `Demand ratio: ${ctx.parsed.y}`
+              }
+            }
+          },
+          scales: {
+            x: {
+              grid: { display: false },
+              ticks: { color: '#334155', font: { weight: 600 } }
+            },
+            y: {
+              beginAtZero: false,
+              grid: { color: 'rgba(148,163,184,0.2)' },
+              ticks: { color: '#475569' }
+            }
+          }
+        }
+      })
     },
   },
 };
@@ -1328,5 +1517,160 @@ export default {
 }
 
 /* Public Transport Facilities Section End */
+
+/* PT Trend Section Start */
+/* PT Demand Trend */
+.pt-trend {
+  padding: 4rem 0 5rem;
+}
+
+.pt-trend-container {
+  width: 80%;
+  margin: 0 auto;
+}
+
+.pt-trend-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+.pt-trend-header h2 {
+  font-size: 2.4rem;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  background: linear-gradient(135deg, #1e293b 0%, #3b82f6 50%, #22c55e 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.pt-trend-header p {
+  color: #475569;
+  font-size: 1.05rem;
+}
+
+.pt-trend-grid {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: 2rem;
+}
+
+.pt-trend-card {
+  background: linear-gradient(135deg, rgba(248, 250, 252, 0.95), rgba(241, 245, 249, 0.9));
+  border-radius: 20px;
+  padding: 1.5rem;
+  border: 1px solid rgba(226, 232, 240, 0.6);
+  box-shadow: 0 14px 40px rgba(0,0,0,0.08);
+  backdrop-filter: blur(18px);
+  transition: transform .25s ease, box-shadow .25s ease;
+}
+.pt-trend-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 22px 60px rgba(0,0,0,0.12);
+}
+
+.card-head {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  padding-bottom: .75rem;
+  border-bottom: 2px solid rgba(148,163,184,.2);
+}
+.card-head h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #0f172a;
+}
+.head-icon {
+  width: 34px; height: 34px;
+  display: grid; place-items: center;
+  border-radius: 10px;
+  color: #3b82f6;
+  background: rgba(59,130,246,.12);
+  border: 1px solid rgba(59,130,246,.25);
+}
+
+.card-body {
+  margin-top: 1rem;
+  height: 360px; /* 让图表更高一点 */
+}
+.chart-card .card-body canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.insight-card .card-body {
+  height: auto;
+}
+.insight-year {
+  margin-left: auto;
+  font-size: .9rem;
+  color: #64748b;
+  border: 1px dashed rgba(148,163,184,.4);
+  padding: 2px 8px; border-radius: 999px;
+}
+.insight-text {
+  font-size: 1rem;
+  color: #334155;
+  line-height: 1.7;
+  background: rgba(255,255,255,.7);
+  border: 1px solid rgba(226,232,240,.8);
+  border-radius: 12px;
+  padding: 1rem;
+}
+.insight-empty {
+  color: #94a3b8;
+}
+.insight-metrics {
+  list-style: none; padding: 0; margin: 1rem 0 0;
+  display: grid; grid-template-columns: 1fr 1fr; gap: .6rem .8rem;
+}
+.insight-metrics li {
+  display: flex; align-items: center; justify-content: space-between;
+  background: rgba(255,255,255,.6);
+  border: 1px solid rgba(226,232,240,.8);
+  border-radius: 10px; padding: .5rem .75rem;
+  font-size: .95rem; color: #475569;
+}
+.insight-metrics b { color: #0f172a; }
+
+.insight-body { display: flex; flex-direction: column; gap: 1rem; }
+
+.insight-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(148,163,184,.35), transparent);
+  margin: .25rem 0 .5rem;
+}
+
+.year-detail-head {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: .75rem;
+}
+
+.detail-title {
+  font-weight: 700; color: #0f172a;
+}
+
+.year-switch { display: flex; gap: .4rem; flex-wrap: wrap; }
+
+.year-chip {
+  border: 1px solid rgba(148,163,184,.5);
+  background: #fff;
+  padding: .25rem .6rem;
+  border-radius: 999px;
+  font-size: .85rem;
+  cursor: pointer;
+  transition: all .2s ease;
+}
+.year-chip:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,.06); }
+.year-chip.active {
+  border-color: #3b82f6;
+  color: #fff;
+  background: #3b82f6;
+}
+.year-chip.disabled {
+  opacity: .5;
+  cursor: not-allowed;
+}
+
+/* PT Trend Section End */
 
 </style>

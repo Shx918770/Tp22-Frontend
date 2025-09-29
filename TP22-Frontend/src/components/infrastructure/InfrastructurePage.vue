@@ -36,7 +36,7 @@
     <!-- Infrastructure Cards --><!--Design by HongxiangShao-->
     <div class="facilities-grid">
       <!-- Public Transport Bubble --><!--Design by HongxiangShao-->
-      <div class="facility-bubble transport">
+      <div class="facility-bubble transport" role="button" tabindex="0" @click="scrollToSection('#pt-trend')" @keyup.enter.space="scrollToSection('#pt-trend')">
         <div class="bubble-icon">
           <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
             <path d="M3 7V5C3 3.89543 3.89543 3 5 3H19C20.1046 3 21 3.89543 21 5V7M3 7L5 19C5 20.1046 5.89543 21 7 21H17C18.1046 21 19 20.1046 19 19L21 7M3 7H21M9 11V17M15 11V17" stroke="currentColor" stroke-width="2"/>
@@ -53,8 +53,8 @@
         <div class="bubble-glow"></div>
       </div>
 
-      <!-- Cycling Infrastructure Bubble --><!--Design by HongxiangShao-->
-      <div class="facility-bubble cycling">
+      <!-- Cycling Bubble --><!--Design by HongxiangShao-->
+      <div class="facility-bubble cycling" role="button" tabindex="0" @click="scrollToSection('#cy-trend')" @keyup.enter.space="scrollToSection('#cy-trend')">
         <div class="bubble-icon">
           <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
             <circle cx="7" cy="17" r="3" stroke="currentColor" stroke-width="2"/>
@@ -73,7 +73,7 @@
       </div>
 
       <!-- Parking Bubble -->
-      <div class="facility-bubble parking">
+      <div class="facility-bubble parking" role="button" tabindex="0" @click="scrollToSection('#pk-trend')" @keyup.enter.space="scrollToSection('#pk-trend')">
         <div class="bubble-icon">
           <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
             <rect x="3" y="7" width="18" height="10" rx="3" stroke="currentColor" stroke-width="2"/>
@@ -189,7 +189,7 @@
       </div>
     </section>
     <!-- PT Demand Trend Section -->
-    <section class="pt-trend">
+    <section id="pt-trend" class="pt-trend">
       <div class="container pt-trend-container">
         <div class="pt-trend-header">
           <h2>Public Transport Demand Trend</h2>
@@ -256,6 +256,229 @@
         </div>
       </div>
     </section>
+    <section id="cy-trend" class="cy-trend">
+      <div class="container cy-trend-container">
+        <div class="cy-trend-header">
+          <h2>Cycling Demand Trend(Gauge)</h2>
+          <p>Demand ratio over time and the latest cycling insight for this suburb</p>
+        </div>
+
+        <div class = "cy-trend-grid">
+          <!-- Left:  Chart -->
+          <div class="cy-trend-card chart-card">
+            <div class="card-head">
+              <div class="head-icon">
+                <!-- speedometer icon -->
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+                  <path d="M3 13a9 9 0 1 1 18 0" stroke="currentColor" stroke-width="2"/>
+                  <path d="M12 13l5-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+              </div>
+              <h3>Cycling lanes per 1,000 people</h3>
+            </div>
+
+            <div class="card-body" style="height:auto;padding:1rem 0 0;">
+              <div class="gauge-container-compact">
+                <svg viewBox="0 0 320 200" class="gauge-svg">
+                  <!-- 背景三段：Low / Medium / High -->
+                  <!-- Low: 0–12 -->
+                  <path :d="arcPath(GAUGE_START, a12)" stroke="#ef4444" stroke-width="18" fill="none" stroke-linecap="round" />
+                  <!-- Medium: 12–20 -->
+                  <path :d="arcPath(a12, a20)" stroke="#f59e0b" stroke-width="18" fill="none" stroke-linecap="round" />
+                  <!-- High: 20–30 -->
+                  <path :d="arcPath(a20, GAUGE_END)" stroke="#22c55e" stroke-width="18" fill="none" stroke-linecap="round" />
+
+                  <!-- 阈值刻度文字 -->
+                  <text x="120" y="55" class="gauge-tick" text-anchor="middle">12</text>
+                  <text x="210" y="55" class="gauge-tick" text-anchor="middle">20</text>
+
+                  <!-- 动态指针（颜色随 zone 或后端 gauge_color） -->
+                  <g :transform="`rotate(${getNeedleAngle(kmPer1k)} 160 160)`">
+                    <!-- Drop shadow -->
+                    <path d="M 162 162 L 235 162 L 240 160 L 235 158 L 162 158 Z" fill="rgba(0,0,0,0.15)"/>
+                    <!-- Needle -->
+                    <path d="M 160 160 L 235 160 L 240 158 L 235 156 L 160 158 Z"
+                          :fill="`url(#needleGradient-${gaugeZoneCY})`"
+                          :stroke="`url(#needleBorder-${gaugeZoneCY})`" stroke-width="0.5"/>
+                    <!-- Highlight -->
+                    <path d="M 160 159 L 235 159 L 238 158 L 235 157.5 L 160 157.5 Z"
+                          :fill="`url(#needleHighlight-${gaugeZoneCY})`" opacity="0.7"/>
+                  </g>
+
+                  <!-- 渐变定义（按 zone 提供；若后端给了 gauge_color 则使用它） -->
+                  <defs>
+                    <linearGradient id="needleGradient-low" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%"  :style="`stop-color:${getNeedleColors('low').needle[0]}`"/>
+                      <stop offset="50%" :style="`stop-color:${getNeedleColors('low').needle[1]}`"/>
+                      <stop offset="100%" :style="`stop-color:${getNeedleColors('low').needle[2]}`"/>
+                    </linearGradient>
+                    <linearGradient id="needleBorder-low" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%"  :style="`stop-color:${getNeedleColors('low').border[0]}`"/>
+                      <stop offset="100%" :style="`stop-color:${getNeedleColors('low').border[1]}`"/>
+                    </linearGradient>
+                    <linearGradient id="needleHighlight-low" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%"  :style="`stop-color:${getNeedleColors('low').highlight[0]}`"/>
+                      <stop offset="100%" :style="`stop-color:${getNeedleColors('low').highlight[1]}`"/>
+                    </linearGradient>
+
+                    <linearGradient id="needleGradient-medium" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%"  :style="`stop-color:${getNeedleColors('medium').needle[0]}`"/>
+                      <stop offset="50%" :style="`stop-color:${getNeedleColors('medium').needle[1]}`"/>
+                      <stop offset="100%" :style="`stop-color:${getNeedleColors('medium').needle[2]}`"/>
+                    </linearGradient>
+                    <linearGradient id="needleBorder-medium" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%"  :style="`stop-color:${getNeedleColors('medium').border[0]}`"/>
+                      <stop offset="100%" :style="`stop-color:${getNeedleColors('medium').border[1]}`"/>
+                    </linearGradient>
+                    <linearGradient id="needleHighlight-medium" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%"  :style="`stop-color:${getNeedleColors('medium').highlight[0]}`"/>
+                      <stop offset="100%" :style="`stop-color:${getNeedleColors('medium').highlight[1]}`"/>
+                    </linearGradient>
+
+                    <linearGradient id="needleGradient-high" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%"  :style="`stop-color:${getNeedleColors('high').needle[0]}`"/>
+                      <stop offset="50%" :style="`stop-color:${getNeedleColors('high').needle[1]}`"/>
+                      <stop offset="100%" :style="`stop-color:${getNeedleColors('high').needle[2]}`"/>
+                    </linearGradient>
+                    <linearGradient id="needleBorder-high" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%"  :style="`stop-color:${getNeedleColors('high').border[0]}`"/>
+                      <stop offset="100%" :style="`stop-color:${getNeedleColors('high').border[1]}`"/>
+                    </linearGradient>
+                    <linearGradient id="needleHighlight-high" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%"  :style="`stop-color:${getNeedleColors('high').highlight[0]}`"/>
+                      <stop offset="100%" :style="`stop-color:${getNeedleColors('high').highlight[1]}`"/>
+                    </linearGradient>
+                  </defs>
+
+                  <!-- 中心圆（随 zone/后端色） -->
+                  <circle cx="160" cy="160" r="10"
+                          :fill="getNeedleColors(gaugeZoneCY).needle[1]"
+                          :stroke="getNeedleColors(gaugeZoneCY).border[1]" stroke-width="2"/>
+                  <text x="160" y="185" text-anchor="middle" class="gauge-value">{{ kmPer1k?.toFixed?.(1) ?? '-' }}</text>
+                </svg>
+              </div>
+
+              <!-- Legend -->
+              <div class="gauge-legend expanded" style="margin-top:.75rem">
+                <div class="legend-item"><span class="dot low"></span><span>Low (0 – 12.0)</span></div>
+                <div class="legend-item"><span class="dot medium"></span><span>Medium (12.0 – 20.0)</span></div>
+                <div class="legend-item"><span class="dot high"></span><span>High (20.0+)</span></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: Insight -->
+          <div class="cy-trend-card insight-card">
+            <div class="card-head">
+              <div class="head-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+                  <path d="M12 3V5M12 19V21M4.22 4.22L5.64 5.64M18.36 18.36L19.78 19.78M3 12H5M19 12H21M4.22 19.78L5.64 18.36M18.36 5.64L19.78 4.22" stroke="currentColor" stroke-width="2"/>
+                </svg>
+              </div>
+              <h3>Suburb Insight</h3>
+            </div>
+
+            <div class="card-body insight-body">
+              <!-- 上半：固定洞察 -->
+              <p v-if="selectedInsightCY" class="insight-text">{{ selectedInsightCY }}</p>
+              <p v-else class="insight-empty">No insight available.</p>
+
+              <div class="insight-divider"></div>
+
+              <!-- 下半：按年份详情 -->
+              <div class="year-detail-head">
+                <span class="detail-title">Details by year</span>
+                <div class="year-switch">
+                  <button
+                    v-for="y in [2021, 2026, 2031, 2036]"
+                    :key="y"
+                    class="year-chip"
+                    :class="{ active: selectedYearCY === y, disabled: !cyTrend.byYear[y] }"
+                    :disabled="!cyTrend.byYear[y]"
+                    @click="selectedYearCY = y"
+                  >{{ y }}</button>
+                </div>
+              </div>
+
+              <ul class="insight-metrics" v-if="selectedYearDataCY">
+                <li><span>Population (est.)</span><b>{{ selectedYearDataCY.population_est?.toLocaleString?.() || selectedYearDataCY.population_est || '-' }}</b></li>
+                <li><span>Cycling (km)</span><b>{{ selectedYearDataCY.cycling_km ?? '-' }}</b></li>
+                <li><span>km per 1000</span><b>{{ selectedYearDataCY.km_per_1000 ?? '-' }}</b></li>
+              </ul>
+              <p v-else class="insight-empty">No data for the selected year.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- Parking Demand Trend Section -->
+    <section id="pk-trend" class="pk-trend">
+      <div class="container pt-trend-container">
+        <div class="pt-trend-header">
+          <h2>Parking Demand Trend</h2>
+          <p>Demand ratio over time and the latest parking insight for this suburb</p>
+        </div>
+
+        <div class="pt-trend-grid">
+          <!-- Left: Line Chart -->
+          <div class="pt-trend-card chart-card">
+            <div class="card-head">
+              <div class="head-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+                  <path d="M4 19V5M4 19H20M8 15L12 11L15 13L20 8" stroke="currentColor" stroke-width="2" />
+                </svg>
+              </div>
+              <h3>Bays per 1,000 (2021–2036)</h3>
+            </div>
+            <div class="card-body">
+              <canvas id="pkTrendChart"></canvas>
+            </div>
+          </div>
+
+          <!-- Right: Insight -->
+          <div class="pt-trend-card insight-card">
+            <div class="card-head">
+              <div class="head-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+                  <path d="M12 3V5M12 19V21M4.22 4.22L5.64 5.64M18.36 18.36L19.78 19.78M3 12H5M19 12H21M4.22 19.78L5.64 18.36M18.36 5.64L19.78 4.22" stroke="currentColor" stroke-width="2"/>
+                </svg>
+              </div>
+              <h3>Suburb Insight</h3>
+            </div>
+
+            <div class="card-body insight-body">
+              <!-- 每年不同的 insight -->
+              <p v-if="selectedInsightPK" class="insight-text">{{ selectedInsightPK }}</p>
+              <p v-else class="insight-empty">No insight available.</p>
+
+              <div class="insight-divider"></div>
+
+              <!-- 按年份详情 -->
+              <div class="year-detail-head">
+                <span class="detail-title">Details by year</span>
+                <div class="year-switch">
+                  <button
+                    v-for="y in [2021, 2026, 2031, 2036]"
+                    :key="y"
+                    class="year-chip"
+                    :class="{ active: selectedYearPK === y, disabled: !pkTrend.byYear[y] }"
+                    :disabled="!pkTrend.byYear[y]"
+                    @click="selectedYearPK = y"
+                  >{{ y }}</button>
+                </div>
+              </div>
+
+              <ul class="insight-metrics" v-if="selectedYearDataPK">
+                <li><span>Population (est.)</span><b>{{ selectedYearDataPK.population_est?.toLocaleString?.() || selectedYearDataPK.population_est || '-' }}</b></li>
+                <li><span>Parking bays</span><b>{{ selectedYearDataPK.parking_bays ?? '-' }}</b></li>
+                <li><span>Bays per 1,000</span><b>{{ selectedYearDataPK.bays_per_1000 ?? '-' }}</b></li>
+              </ul>
+              <p v-else class="insight-empty">No data for the selected year.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
   </div>
 </template>
 
@@ -295,8 +518,32 @@ export default {
         latest: null,
         byYear: {}
       },
+      cyTrend: {
+        points: [],
+        year: null,
+        insight: '',
+        latest: null,
+        byYear: {}
+      },
+      pkTrend: {
+        points: [],
+        year: null,
+        latest: null,
+        byYear: {}
+      },
       selectedYear: 2021,
+      selectedYearCY:2026,
+      selectedYearPK: 2026,
+      transportChart: null,
       ptTrendChart: null,
+      cyTrendChart: null,
+      pkTrendChart: null,
+      gaugeMaxCY: 30,
+      gaugeThresholdsCY: { low: 12, medium: 20 },
+      GAUGE_MIN: 0,
+      GAUGE_MAX: 30,
+      GAUGE_START: -180,
+      GAUGE_END: 0,
       currentFilter: 'all',
       stopFilter: 'all',
       loading: false,
@@ -315,10 +562,44 @@ export default {
     selectedYearData() {
       return this.ptTrend.byYear?.[this.selectedYear] || null;
     },
+
+    // about the demand of cycling
+    selectedYearDataCY() {
+      return this.cyTrend.byYear?.[this.selectedYearCY] || null;
+    },
+    selectedInsightCY() {
+      return this.cyTrend.byYear?.[this.selectedYearCY]?.insight || '';
+    },
+    gaugeValueCY() {
+      return this.selectedYearDataCY?.km_per_1000 ?? 0;
+    },
+    gaugeZoneCY() {
+      const cls = (this.selectedYearDataCY?.gauge_class || '').toString().toLowerCase();
+      if (cls === 'low' || cls === 'medium' || cls === 'high') return cls;
+      return this.getCurrentZone(this.gaugeValueCY);
+    },
+    // gaugeAngleCY() {
+    //   return this.getCorrectNeedleAngle(this.gaugeValueCY);
+    // },
+    kmPer1k() {
+      return Number(this.selectedYearDataCY?.km_per_1000 ?? 0);
+    },
+    a12() { return this.GAUGE_START + (12 - this.GAUGE_MIN) / (this.GAUGE_MAX - this.GAUGE_MIN) * (this.GAUGE_END - this.GAUGE_START); },
+    a20() { return this.GAUGE_START + (20 - this.GAUGE_MIN) / (this.GAUGE_MAX - this.GAUGE_MIN) * (this.GAUGE_END - this.GAUGE_START); },
+
+    // about the demand of parking
+    selectedYearDataPK() {
+      return this.pkTrend.byYear?.[this.selectedYearPK] || null;
+    },
+    selectedInsightPK() {
+      return this.pkTrend.byYear?.[this.selectedYearPK]?.insight || '';
+    },
   },
   mounted() {
     this.initMap()
     this.loadData()
+    this.loadCyclingTrend(this.selectedSuburb)
+    this.loadParkingTrend(this.selectedSuburb)
   },
   watch: {
     selectedSuburb: {
@@ -327,6 +608,8 @@ export default {
         if (newSuburb) {
           this.loadStats(newSuburb)
           this.loadPtTrend(newSuburb)
+          this.loadCyclingTrend(newSuburb)
+          this.loadParkingTrend(newSuburb)
         }
       }
     }
@@ -394,6 +677,23 @@ export default {
       } finally {
         this.loading = false
       }
+    },
+    scrollToSection(selector, extraOffset = 12) {
+      // 1) 读取 Header 高度（优先用 Header 设置的 CSS 变量）
+      const cssVar = getComputedStyle(document.documentElement)
+                      .getPropertyValue('--nav-height');
+      const headerH = cssVar ? parseInt(cssVar, 10) :
+                    (document.querySelector('.nav-bar')?.offsetHeight || 0);
+
+      // 2) 找到目标元素并计算位置
+      const el = document.querySelector(selector);
+      if (!el) return;
+
+      const top = el.getBoundingClientRect().top + window.pageYOffset
+                - headerH - extraOffset; // 预留一点间距
+
+      // 3) 平滑滚动
+      window.scrollTo({ top, behavior: 'smooth' });
     },
     initMap() {
       this.map = L.map('map').setView([-37.81, 144.96], 16)
@@ -486,22 +786,16 @@ export default {
         if (this.layers[type]) this.map.removeLayer(this.layers[type])
       }
     },
-    renderTransportChart() {
+    async renderTransportChart() {
+      await this.$nextTick();
       const canvas = document.getElementById('transportChart');
       if (!canvas) return;
       const ctx = canvas.getContext('2d');
       if (!ctx) return;
 
       const allModes = [
-        "INTERSTATE TRAIN",
-        "METRO BUS",
-        "METRO TRAIN",
-        "METRO TRAM",
-        "REGIONAL COACH",
-        "REGIONAL TRAIN",
-        "SKYBUS"
+        "INTERSTATE TRAIN","METRO BUS","METRO TRAIN","METRO TRAM","REGIONAL COACH","REGIONAL TRAIN","SKYBUS"
       ];
-
       const colors = {
         "INTERSTATE TRAIN": "#9C27B0",
         "METRO BUS": "#8BC34A",
@@ -514,127 +808,79 @@ export default {
 
       let modes = allModes.map(mode => ({
         mode,
-        count: this.stats.transport.modes?.[mode] || 0,
+        count: Number(this.stats.transport.modes?.[mode] || 0),
         color: colors[mode]
-      }));
+      })).sort((a,b)=>b.count-a.count);
 
-      // odrer by count descending
-      modes.sort((a, b) => b.count - a.count);
+      const total = modes.reduce((s,m)=>s+m.count,0);
 
-      const total = modes.reduce((sum, m) => sum + m.count, 0);
-      const maxValue = Math.max(...modes.map(m => m.count), 1);
-
-      const ringWidth = 20;
-      const ringGap = 8;
-      const baseCutout = 65;
-
+      // ✅ 用百分比做同心环（不会被裁）
+      const RING = { width: 9, gap: 3, baseCutout: 20 }; // 单位：%
       const datasets = modes.map((m, i) => {
-        const inner = baseCutout + i * (ringWidth + ringGap);
-        const outer = inner + ringWidth;
+        const cutoutPct = RING.baseCutout + i * (RING.width + RING.gap);
+        const radiusPct = cutoutPct + RING.width;
         return {
           label: m.mode,
-          data: [m.count, total - m.count],
-          backgroundColor: [
-            m.count > 0 ? m.color : "#E0E0E0", 
-            "rgba(0,0,0,0.05)"
-          ],
+          data: [m.count, Math.max(total - m.count, 0)],
+          backgroundColor: [ m.count > 0 ? m.color : "#E5E7EB", "rgba(0,0,0,0.05)" ],
           borderWidth: 0,
-          cutout: inner,
-          radius: outer
+          cutout: `${cutoutPct}%`,
+          radius: `${radiusPct}%`
         };
       });
 
-      // if chart already exists, destroy it first
-      if (this.transportChart) { this.transportChart.stop(); this.transportChart.destroy(); }
-      this.transportChart = null;
-
+      if (this.transportChart) { this.transportChart.destroy(); this.transportChart = null; }
       this.transportChart = new Chart(ctx, {
         type: 'doughnut',
         data: { datasets },
         options: {
           responsive: true,
           maintainAspectRatio: false,
-          layout: { padding: {top: -60}},
-          rotation: 0,
+          rotation: -135,        // 270° 仪表圈（可保留）
           circumference: 270,
-          plugins: {
-            legend: { display: false },
-            tooltip: { enabled: false },
-          },
-          elements: {
-            arc: { borderWidth: 0 }
-          }
+          plugins: { legend: { display: false }, tooltip: { enabled: false } },
+          elements: { arc: { borderWidth: 0 } }
         },
         plugins: [
-          // clean center
-          {
-            id: 'clearCenter',
-            beforeDraw(chart) {
-              const { ctx, chartArea: { width, height } } = chart;
-              ctx.save();
-              ctx.clearRect(width / 2 - 200, height / 2 - 40, 400, 200);
-              ctx.restore();
-            }
-          },
-          {
-            id: 'moveUp',
-            beforeDraw(chart) {
-              const { ctx } = chart;
-              if (!ctx) return;
-              ctx.save();
-              ctx.translate(0, -170);
-            },
-            afterDraw(chart) {
-              if (chart?.ctx) chart.ctx.restore();
-            }
-          },
-          // only show Total: xxx
+          // 中心总数
           {
             id: 'centerText',
-            afterDraw: (chart) => {
-              const { ctx, chartArea: { width, height } } = chart;
+            afterDatasetsDraw: (chart) => {
+              const { ctx, chartArea } = chart;
+              if (!chartArea) return;
+              const x = (chartArea.left + chartArea.right) / 2;
+              const y = (chartArea.top + chartArea.bottom) / 2;
               ctx.save();
-              ctx.font = 'bold 22px Inter';
-              ctx.fillStyle = '#111';
+              ctx.font = '600 20px Inter';
+              ctx.fillStyle = '#111827';
               ctx.textAlign = 'center';
               ctx.textBaseline = 'middle';
-              ctx.fillText(`Total: ${total}`, width / 2, height / 2 -170);
+              ctx.fillText(`Total: ${total}`, x, y);
               ctx.restore();
             }
           },
-          //  legend
+          // 简单外侧标注
           {
-            id: 'customLegend',
-            afterDraw: (chart) => {
-              const { ctx, chartArea: { width, height } } = chart;
-              ctx.save();
-              ctx.font = '12px Inter';
-              ctx.textAlign = 'right';
-              ctx.textBaseline = 'middle';
-
-              const centerX = width / 2 - 10;
-              const centerY = height / 2 -150;
-
-              chart.data.datasets.forEach((ds, datasetIndex) => {
-                if (ds.data[0] === 0) return;
-                const meta = chart.getDatasetMeta(datasetIndex);
-                const arc = meta.data[0];
+            id: 'outerLabels',
+            afterDatasetsDraw: (chart) => {
+              const { ctx } = chart;
+              modes.forEach((m, di) => {
+                if (m.count === 0) return;
+                const meta = chart.getDatasetMeta(di);
+                const arc = meta?.data?.[0];
                 if (!arc) return;
-
-                // line angle
-                const angle = arc.startAngle;
-                // line length
-                const r = arc.outerRadius + 15;
-
-                const x = centerX + Math.cos(angle) * r;
-                const y = centerY + Math.sin(angle) * r;
-
-                // text
-                ctx.fillStyle = ds.backgroundColor[0];
-                ctx.fillText(`${ds.label} (${ds.data[0]})`, x + 8, y);
+                const r = arc.outerRadius + 14;
+                const angle = arc.startAngle; // 取段起点标注即可
+                const x = arc.x + Math.cos(angle) * r;
+                const y = arc.y + Math.sin(angle) * r;
+                ctx.save();
+                ctx.font = '12px Inter';
+                ctx.fillStyle = modes[di].color;
+                ctx.textAlign = 'left';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(`${m.mode} (${m.count})`, x + 6, y);
+                ctx.restore();
               });
-
-              ctx.restore();
             }
           }
         ]
@@ -684,66 +930,261 @@ export default {
       this.ptTrend.insight = latest?.suburb_insight || ''
       this.ptTrend.latest = latest || null
 
+      await this.$nextTick();
+      console.log('[PT points]', this.ptTrend.points);
       this.renderPtTrendChart()
     },
 
-    renderPtTrendChart() {
+    async renderPtTrendChart() {
       const canvas = document.getElementById('ptTrendChart');
       if (!canvas) return;
+      await this.$nextTick();                 // ✅ 等 DOM
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;                        // ✅ 防御
+
+      if (this.ptTrendChart) {                 // ✅ 先干净销毁
+        this.ptTrendChart.destroy();
+        this.ptTrendChart = null;
+      }
+
+      const pts = (this.ptTrend.points || []).map(p => ({ year: String(p.year), ratio: Number(p.ratio) }));
+      if (!pts.length) return;
+
+      const labels = pts.map(p => p.year);
+      const values = pts.map(p => p.ratio);
+      const min = Math.min(...values);
+      const max = Math.max(...values);
+      const pad = Math.max((max - min) * 0.15, 10);
+
+      // ✅ 用 rAF 确保在可见尺寸下绘制；关闭动画避免 destroy 竞态
+      requestAnimationFrame(() => {
+        this.ptTrendChart = new Chart(ctx, {
+          type: 'line',
+          data: { labels, datasets: [{
+            label: 'Demand Ratio',
+            data: values, tension: 0.35,
+            borderColor: '#3b82f6', backgroundColor: 'transparent',
+            borderWidth: 2.5, pointRadius: 4, pointHoverRadius: 6, spanGaps: true
+          }]},
+          options: {
+            responsive: true, maintainAspectRatio: false, resizeDelay: 0,
+            animation: { duration: 0 },                      // ✅
+            plugins: { legend: { display: false },
+              tooltip: { callbacks: { label: c => `Demand ratio: ${c.parsed.y}` } } },
+            scales: {
+              x: { grid: { display: false }, ticks: { color: '#334155', font: { weight: 600 } } },
+              y: {
+                beginAtZero: false,
+                suggestedMin: min - pad, suggestedMax: max + pad,
+                grid: { color: 'rgba(148,163,184,0.2)' }, ticks: { color: '#475569' }
+              }
+            }
+          }
+        });
+      });
+    },
+
+    polarToXY(angleDeg, r = 100, cx = 160, cy = 160) {
+      const rad = angleDeg * Math.PI / 180;
+      return {
+        x: cx + r * Math.cos(rad),
+        y: cy + r * Math.sin(rad),
+      };
+    },
+    // 生成圆弧 path（半径=100，圆心=160,160；你的 SVG 已是这个几何）
+    arcPath(startDeg, endDeg, r = 100, cx = 160, cy = 160) {
+      const s = this.polarToXY(startDeg, r, cx, cy);
+      const e = this.polarToXY(endDeg,   r, cx, cy);
+      // 大弧标志：>180° 才为 1；我们 0–180° 的半圆段始终是 0
+      const largeArc = Math.abs(endDeg - startDeg) > 180 ? 1 : 0;
+      const sweep = 1; // 顺时针
+      return `M ${s.x} ${s.y} A ${r} ${r} 0 ${largeArc} ${sweep} ${e.x} ${e.y}`;
+    },
+    getNeedleAngle(value) {
+      const v = Math.max(this.GAUGE_MIN, Math.min(this.GAUGE_MAX, Number(value) || 0));
+      return this.GAUGE_START
+          + (v - this.GAUGE_MIN) / (this.GAUGE_MAX - this.GAUGE_MIN)
+          * (this.GAUGE_END - this.GAUGE_START);
+    },
+    // 根据阈值给区间
+    getCurrentZone(value) {
+      const v = Number(value) || 0;
+      if (v < 12) return 'low';
+      if (v < 20) return 'medium';
+      return 'high';
+    },
+    // 指针/边框/高光/中心的颜色；若后端给了 gauge_color 就全部用它
+    getNeedleColors(zone) {
+      const override = (this.selectedYearDataCY?.gauge_color || '').trim();
+      if (override) {
+        // 用后端色
+        return {
+          needle:   [override, override, override],
+          border:   [override, override],
+          highlight:['#ffffff', '#ffffff'],
+        };
+      }
+      // 按区间的默认色
+      const map = {
+        low: {
+          needle: ['#f87171', '#ef4444', '#dc2626'],   // 红
+          border: ['#7f1d1d', '#991b1b'],
+          highlight: ['#ffe4e6', '#fecaca'],
+        },
+        medium: {
+          needle: ['#fbbf24', '#f59e0b', '#d97706'],   // 橙
+          border: ['#7c2d12', '#b45309'],
+          highlight: ['#ffedd5', '#fed7aa'],
+        },
+        high: {
+          needle: ['#34d399', '#22c55e', '#16a34a'],   // 绿
+          border: ['#064e3b', '#065f46'],
+          highlight: ['#d1fae5', '#bbf7d0'],
+        }
+      };
+      return map[zone] || map.low;
+    },
+    async loadCyclingTrend(suburb) {
+      if (!suburb) return;
+      const years = [2021, 2026, 2031, 2036];
+
+      const calls = years.map(y => infrastructureApi.getCyclingDemand(suburb, y));
+      const results = await apiUtils.safeBatchApiCalls(calls);
+
+      const rows = [];
+      results.forEach(res => {
+        if (!res.success) return;
+        const r = res.data?.data || res.data;
+        if (!r) return;
+
+        const norm = {
+          year: r.year ?? r.Year,
+          population_est: r.population_est ?? r.Population_est,
+          cycling_km: r.cycling_km ?? r.Cycling_km,
+          km_per_1000: Number(r.km_per_1000 ?? r.Km_per_1000 ?? r.demand_ratio ?? r.Demand_ratio),
+          gauge_class: r.gauge_class ?? r.Gauge_Class,
+          gauge_color: r.gauge_color ?? r.Gauge_Color,
+          insight: r.cycling_insight ?? r.Cycling_Insight ?? r.suburb_insight ?? r.Suburb_Insight ?? ''
+        };
+        if (!norm.year) return;
+        rows.push(norm);
+      });
+
+      rows.sort((a,b)=>a.year-b.year);
+      this.cyTrend.byYear = rows.reduce((acc, r) => (acc[r.year]=r, acc), {});
+      this.cyTrend.latest = rows[rows.length-1] || null;
+      this.cyTrend.insight = this.cyTrend.latest?.insight || '';
+
+      // 若 2026 没数据，就用第一个有数据的年份
+      if (!this.cyTrend.byYear[this.selectedYearCY]) {
+        this.selectedYearCY = this.cyTrend.byYear[2026] ? 2026 : (rows[0]?.year ?? this.selectedYearCY);
+      }
+    },
+
+    //parking demand
+    async loadParkingTrend(suburb) {
+      if (!suburb) return;
+      const years = [2021, 2026, 2031, 2036];
+      const calls = years.map(y => infrastructureApi.getParkingDemand(suburb, y));
+
+      const results = await apiUtils.safeBatchApiCalls(calls);
+      console.log('[PK] raw results=', results);
+
+      const rows = [];
+
+      const normalize = (r) => {
+        if (!r) return null;
+        const year = r.year ?? r.Year;
+        const baysPer1000 = Number(r.Bays_per_1000 ?? r.bays_per_1000);
+        const population_est = r.population_est ?? r.Population_est;
+        const parking_bays = r.Parking_bays ?? r.parking_bays;
+        const insight = r.Parking_Insight ?? r.parking_insight ?? r.Suburb_Insight ?? r.suburb_insight ?? '';
+
+        if (!year || Number.isNaN(baysPer1000)) return null;
+        return { year, bays_per_1000: baysPer1000, population_est, parking_bays, insight };
+      };
+
+      results.forEach(res => {
+        if (!res.success) return;
+        // 后端是 { success, data: { ... } }
+        const payload = res.data?.data ?? res.data ?? null;
+        if (!payload) return;
+
+        if (Array.isArray(payload)) {
+          const norm = normalize(payload[0]);
+          if (norm) rows.push(norm);
+        } else {
+          const norm = normalize(payload);
+          if (norm) rows.push(norm);
+        }
+      });
+
+      rows.sort((a, b) => a.year - b.year);
+
+      this.pkTrend.byYear = rows.reduce((acc, r) => (acc[r.year] = r, acc), {});
+      this.pkTrend.points = rows.map(r => ({ year: r.year, ratio: r.bays_per_1000 })); // 用 Bays_per_1000 画线
+
+      const latest = rows[rows.length - 1] || null;
+      this.pkTrend.latest = latest;
+      this.pkTrend.year = latest?.year || null;
+
+      if (!this.pkTrend.byYear[this.selectedYearPK]) {
+        this.selectedYearPK = this.pkTrend.byYear[2026] ? 2026 : (rows[0]?.year ?? this.selectedYearPK);
+      }
+
+      console.log('[PK points]', this.pkTrend.points);
+      this.$nextTick(() => this.renderPkTrendChart());
+    },
+
+    async renderPkTrendChart() {
+      const canvas = document.getElementById('pkTrendChart');
+      if (!canvas) return;
+      await this.$nextTick();
       const ctx = canvas.getContext('2d');
       if (!ctx) return;
 
-      // destroy existing chart if any
-      if (this.ptTrendChart) { this.ptTrendChart.stop(); this.ptTrendChart.destroy(); }
-      this.ptTrendChart = null;
+      if (this.pkTrendChart) { this.pkTrendChart.destroy(); this.pkTrendChart = null; }
 
-      if (!this.ptTrend.points?.length) {
-        return;
-      }
+      const YEARS = ['2021','2026','2031','2036'];
+      const byYear = this.pkTrend.byYear || {};
+      const values = YEARS.map(y => {
+        const r = byYear[Number(y)];
+        const v = r ? Number(r.bays_per_1000) : null;
+        return Number.isFinite(v) ? v : null;
+      });
+      if (values.every(v => v == null)) return;
 
-      const labels = this.ptTrend.points.map(p => p.year)
-      const data = this.ptTrend.points.map(p => p.ratio)
+      const nums = values.filter(v => v != null);
+      const min = Math.min(...nums);
+      const max = Math.max(...nums);
+      const pad = Math.max((max - min) * 0.15, 5);
 
-      this.ptTrendChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels,
-          datasets: [{
-            label: 'Demand Ratio',
-            data,
-            tension: 0.35,
-            borderColor: '#3b82f6',
-            backgroundColor: 'transparent',
-            fill: false,
-            borderWidth: 2.5,
-            pointRadius: 4,
-            pointHoverRadius: 6,
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: { display: false },
-            tooltip: {
-              callbacks: {
-                label: (ctx) => `Demand ratio: ${ctx.parsed.y}`
+      requestAnimationFrame(() => {
+        this.pkTrendChart = new Chart(ctx, {
+          type: 'line',
+          data: { labels: YEARS, datasets: [{
+            label: 'Bays per 1,000',
+            data: values, tension: 0.35,
+            borderColor: '#0ea5e9', backgroundColor: 'transparent',
+            pointBackgroundColor: '#0ea5e9', borderWidth: 2.5,
+            pointRadius: 4, pointHoverRadius: 6, spanGaps: true
+          }]},
+          options: {
+            responsive: true, maintainAspectRatio: false, resizeDelay: 0,
+            animation: { duration: 0 },                       // ✅
+            plugins: { legend: { display: false },
+              tooltip: { callbacks: { label: c => `Bays per 1,000: ${c.parsed.y}` } } },
+            scales: {
+              x: { type: 'category', grid: { display: false }, ticks: { color: '#334155', font: { weight: 600 } } },
+              y: {
+                beginAtZero: true,
+                suggestedMin: Math.max(0, min - pad), suggestedMax: max + pad,
+                grid: { color: 'rgba(148,163,184,0.2)' }, ticks: { color: '#475569' }
               }
             }
-          },
-          scales: {
-            x: {
-              grid: { display: false },
-              ticks: { color: '#334155', font: { weight: 600 } }
-            },
-            y: {
-              beginAtZero: false,
-              grid: { color: 'rgba(148,163,184,0.2)' },
-              ticks: { color: '#475569' }
-            }
           }
-        }
-      })
+        });
+      });
     },
   },
 };
@@ -757,7 +1198,8 @@ export default {
   position: relative;
   min-height: 100vh;
   overflow-x: hidden;
-  padding-top: 80px;
+  padding-top: calc(var(--nav-height, 80px) + 12px);
+  padding-bottom: 120px;
 }
 
 .dynamic-background {
@@ -1672,5 +2114,82 @@ export default {
 }
 
 /* PT Trend Section End */
+
+/* Cycling Trend Section Start */
+.cy-trend { padding: 4rem 0 5rem; }
+
+.cy-trend-container { width: 80%; margin: 0 auto; }
+
+.cy-trend-header { text-align: center; margin-bottom: 2rem; }
+.cy-trend-header h2 {
+  font-size: 2.4rem; font-weight: 900; letter-spacing: -0.02em;
+  background: linear-gradient(135deg, #0f172a 0%, #22c55e 50%, #3b82f6 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+
+.cy-trend-header p { color: #475569; font-size: 1.05rem; }
+
+/* 关键：左右分布（两列） */
+.cy-trend-grid {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;  /* 左图宽一些，右侧 insight 窄一些 */
+  gap: 2rem;
+  align-items: stretch;
+}
+
+/* 复用与 pt 一致的卡片风格 */
+.cy-trend-card {
+  background: linear-gradient(135deg, rgba(248,250,252,.95), rgba(241,245,249,.9));
+  border-radius: 20px;
+  padding: 1.5rem;
+  border: 1px solid rgba(226,232,240,.6);
+  box-shadow: 0 14px 40px rgba(0,0,0,.08);
+  backdrop-filter: blur(18px);
+  transition: transform .25s ease, box-shadow .25s ease;
+}
+.cy-trend-card:hover { transform: translateY(-4px); box-shadow: 0 22px 60px rgba(0,0,0,.12); }
+
+/* 与 pt 一致的头部样式，保持对齐 */
+.cy-trend-card .card-head {
+  display: flex; align-items: center; gap: .75rem;
+  padding-bottom: .75rem; border-bottom: 2px solid rgba(148,163,184,.2);
+}
+.cy-trend-card .card-head h3 { margin: 0; font-size: 1.2rem; font-weight: 800; color: #0f172a; }
+.cy-trend-card .head-icon {
+  width: 34px; height: 34px; display: grid; place-items: center;
+  border-radius: 10px; color: #22c55e;
+  background: rgba(34,197,94,.12); border: 1px solid rgba(34,197,94,.25);
+}
+
+/* 左卡片内部的仪表盘容器高度 */
+.cy-trend-card.chart-card .card-body { height: auto; }
+
+.gauge-container-compact { display:flex; justify-content:center; }
+.gauge-svg { width:100%; max-width:640px; height:auto; }
+.gauge-value {
+  font-size: 20px;
+  font-weight: 800;
+  fill: #0f172a;
+}
+.gauge-tick {
+  font-size: 12px;
+  fill: #64748b;
+}
+.gauge-legend { display:flex; gap:1.25rem; justify-content:center; }
+.gauge-legend .legend-item { display:flex; align-items:center; gap:.4rem; font-size:.9rem; color:#475569; }
+.gauge-legend .dot { width:10px; height:10px; border-radius:999px; display:inline-block; }
+.gauge-legend .dot.low { background:#ef4444; }
+.gauge-legend .dot.medium { background:#f59e0b; }
+.gauge-legend .dot.high { background:#22c55e; }
+
+/* Cycling Trend Section End */
+
+/* parking Trend Section Start */
+.pk-trend .pt-trend-header h2 {
+  background: linear-gradient(135deg, #1e293b 0%, #0ea5e9 50%, #22c55e 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+/* parking Trend Section End */
 
 </style>

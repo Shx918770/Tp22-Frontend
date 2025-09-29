@@ -2,6 +2,16 @@
   <div class="homepage">
     <!-- Header/Hero Section -->
     <header class="hero-section full-height">
+      <div class="yt-bg">
+        <iframe
+          class="yt-iframe"
+          src="https://www.youtube.com/embed/nwgexI6ZKyY?autoplay=1&mute=1&loop=1&playlist=nwgexI6ZKyY&controls=0&modestbranding=1&showinfo=0&playsinline=1&rel=0"
+          title="YouTube video background"
+          frameborder="0"
+          allow="autoplay; encrypted-media; picture-in-picture"
+          allowfullscreen
+        ></iframe>
+      </div>
       <div class="hero-content">
           <div class="logo">
            <div class="logo-icon">
@@ -427,8 +437,8 @@ export default {
 
 /* Hero Section */
 .hero-section {
-  background: linear-gradient(135deg, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.5) 50%, rgba(0, 0, 0, 0.6) 100%), 
-              url('https://images.unsplash.com/photo-1519501025264-65ba15a82390?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80');
+  position:relative;
+  background: none;
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
@@ -442,6 +452,30 @@ export default {
   position: relative;
   overflow: hidden;
 }
+
+.yt-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.9; 
+}
+
+/* 让 16:9 的 iframe 覆盖全屏并居中裁切 */
+.yt-iframe {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 120vw; 
+  height: 67.5vw;   
+  min-width: 177.78vh;  
+  min-height: 100vh;
+  transform: translate(-50%, -50%);
+}
+
+.hero-section::before,
+.hero-section::after { z-index: 1; }
+.hero-content { position: relative; z-index: 2; }
 
 .hero-section::before {
   content: '';

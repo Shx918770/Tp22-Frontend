@@ -4,8 +4,9 @@
     <header class="hero-section full-height">
       <div class="yt-bg">
         <iframe
+          id="heroYt"
           class="yt-iframe"
-          src="https://www.youtube.com/embed/nwgexI6ZKyY?autoplay=1&mute=1&loop=1&playlist=nwgexI6ZKyY&controls=0&modestbranding=1&showinfo=0&playsinline=1&rel=0"
+          src="https://www.youtube.com/embed/nwgexI6ZKyY?autoplay=1&mute=1&loop=1&playlist=nwgexI6ZKyY&controls=0&modestbranding=1&showinfo=0&playsinline=1&rel=0&start=291&enablejsapi=1"
           title="YouTube video background"
           frameborder="0"
           allow="autoplay; encrypted-media; picture-in-picture"
@@ -288,6 +289,7 @@ export default {
   async mounted() {
     await this.loadInitialData()
     await this.loadAvailableSuburbs()
+    this.initHeroVideoHD()
   },
   computed: {
     canCompare() {
@@ -295,6 +297,99 @@ export default {
     }
   },
   methods: {
+
+    initHeroVideoHD() {
+      const ensureHD = (player) => {
+        // 优先尝试 highres，不行就 hd1080
+        player.setPlaybackQuality && player.setPlaybackQuality('highres')
+        player.setPlaybackQuality && player.setPlaybackQuality('hd1080')
+      }
+
+      const mountBadge = () => {
+        let el = document.getElementById('yt-quality-badge')
+        if (!el) {
+          el = document.createElement('div')
+          el.id = 'yt-quality-badge'
+          el.style.cssText = `
+            position: absolute; right: 10px; bottom: 10px; z-index: 5;
+            background: rgba(0,0,0,.55); color:#fff; padding:6px 10px;
+            border-radius: 12px; font: 600 12px/1.2 Inter,system-ui,sans-serif;
+            letter-spacing:.3px; backdrop-filter: blur(4px);
+          `
+          document.querySelector('.hero-section')?.appendChild(el)
+        }
+        return el
+      }
+
+      const updateBadge = (q) => {
+        const el = mountBadge()
+        el.textContent = `Come from: https://www.youtube.com/watch?v=nwgexI6ZKyY, Quality: ${q || '—'}`
+      }
+
+      const logQualities = (player) => {
+        try {
+          const cur = player.getPlaybackQuality?.()
+          const avl = player.getAvailableQualityLevels?.()
+          console.log('[YT] current quality =', cur)
+          console.log('[YT] available levels =', avl)
+          updateBadge(cur)
+        } catch (e) {}
+      }
+
+      // 如果当前质量低于 1080，尝试再拉一把
+      const nudgeIfBelow1080 = (player) => {
+        const order = ['highres','hd2160','hd1440','hd1080','hd720','large','medium','small','tiny','auto']
+        const q = player.getPlaybackQuality?.() || ''
+        if (order.indexOf(q) > order.indexOf('hd1080')) {
+          ensureHD(player)
+        }
+      }
+
+      const create = () => {
+        this.ytPlayer = new window.YT.Player('heroYt', {
+          events: {
+            onReady: (e) => {
+              window.heroPlayer = e.target;
+              // 先保证在播，再设清晰度
+              e.target.mute()
+              e.target.playVideo()
+              ensureHD(e.target)
+              // 播放开始后再“补打一针”，避免被自适应降回去
+              setTimeout(() => {
+                logQualities(e.target);
+                ensureHD(e.target);}, 800);
+
+                this._qualityTimer && clearInterval(this._qualityTimer)
+                this._qualityTimer = setInterval(() => {
+                  const q = e.target.getPlaybackQuality?.();
+                  updateBadge(q);
+                  nudgeIfBelow1080(e.target)
+                }, 2000);
+            },
+            onStateChange: (e) => {
+              if (e.data === window.YT.PlayerState.PLAYING) {
+                ensureHD(e.target)
+                setTimeout(() => ensureHD(e.target), 1200)
+                logQualities(e.target)
+              }
+            },
+            onPlaybackQualityChange: (e) => {
+              console.log('[YT] onPlaybackQualityChange =>', e.data)
+              updateBadge(e.data)
+            }
+          }
+        })
+      }
+
+      if (window.YT && window.YT.Player) {
+        create()
+      } else {
+        const tag = document.createElement('script')
+        tag.src = 'https://www.youtube.com/iframe_api'
+        document.head.appendChild(tag)
+        window.onYouTubeIframeAPIReady = create
+      }
+    },
     async loadInitialData() {
       this.loading = true
       this.error = null

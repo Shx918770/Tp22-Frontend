@@ -556,7 +556,6 @@ export default {
   opacity: 0.9; 
 }
 
-/* 让 16:9 的 iframe 覆盖全屏并居中裁切 */
 .yt-iframe {
   position: absolute;
   top: 50%;

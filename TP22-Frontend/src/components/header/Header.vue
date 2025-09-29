@@ -93,9 +93,14 @@ export default {
       this.visibleTabs = [];
       this.hiddenTabs = [];
 
-      const logoWidth = this.$el.querySelector(".nav-top")?.offsetWidth || 0;
+      const leftWidth = this.$el.querySelector(".nav-top")?.offsetWidth || 0;
       const moreMenuWidth = 60;
-      const availableWidth = containerWidth - moreMenuWidth; 
+      const containerPadding = 32 * 2;
+
+      const availableWidth = Math.max(
+        0,
+        containerWidth - leftWidth - moreMenuWidth - containerPadding
+      );
 
       const hiddenMeasure = document.createElement("div");
       hiddenMeasure.style.visibility = "hidden";
@@ -150,44 +155,50 @@ export default {
 }
 
 .nav-container {
-  max-width: 1200px;
+  width: 80%;
   margin: 0 auto;
   padding: 1rem 2rem;
   display: flex;
-  flex-direction: column;
-  /* align-items: center; */
-  gap: 0.5rem;
-  /* justify-content: space-between; */
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
 }
 
+@media (max-width: 768px){
+  .nav-container{
+    width: 95%;
+    padding: 0.75rem 1rem;
+  }
+}
 /* first line */
 .nav-top {
   display: flex;
-  justify-content: flex-start;
   align-items: center;
   gap: 1rem;
+  flex: 0 0 auto;
 }
 
 /* second line */
 .nav-bottom {
   position: relative;
   display: flex;
-  justify-content: stretch;
   align-items: center;
+  justify-content: flex-end;
+  flex: 1 1 auto;
   width: 100%;
 }
 
 .nav-tabs {
   display: flex;
-  flex: 1;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
-  gap: 0;
+  gap: .25rem;
   background: transparent;
   border: none;
-  border-radius: 0;
   padding: 0;
   margin: 0;
+  flex: 0 1 auto;
 }
 
 .nav-tab {
@@ -213,25 +224,24 @@ export default {
 
 /* ☰list + pull down */
 .more-menu {
-  position: absolute;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  /* margin-left: 0.5rem; */
-  /* flex-shrink: 0; */
+  position: relative;
+  transform: none;
+  right: auto;
+  top: auto;
+  margin-left: .5rem;
 }
 
 .menu-toggle {
   background: none;
   border: none;
-  font-size: 1.5rem;
+  font-size: 1.25rem;
   cursor: pointer;
 }
 
 .dropdown {
   position: absolute;
   right: 0;
-  top: 2.5rem;
+  top: 2.2rem;
   background: white;
   border: 1px solid #ddd;
   border-radius: 8px;

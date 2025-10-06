@@ -143,7 +143,6 @@
           <div class="transport-section pie-chart-section">
             <div class="section-header">
               <div class="section-icon">
-                <!-- Transport icon --><!--Design by HongxiangShao-->
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                   <path d="M3 7V5C3 3.9 3.9 3 5 3H19C20.1 3 21 3.9 21 5V7" stroke="currentColor" stroke-width="2"/>
                   <path d="M3 7L5 19C5 20.1 5.9 21 7 21H17C18.1 21 19 20.1 19 19L21 7H3Z" stroke="currentColor" stroke-width="2"/>
@@ -152,8 +151,8 @@
               <h3>Mode Distribution</h3>
             </div>
             <div class="section-content">
-              <div class="pie-chart-container">
-                <canvas id="transportChart"></canvas>
+              <div class="pie-chart-container" style="padding:0;">
+                <RadialRingsChart :items="ptModeItems" :sweepDeg="270" :startAngle="90" />
               </div>
             </div>
           </div>
@@ -487,15 +486,15 @@ import Header from "@/components/header/Header.vue";
 import { infrastructureApi, apiUtils } from '../../services/api.js'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
-// import {Chart, ArcElement, DoughnutController, LineController, LineElement, PointElement, CategoryScale, LinearScale, Tooltip, Legend, Filler,} from 'chart.js'
+import RadialRingsChart from '../infrastructure/RadialRingsChart.vue';
 
-// Chart.register(ArcElement, DoughnutController, LineController, LineElement, PointElement, CategoryScale, LinearScale, Tooltip, Legend, Filler);
 import Chart from 'chart.js/auto';
 
 export default {
   name: "InfrastructurePage",
   components: {
-    Header
+    Header,
+    RadialRingsChart
   },
   data() {
     return {
@@ -594,6 +593,60 @@ export default {
     selectedInsightPK() {
       return this.pkTrend.byYear?.[this.selectedYearPK]?.insight || '';
     },
+
+    ptModeItems() {
+      const ORDER = [
+        'Interstate Train',               // 这里的名字是展示名；不会用来匹配 MODE
+        'Metro Bus',
+        'Metro Train',
+        'Metro Tram',
+        'Regional coach',
+        'Regional train',
+        'Sky bus'
+      ];
+      // 你的真实 7 类来自 MODE 字段（REGIONAL/INTERSTATE/METRO...）
+      // 这里给出「展示名 → MODE 的正则」映射（你可以按需要调整）。
+      const MAP = {
+        'Interstate Train':               /(INTERSTATE\s*TRAIN)/i,
+        'Metro Bus':               /(METRO\s*BUS)/i,
+        'Metro Train':          /(METRO\s*TRAIN)/i,
+        'Metro Tram':              /(METRO\s*TRAM)/i,
+        'Regional coach':    /(REGIONAL\s*COACH)/i,
+        'Regional train':          /(REGIONAL\s*TRAIN)/i,
+        'Sky bus':              /(SKYBUS)/i
+      };
+      const COLORS = {
+        'Interstate Train': '#FFA500',
+        'Metro Bus': '#FF7F50',
+        'Metro Train': '#FF6B81',
+        'Metro Tram': '#FF5CA8',
+        'Regional coach': '#B36CFF',
+        'Regional train': '#8A63FF',
+        'Sky bus': '#5B6BFF'
+      };
+
+      // 统计：如果你已在 loadStats 里有 this.stats.transport.modes，就优先用它；
+      // 否则对 stops 做一次兜底聚合
+      const modesCount = { ...(this.stats.transport?.modes || {}) };
+      const rows = this.stats.transport?.stops || [];
+      if (!Object.keys(modesCount).length && rows.length) {
+        rows.forEach(r => {
+          const m = (r.MODE || '').toUpperCase();
+          modesCount[m] = (modesCount[m] || 0) + 1;
+        });
+      }
+
+      // 根据映射生成 items（外→内），没命中的计 0
+      return ORDER.map(name => {
+        const re = MAP[name];
+        let count = 0;
+        // 如果有现成聚合：遍历 key 匹配正则；否则直接 0
+        Object.keys(modesCount).forEach(k => {
+          if (re && re.test(k)) count += Number(modesCount[k] || 0);
+        });
+        return { name, value: count, color: COLORS[name] };
+      });
+    },
   },
   mounted() {
     this.initMap()
@@ -648,7 +701,6 @@ export default {
                 modes: modeCounts,
                 stops: rows
             }
-            this.renderTransportChart()
         }
         if (cyclingRes.status === 'fulfilled' && cyclingLen.status === 'fulfilled') {
           const rows = apiUtils.extractData(cyclingRes.value).data || []
@@ -785,106 +837,6 @@ export default {
       } else {
         if (this.layers[type]) this.map.removeLayer(this.layers[type])
       }
-    },
-    async renderTransportChart() {
-      await this.$nextTick();
-      const canvas = document.getElementById('transportChart');
-      if (!canvas) return;
-      const ctx = canvas.getContext('2d');
-      if (!ctx) return;
-
-      const allModes = [
-        "INTERSTATE TRAIN","METRO BUS","METRO TRAIN","METRO TRAM","REGIONAL COACH","REGIONAL TRAIN","SKYBUS"
-      ];
-      const colors = {
-        "INTERSTATE TRAIN": "#9C27B0",
-        "METRO BUS": "#8BC34A",
-        "METRO TRAIN": "#4CAF50",
-        "METRO TRAM": "#FF9800",
-        "REGIONAL COACH": "#FF5722",
-        "REGIONAL TRAIN": "#2196F3",
-        "SKYBUS": "#795548"
-      };
-
-      let modes = allModes.map(mode => ({
-        mode,
-        count: Number(this.stats.transport.modes?.[mode] || 0),
-        color: colors[mode]
-      })).sort((a,b)=>b.count-a.count);
-
-      const total = modes.reduce((s,m)=>s+m.count,0);
-
-      // ✅ 用百分比做同心环（不会被裁）
-      const RING = { width: 9, gap: 3, baseCutout: 20 }; // 单位：%
-      const datasets = modes.map((m, i) => {
-        const cutoutPct = RING.baseCutout + i * (RING.width + RING.gap);
-        const radiusPct = cutoutPct + RING.width;
-        return {
-          label: m.mode,
-          data: [m.count, Math.max(total - m.count, 0)],
-          backgroundColor: [ m.count > 0 ? m.color : "#E5E7EB", "rgba(0,0,0,0.05)" ],
-          borderWidth: 0,
-          cutout: `${cutoutPct}%`,
-          radius: `${radiusPct}%`
-        };
-      });
-
-      if (this.transportChart) { this.transportChart.destroy(); this.transportChart = null; }
-      this.transportChart = new Chart(ctx, {
-        type: 'doughnut',
-        data: { datasets },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          rotation: -135,        // 270° 仪表圈（可保留）
-          circumference: 270,
-          plugins: { legend: { display: false }, tooltip: { enabled: false } },
-          elements: { arc: { borderWidth: 0 } }
-        },
-        plugins: [
-          // 中心总数
-          {
-            id: 'centerText',
-            afterDatasetsDraw: (chart) => {
-              const { ctx, chartArea } = chart;
-              if (!chartArea) return;
-              const x = (chartArea.left + chartArea.right) / 2;
-              const y = (chartArea.top + chartArea.bottom) / 2;
-              ctx.save();
-              ctx.font = '600 20px Inter';
-              ctx.fillStyle = '#111827';
-              ctx.textAlign = 'center';
-              ctx.textBaseline = 'middle';
-              ctx.fillText(`Total: ${total}`, x, y);
-              ctx.restore();
-            }
-          },
-          // 简单外侧标注
-          {
-            id: 'outerLabels',
-            afterDatasetsDraw: (chart) => {
-              const { ctx } = chart;
-              modes.forEach((m, di) => {
-                if (m.count === 0) return;
-                const meta = chart.getDatasetMeta(di);
-                const arc = meta?.data?.[0];
-                if (!arc) return;
-                const r = arc.outerRadius + 14;
-                const angle = arc.startAngle; // 取段起点标注即可
-                const x = arc.x + Math.cos(angle) * r;
-                const y = arc.y + Math.sin(angle) * r;
-                ctx.save();
-                ctx.font = '12px Inter';
-                ctx.fillStyle = modes[di].color;
-                ctx.textAlign = 'left';
-                ctx.textBaseline = 'middle';
-                ctx.fillText(`${m.mode} (${m.count})`, x + 6, y);
-                ctx.restore();
-              });
-            }
-          }
-        ]
-      });
     },
 
     async loadPtTrend(suburb) {

@@ -15,4 +15,12 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url))
     },
   },
+  optimizeDeps: {
+    include: ['echarts', 'chart.js', 'chart.js/auto']
+  },
+  build: {
+    rollupOptions: {
+      external: [],
+    }
+  }
 })

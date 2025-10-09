@@ -713,4 +713,30 @@ export const aiApi = {
   }
 };
 
+// News API
+export const newsApi = {
+  // Get news by suburb
+  getNewsBySuburb(suburb) {
+    return api.get(`/news/suburb/${encodeURIComponent(suburb)}`)
+  },
+
+  // Get news by category
+  getNewsByCategory(category, suburb = null) {
+    const params = suburb ? `?suburb=${encodeURIComponent(suburb)}` : ''
+    return api.get(`/news/category/${encodeURIComponent(category)}${params}`)
+  },
+
+  // Search news with keywords
+  searchNews(keywords, suburb = null) {
+    const params = new URLSearchParams({ keywords })
+    if (suburb) params.append('suburb', suburb)
+    return api.get(`/news/search?${params.toString()}`)
+  },
+
+  // Health check
+  healthCheck() {
+    return api.get('/news/suburb/Melbourne?limit=1')
+  }
+};
+
 export default api

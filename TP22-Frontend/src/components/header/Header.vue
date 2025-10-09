@@ -37,9 +37,9 @@
             </template>
           </div>
 
-          <!-- ☰list, only show when some navigation hide -->
+          <!-- Menu list, only show when some navigation hide -->
           <div v-if="hiddenTabs.length" class="more-menu">
-            <button class="menu-toggle" @click="isMenuOpen = !isMenuOpen">☰</button>
+            <button class="menu-toggle" @click="isMenuOpen = !isMenuOpen">&#9776;</button>
             <transition name="fade-slide">
               <div v-if="isMenuOpen" class="dropdown">
                 <div v-for="tab in hiddenTabs" :key="tab.label" class="nav-tab" @click="goTo(tab)">
@@ -67,6 +67,7 @@ export default {
         { label: "AI Chat", path: "/aichatbox" },
         { label: "Infrastructure", path: "/infrastructure" },
         { label: "Environment", path: "/environment" },
+        { label: "News", path: "/news" },
         // { label: "Compare", path: "/#compare-section" }
       ],
       visibleTabs: [],
@@ -222,7 +223,7 @@ export default {
   color: #333;
 }
 
-/* ☰list + pull down */
+/* Menu list + pull down */
 .more-menu {
   position: relative;
   transform: none;

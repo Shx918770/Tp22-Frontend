@@ -13,7 +13,7 @@ import {
   LineElement,
   PointElement,
   CategoryScale,
-  LinearScale
+  LinearScale,
 } from "chart.js";
 import { Line } from "vue-chartjs";
 
@@ -32,7 +32,47 @@ export default {
   components: { Line },
   props: {
     chartData: { type: Object, required: true },
-    chartOptions: { type: Object, default: () => ({ responsive: true }) }
-  }
+  },
+  computed: {
+    chartOptions() {
+      return {
+        responsive: true,
+        interaction: {
+          mode: "index",
+          intersect: false,
+        },
+        stacked: false,
+        scales: {
+          y: {
+            type: "linear",
+            display: true,
+            position: "left",
+            title: {
+              display: true,
+              text: "Number of Trees Planted",
+            },
+            ticks: { color: "#4CAF50" },
+          },
+          y1: {
+            type: "linear",
+            display: true,
+            position: "right",
+            title: {
+              display: true,
+              text: "Air Quality Index (AQI)",
+            },
+            min: 0,
+            max: 40,
+            grid: { drawOnChartArea: false },
+            ticks: { color: "#2196F3" },
+          },
+          x: {
+            title: { display: true, text: "Year" },
+            ticks: { color: "#666" },
+          },
+        },
+      };
+    },
+  },
 };
 </script>

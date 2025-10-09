@@ -195,21 +195,6 @@
         </div>
       </section>
 
-      <!-- Air Detail Section -->
-      <section id="air-detail-section" class="air-detail-section">
-        <div class="container">
-          <div class="detail-card">
-            <h2 class="section-title">Air Quality Insights</h2>
-            <p class="section-subtitle">Pollutant distribution, daily levels, and long-term trends</p>
-            <!-- Trend Chart -->
-            <div class="card-panel trend-panel">
-              <h3 class="panel-title">Air Quality Trend (PM2.5)</h3>
-              <LineChart :chart-data="airTrendData || { labels: [], datasets: [] }" />
-            </div>
-          </div>
-        </div>
-      </section>
-
       <!-- Energy Consumption Map -->
       <section id="energy-map-section" class="energy-map-section">
         <div class="container">
@@ -228,131 +213,13 @@
               <div class="legend">
                 <h4>Total Energy (2026)</h4>
                 <div><span style="background:#800026"></span> > 70,000</div>
-                <div><span style="background:#BD0026"></span> 30,001 – 70,000</div>
-                <div><span style="background:#FC4E2A"></span> 15,001 – 30,000</div>
-                <div><span style="background:#FD8D3C"></span> 5,001 – 15,000</div>
-                <div><span style="background:#FEB24C"></span> 1,001 – 5,000</div>
-                <div><span style="background:#FFEDA0"></span> 0 – 1,000</div>
+                <div><span style="background:#BD0026"></span> 30,001 - 70,000</div>
+                <div><span style="background:#FC4E2A"></span> 15,001 - 30,000</div>
+                <div><span style="background:#FD8D3C"></span> 5,001 - 15,000</div>
+                <div><span style="background:#FEB24C"></span> 1,001 - 5,000</div>
+                <div><span style="background:#FFEDA0"></span> 0 - 1,000</div>
               </div>
             </l-map>
-          </div>
-        </div>
-      </section>
-
-      <!-- Air Quality Monitoring Trends - Wave Visualization -->
-      <section class="air-quality-trends">
-        <div class="container">
-          <div class="trends-header">
-            <h2 class="section-title">Air Quality Monitoring Trends</h2>
-            <p class="section-subtitle">Monthly air quality data and fluctuation patterns</p>
-          </div>
-
-          <div class="trends-visualization">
-            <div class="time-selector">
-              <button class="time-btn active" data-period="6m">6 Months</button>
-              <button class="time-btn" data-period="1y">1 Year</button>
-              <button class="time-btn" data-period="2y">2 Years</button>
-            </div>
-
-            <div class="quality-chart">
-              <div class="chart-container">
-                <div class="quality-levels">
-                  <div class="level good">
-                    <div class="level-indicator"></div>
-                    <span class="level-label">Good (0-50)</span>
-                  </div>
-                  <div class="level moderate">
-                    <div class="level-indicator"></div>
-                    <span class="level-label">Moderate (51-100)</span>
-                  </div>
-                  <div class="level unhealthy">
-                    <div class="level-indicator"></div>
-                    <span class="level-label">Unhealthy (101+)</span>
-                  </div>
-                </div>
-
-                <div class="chart-area">
-                  <svg class="trend-chart" viewBox="0 0 800 300" preserveAspectRatio="xMidYMid meet">
-                    <!-- Background Grid -->
-                    <defs>
-                      <pattern id="grid" width="80" height="60" patternUnits="userSpaceOnUse">
-                        <path d="M 80 0 L 0 0 0 60" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
-                      </pattern>
-                      <linearGradient id="airGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                        <stop offset="0%" stop-color="#2196F3" stop-opacity="0.3"/>
-                        <stop offset="50%" stop-color="#FFC107" stop-opacity="0.2"/>
-                        <stop offset="100%" stop-color="#F44336" stop-opacity="0.1"/>
-                      </linearGradient>
-                    </defs>
-                    <rect width="800" height="300" fill="url(#grid)" opacity="0.3"/>
-                    
-                    <!-- Air Quality Trend Line -->
-                    <path d="M50,180 Q150,160 250,140 T450,120 Q550,110 650,125 T750,140" 
-                          stroke="#2196F3" stroke-width="3" fill="none" class="trend-line"/>
-                    
-                    <!-- Fill Area -->
-                    <path d="M50,180 Q150,160 250,140 T450,120 Q550,110 650,125 T750,140 L750,300 L50,300 Z" 
-                          fill="url(#airGradient)" opacity="0.6"/>
-                    
-                    <!-- Data Points -->
-                    <circle cx="150" cy="160" r="6" fill="#2196F3" class="data-point">
-                      <animate attributeName="r" values="6;8;6" dur="2s" repeatCount="indefinite"/>
-                    </circle>
-                    <circle cx="250" cy="140" r="6" fill="#4CAF50" class="data-point">
-                      <animate attributeName="r" values="6;8;6" dur="2s" begin="0.5s" repeatCount="indefinite"/>
-                    </circle>
-                    <circle cx="350" cy="120" r="6" fill="#4CAF50" class="data-point">
-                      <animate attributeName="r" values="6;8;6" dur="2s" begin="1s" repeatCount="indefinite"/>
-                    </circle>
-                    <circle cx="450" cy="120" r="6" fill="#4CAF50" class="data-point">
-                      <animate attributeName="r" values="6;8;6" dur="2s" begin="1.5s" repeatCount="indefinite"/>
-                    </circle>
-                    <circle cx="550" cy="110" r="6" fill="#4CAF50" class="data-point">
-                      <animate attributeName="r" values="6;8;6" dur="2s" begin="2s" repeatCount="indefinite"/>
-                    </circle>
-                    <circle cx="650" cy="125" r="6" fill="#FFC107" class="data-point">
-                      <animate attributeName="r" values="6;8;6" dur="2s" begin="2.5s" repeatCount="indefinite"/>
-                    </circle>
-                  </svg>
-                </div>
-
-                <div class="chart-labels">
-                  <div class="x-labels">
-                    <span>Jan</span>
-                    <span>Feb</span>
-                    <span>Mar</span>
-                    <span>Apr</span>
-                    <span>May</span>
-                    <span>Jun</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="trend-insights">
-              <div class="insight-card">
-                <div class="insight-icon good">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                    <path d="M9 12L11 14L15 10M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="currentColor" stroke-width="2"/>
-                  </svg>
-                </div>
-                <div class="insight-content">
-                  <h4>Improving Trend</h4>
-                  <p>Air quality has improved by 15% over the last 6 months</p>
-                </div>
-              </div>
-              <div class="insight-card">
-                <div class="insight-icon warning">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                    <path d="M12 9V13M12 17H12.01M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="currentColor" stroke-width="2"/>
-                  </svg>
-                </div>
-                <div class="insight-content">
-                  <h4>Seasonal Variation</h4>
-                  <p>Higher pollution levels expected during winter months</p>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </section>
@@ -564,11 +431,9 @@ export default {
 
         if (result.success && Array.isArray(result.data)) {
           this.trees = result.data.map(tree => ({
-            id: tree.comId,
             lat: tree.latitude,
             lng: tree.longitude,
-            name: tree.commonName,
-            life: tree.usefulLifeExpectencyValue || 0,
+            name: tree.scientificName,
             year: (tree.yearPlanted && !isNaN(parseInt(tree.yearPlanted))) ? parseInt(tree.yearPlanted) : null
           }))
           if (this.trees.length > 0) {
@@ -582,41 +447,18 @@ export default {
       }
     },
 
-    // data of air
-    async loadAirData(suburb) {
+    // data of AQI
+    async loadAirTrend(suburb) {
       try {
-        const res = await environmentApi.getAirBySuburb(suburb);
-        this.latestPollutants = res.data?.data || {};
-
-        this.airStations = [{
-          name: `${suburb} Station`,
-          lat: this.mapCenter[0],
-          lng: this.mapCenter[1],
-          pm25: res.data?.PM25 || 0,
-          o3: res.data?.O3 || 0
-        }];
-
-        const trendRes = await environmentApi.getAirTrend(suburb);
-        const trend = trendRes.data?.data || [];
-        const limitedTrend = trend.slice(-15);
-        this.airTrendData = {
-          labels: limitedTrend.map(d =>{
-            const dt = new Date(d.date);
-            const month = dt.toLocaleString("en-US", { month: "short" }).toUpperCase();
-            const day = String(dt.getDate()).padStart(2, "0");
-            return `${day}-${month}`;
-          }),
-          datasets: [{
-            label: "PM2.5 (µg/m³)",
-            data: limitedTrend.map(d => d.PM25),
-            borderColor: "blue",
-            backgroundColor: "rgba(0,0,255,0.3)"
-          }]
-        };
+        const res = await environmentApi.getAirTrend(suburb);
+        const data = res.data?.data || [];
+        this.airTrendData = data;
       } catch (e) {
-        console.error("Failed to load air data", e);
+        console.error("Failed to load air trend", e);
+        this.airTrendData = [];
       }
     },
+    
 
     onGeoJsonReady(layer) {
       layer.eachLayer(l => {
@@ -765,9 +607,9 @@ export default {
 
       try {
         await this.loadTrees(suburb);
-        await this.loadAirData(suburb);
         await this.loadEnergyTrend(suburb);
         await this.loadEnergyBlocks(suburb);
+        await this.loadAirTrend(suburb);
       } catch (e) {
         console.error("Failed to load environmental data", e);
         this.error = `Failed to load data for ${suburb}`;
@@ -799,16 +641,6 @@ export default {
       });
     }
   },
-  watch: {
-    selectedSuburb: {
-      immediate: true,
-      handler(newSuburb) {
-        if (newSuburb) {
-          this.loadAirData(newSuburb);
-        }
-      }
-    }
-  },
   computed: {
     plantedTrendData() {
       const yearCounts = {};
@@ -821,6 +653,8 @@ export default {
 
       const sortedYears = Object.keys(yearCounts).sort((a, b) => a - b);
 
+      const aqiData = this.airTrendData || [];
+
       return {
         labels: sortedYears,
         datasets: [
@@ -829,9 +663,21 @@ export default {
             data: sortedYears.map(year => yearCounts[year]),
             borderColor: "green",
             backgroundColor: "rgba(0,128,0,0.3)",
-            fill: true
-          }
-        ]
+            fill: true,
+            tAxisID:"y",
+          },
+          {
+            label: "Air Quality (AQI)",
+            data: sortedYears.map(year => {
+              const match = aqiData.find(row => String(row.year) === String(year));
+              return match ? match.aqi : null;
+            }),
+            borderColor: "#2196F3",
+            backgroundColor: "rgba(33,150,243,0.2)",
+            fill: false,
+            yAxisID: "y1",
+          },
+        ],
       };
     },
     speciesList() {
@@ -1706,15 +1552,6 @@ export default {
   font-size: 0.85rem;
   color: #666;
   font-weight: 500;
-}
-
-.air-detail-section {
-  scroll-margin-top: var(--nav-height, 120px);
-}
-
-/* Air Quality Trends */
-.air-quality-trends {
-  padding: 6rem 0;
 }
 
 .trends-header {

@@ -1889,7 +1889,6 @@ export default {
 /* Why Choose MelSustain Section */
 .why-section {
   padding: 6rem 2rem;
-  background: linear-gradient(135deg, #4CAF50, #45a049 50%, #4CAF50 100%);
   color: white;
   position: relative;
   overflow: hidden;
@@ -1897,6 +1896,12 @@ export default {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  background-image: url('/img/why-bg.png');
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  overflow: hidden;
 }
 
 .why-section::after {

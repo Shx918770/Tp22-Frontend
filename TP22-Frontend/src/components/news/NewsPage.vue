@@ -7,7 +7,11 @@
     <div class="news-header">
       <div class="header-content">
         <h1 class="page-title">
-          <span class="icon">&#128240;</span>
+          <svg class="icon-news" width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M4 5h12a2 2 0 0 1 2 2v10a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3V5z" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M6 7h8M6 10h10M6 13h7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            <path d="M18 7h2v10a2 2 0 0 1-2 2v-12z" fill="currentColor" opacity=".2"/>
+          </svg>
           Sustainability News
         </h1>
         <p class="page-subtitle">
@@ -15,9 +19,10 @@
           <span v-if="selectedSuburb"> in {{ selectedSuburb }}</span>
         </p>
         <div class="quick-chips">
-          <button class="chip" @click="selectedCategory='environment'; fetchNews()">Environment</button>
-          <button class="chip" @click="selectedCategory='infrastructure'; fetchNews()">Infrastructure</button>
-          <button class="chip" @click="selectedCategory='social'; fetchNews()">Social</button>
+          <button class="chip" @click="selectCategoryChip('environment')">Environment</button>
+          <button class="chip" @click="selectCategoryChip('infrastructure')">Infrastructure</button>
+          <button class="chip" @click="selectCategoryChip('social')">Social</button>
+          <button class="chip" @click="selectCategoryChip('general')">General</button>
         </div>
       </div>
     </div>
@@ -27,11 +32,12 @@
       <div class="filter-container">
         <div class="filter-group">
           <label class="filter-label">Category:</label>
-          <select v-model="selectedCategory" @change="fetchNews" class="filter-select">
+          <select v-model="selectedCategory" @change="onCategoryChange" class="filter-select">
             <option value="all">All Categories</option>
             <option value="environment">Environment</option>
             <option value="infrastructure">Infrastructure</option>
             <option value="social">Social</option>
+            <option value="general">General</option>
           </select>
         </div>
         
@@ -44,14 +50,20 @@
               placeholder="Search news..."
               class="search-input"
             />
-            <button @click="searchNews" class="search-button">
-              &#128269;
+            <button @click="searchNews" class="search-button" aria-label="Search">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.8"/>
+                <path d="M20 20l-3.5-3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+              </svg>
             </button>
           </div>
         </div>
 
         <button @click="refreshNews" class="refresh-button" :disabled="loading">
-          <span class="refresh-icon" :class="{ spinning: loading }">&#128260;</span>
+          <svg class="refresh-icon" :class="{ spinning: loading }" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M20 12a8 8 0 1 1-2.343-5.657" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+            <path d="M20 6v4h-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
           Refresh
         </button>
       </div>
@@ -65,16 +77,27 @@
 
     <!-- Error State -->
       <div v-else-if="error" class="error-container">
-        <div class="error-icon">&#9888;</div>
+        <div class="error-icon">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 9v4" stroke="#ff6b6b" stroke-width="2" stroke-linecap="round"/>
+            <path d="M12 17h.01" stroke="#ff6b6b" stroke-width="2" stroke-linecap="round"/>
+            <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" stroke="#ff6b6b" stroke-width="1.5"/>
+          </svg>
+        </div>
       <h3>Unable to Load News</h3>
       <p>{{ error }}</p>
       <button @click="fetchNews" class="retry-button">Try Again</button>
     </div>
 
     <!-- News Grid -->
-    <div v-else class="news-content">
+      <div v-else class="news-content">
       <div v-if="filteredNews.length === 0" class="no-news">
-        <div class="no-news-icon">&#128237;</div>
+        <div class="no-news-icon">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M4 7h16v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7z" stroke="#9aa1ac" stroke-width="1.5"/>
+            <path d="M7 7V6a3 3 0 0 1 3-3h4a3 3 0 0 1 3 3v1" stroke="#9aa1ac" stroke-width="1.5"/>
+          </svg>
+        </div>
         <h3>No News Found</h3>
         <p>Try adjusting your filters or search terms.</p>
       </div>
@@ -111,7 +134,9 @@
           <div class="card-footer">
             <button class="read-more-btn">
               Read Full Article
-              <span class="arrow">&#8594;</span>
+              <svg class="arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M5 12h14M13 5l7 7-7 7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
             </button>
           </div>
         </article>
@@ -153,7 +178,11 @@
               class="external-link-button"
             >
               Read Full Article on {{ selectedArticle.source }}
-              <span class="external-icon">&#128279;</span>
+              <svg class="external-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M14 3h7v7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M21 3 12 12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+                <path d="M20 14v4a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3h4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+              </svg>
             </a>
           </div>
         </div>
@@ -208,19 +237,15 @@ export default {
       try {
         let response
         
-        if (this.searchKeywords.trim()) {
-          response = await newsApi.searchNews(this.searchKeywords, this.selectedSuburb)
-        } else if (this.selectedCategory !== 'all') {
-          response = await newsApi.getNewsByCategory(this.selectedCategory, this.selectedSuburb)
-        } else {
-          response = await newsApi.getNewsBySuburb(this.selectedSuburb || 'Melbourne')
-        }
+        // Always get all news for the suburb first
+        response = await newsApi.getNewsBySuburb(this.selectedSuburb || 'Melbourne')
         
         if (response.data.success) {
           this.news = response.data.data || []
           this.totalNews = response.data.total || 0
-          this.filterNews()
-          this.hasMoreNews = this.news.length < this.totalNews
+          // Apply frontend filtering based on category and search
+          this.applyFilters()
+          this.hasMoreNews = false
         } else {
           throw new Error(response.data.message || 'Failed to fetch news')
         }
@@ -233,34 +258,52 @@ export default {
         this.loading = false
       }
     },
+    
+    applyFilters() {
+      let filtered = [...this.news]
+      
+      // Filter by category
+      if (this.selectedCategory === 'all') {
+        // All category: exclude General type
+        filtered = filtered.filter(article => article.category !== 'general')
+      } else {
+        // Specific category: only show that category
+        filtered = filtered.filter(article => article.category === this.selectedCategory)
+      }
+      
+      // Filter by search keywords
+      if (this.searchKeywords.trim()) {
+        const searchLower = this.searchKeywords.toLowerCase()
+        filtered = filtered.filter(article => {
+          return article.title?.toLowerCase().includes(searchLower) ||
+                 article.description?.toLowerCase().includes(searchLower)
+        })
+      }
+      
+      this.filteredNews = filtered
+    },
+    
+    onCategoryChange() {
+      // Clear search when changing category
+      this.searchKeywords = ''
+      this.applyFilters()
+    },
+    
+    selectCategoryChip(category) {
+      // Clear search and set category
+      this.searchKeywords = ''
+      this.selectedCategory = category
+      this.applyFilters()
+    },
 
     async searchNews() {
       if (!this.searchKeywords.trim()) {
-        this.fetchNews()
+        this.applyFilters()
         return
       }
       
-      this.loading = true
-      this.error = null
-      
-      try {
-        const response = await newsApi.searchNews(this.searchKeywords, this.selectedSuburb)
-        
-        if (response.data.success) {
-          this.news = response.data.data || []
-          this.totalNews = response.data.total || 0
-          this.filterNews()
-        } else {
-          throw new Error(response.data.message || 'Search failed')
-        }
-      } catch (error) {
-        console.error('Error searching news:', error)
-        this.error = 'Search failed. Please try again.'
-        this.news = []
-        this.filteredNews = []
-      } finally {
-        this.loading = false
-      }
+      // Apply filters with search keywords
+      this.applyFilters()
     },
 
     async loadMoreNews() {
@@ -282,18 +325,6 @@ export default {
       }
     },
 
-    filterNews() {
-      this.filteredNews = this.news.filter(article => {
-        const matchesCategory = this.selectedCategory === 'all' || 
-                               article.category === this.selectedCategory
-        
-        const matchesSearch = !this.searchKeywords.trim() ||
-                             article.title.toLowerCase().includes(this.searchKeywords.toLowerCase()) ||
-                             (article.description && article.description.toLowerCase().includes(this.searchKeywords.toLowerCase()))
-        
-        return matchesCategory && matchesSearch
-      })
-    },
 
     refreshNews() {
       this.fetchNews()
@@ -391,6 +422,8 @@ export default {
   font-size: 2rem;
 }
 
+.icon-news { color: #fff; }
+
 .page-subtitle {
   font-size: 1.2rem;
   opacity: 0.9;
@@ -427,14 +460,15 @@ export default {
 }
 
 .filter-container {
-  background: white;
-  padding: 1.5rem;
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  background: rgba(255,255,255,.7);
+  padding: 1.25rem 1.5rem;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(31,38,135,.1);
   display: flex;
   flex-wrap: wrap;
-  gap: 1.5rem;
+  gap: 1.25rem;
   align-items: center;
+  backdrop-filter: blur(6px);
 }
 
 .filter-group {
@@ -617,7 +651,7 @@ export default {
 /* News Cards */
 .news-card {
   background: white;
-  border-radius: 12px;
+  border-radius: 16px;
   overflow: hidden;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -633,7 +667,7 @@ export default {
 
 .card-image {
   position: relative;
-  height: 200px;
+  height: 220px;
   overflow: hidden;
 }
 
@@ -719,7 +753,7 @@ export default {
 .read-more-btn {
   width: 100%;
   padding: 0.75rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #4CAF50 0%, #2196F3 100%);
   color: white;
   border: none;
   border-radius: 8px;

@@ -67,7 +67,7 @@ export default {
         { label: "AI Chat", path: "/aichatbox" },
         { label: "Infrastructure", path: "/infrastructure" },
         { label: "Environment", path: "/environment" },
-        { label: "News", path: "/news" },
+        // { label: "News", path: "/news" },  
         // { label: "Compare", path: "/#compare-section" }
       ],
       visibleTabs: [],

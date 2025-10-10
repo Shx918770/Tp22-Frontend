@@ -435,7 +435,7 @@ export default {
   },
   async mounted() {
     await this.loadInitialData()
-    await this.loadAvailableSuburbs()
+    // await this.loadAvailableSuburbs() 
     await this.fetchNews()
     this.initHeroVideoHD()
   },

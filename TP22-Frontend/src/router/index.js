@@ -6,6 +6,7 @@ import PasswordGate from '../components/PasswordGate.vue'
 import InfrastructurePage from '@/components/infrastructure/InfrastructurePage.vue'
 import ExtralService from '@/components/extralservice/ExtralService.vue'
 import AIChatbox from '@/components/aichatbox/AIChatbox.vue'
+import ComparePage from '@/components/compare/ComparePage.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -44,6 +45,11 @@ const router = createRouter({
       path: '/aichatbox',
       name: 'aichatbox',
       component: AIChatbox
+    },
+    {
+      path: '/compare',
+      name: 'compare',
+      component: ComparePage
     },
   ],
   scrollBehavior(to, from, savedPosition) {

@@ -172,13 +172,18 @@ export const childCareApi = {
 
 // Environment API
 export const environmentApi = {
-  //Map
+
+  //tree card
+  getTreeCardBySuburb: (suburb) =>
+    api.get(`/environment/tree/card`, { params: { suburb } }),
+
+  //Tree Map
   getTreesBySuburb(suburb) {
     return api.get(`/trees?suburb=${encodeURIComponent(suburb)}`)
   },
 
   getAirBySuburb: (suburb) =>
-    api.get(`/environment/air`, { params: { suburb } }),
+    api.get(`/environment/air/card`, { params: { suburb } }),
   getAirTrend: (suburb) =>
     api.get(`/environment/air/trend`, { params: { suburb } }),
 

@@ -74,5 +74,18 @@ export default {
       };
     },
   },
+  mounted(){
+    window.addEventListener("resize", this.handleResize);
+  },
+  beforeUnmount() {
+    window.removeEventListener("resize", this.handleResize);
+  },
+  methods: {
+    handleResize() {
+      if (this.$refs.chartRef?.chart) {
+        this.$refs.chartRef.chart.resize();
+      }
+    },
+  }
 };
 </script>

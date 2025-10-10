@@ -47,18 +47,14 @@
                               stroke-dasharray="314" stroke-dashoffset="94.2" transform="rotate(-90 60 60)"/>
                     </svg>
                     <div class="progress-text">
-                      <div class="progress-value">70%</div>
-                      <div class="progress-label">Coverage</div>
+                      <div class="progress-value">{{ treeCardInfo.score !== null ? treeCardInfo.score : '-' }}</div>
+                      <div class="progress-label">score</div>
                     </div>
                   </div>
                   <div class="indicator-details">
                     <h3 class="indicator-title">Tree Canopy</h3>
-                    <p class="indicator-description">Urban forest coverage providing natural cooling and air purification</p>
+                    <p class="indicator-description">{{ treeCardInfo.description || 'No data available' }}</p>
                     <div class="indicator-metrics">
-                      <div class="metric">
-                        <span class="metric-value">+5.2%</span>
-                        <span class="metric-label">vs Last Year</span>
-                      </div>
                     </div>
                   </div>
                 </div>
@@ -81,18 +77,14 @@
                               stroke-dasharray="314" stroke-dashoffset="125.6" transform="rotate(-90 60 60)"/>
                     </svg>
                     <div class="progress-text">
-                      <div class="progress-value">60</div>
+                      <div class="progress-value">{{ airQualityInfo.aqi !== null ? airQualityInfo.aqi : '-' }}</div>
                       <div class="progress-label">AQI</div>
                     </div>
                   </div>
                   <div class="indicator-details">
                     <h3 class="indicator-title">Air Quality</h3>
-                    <p class="indicator-description">Current air quality index indicating moderate air pollution levels</p>
+                    <p class="indicator-description">{{ airQualityInfo.description || 'No data available' }}</p>
                     <div class="indicator-metrics">
-                      <div class="metric">
-                        <span class="metric-value moderate">Moderate</span>
-                        <span class="metric-label">Status</span>
-                      </div>
                     </div>
                   </div>
                 </div>
@@ -359,6 +351,17 @@ export default {
   name: 'EnvironmentPage',
   data() {
     return {
+      //for three card
+      treeCardInfo: {
+        score: null,
+        description:''
+      },
+      airQualityInfo: {
+        aqi: null,
+        description: ''
+      },
+
+
       //for button which back to top
       showBackToTop: false,
       //for tree part
@@ -423,7 +426,28 @@ export default {
     scrollToTop() {
       window.scrollTo({ top: 0, behavior: "smooth" });
     },
-    // data of tree
+
+    // data for air card
+    async loadTreeCard(suburb) {
+      try {
+        const res = await environmentApi.getTreeCardBySuburb(suburb);
+        const data = res.data?.data;
+
+        if (data) {
+          this.treeCardInfo = {
+            score: data.score || null,
+            description: data.interpretation || 'No description available',
+          };
+        } else {
+          this.treeCardInfo = { score: null, description: 'No data'};
+        }
+      } catch (e) {
+        console.error('Failed to load air quality info', e);
+        this.treeCardInfo = { score: null, description: 'Error loading data'};
+      }
+    },
+
+    // data of tree map
     async loadTrees(suburb) {
       try {
         const res = await environmentApi.getTreesBySuburb(suburb)
@@ -447,7 +471,33 @@ export default {
       }
     },
 
-    // data of AQI
+    // data of AQI card
+    async loadAirQuality(suburb) {
+      try {
+        const res = await environmentApi.getAirBySuburb(suburb);
+        const data = res.data?.data;
+
+        if (data) {
+          this.airQualityInfo = {
+            aqi: data.score || null,
+            description: data.description || 'No description available',
+          };
+        } else {
+          this.airQualityInfo = { aqi: null, description: 'No data'};
+        }
+      } catch (e) {
+        console.error('Failed to load air quality info', e);
+        this.airQualityInfo = { aqi: null, description: 'Error loading data'};
+      }
+    },
+    getAirStatus(aqi) {
+      if (aqi == null) return 'Unknown';
+      if (aqi <= 25) return 'Good';
+      if (aqi <= 30) return 'Moderate';
+      return 'Poor';
+    },
+
+    // data for air trend
     async loadAirTrend(suburb) {
       try {
         const res = await environmentApi.getAirTrend(suburb);
@@ -610,6 +660,8 @@ export default {
         await this.loadEnergyTrend(suburb);
         await this.loadEnergyBlocks(suburb);
         await this.loadAirTrend(suburb);
+        await this.loadAirQuality(suburb);
+        await this.loadTreeCard(suburb);
       } catch (e) {
         console.error("Failed to load environmental data", e);
         this.error = `Failed to load data for ${suburb}`;
@@ -651,15 +703,19 @@ export default {
         }
       });
 
-      const sortedYears = Object.keys(yearCounts).sort((a, b) => a - b);
+      const sortedYears = Object.keys(yearCounts)
+        .map(y => parseInt(y))
+        .filter(y => y >= 2010 && y <= 2021)
+        .sort((a, b) => a - b)
+        .map(String);
 
-      const aqiData = this.airTrendData || [];
+      const aqiData = Array.isArray(this.airTrendData) ? this.airTrendData : [];
 
       return {
         labels: sortedYears,
         datasets: [
           {
-            label: "Trees Planted",
+            label: "Number of Trees",
             data: sortedYears.map(year => yearCounts[year]),
             borderColor: "green",
             backgroundColor: "rgba(0,128,0,0.3)",
@@ -736,52 +792,7 @@ export default {
     selectedSuburb() {
       return this.$route?.query?.suburb || '';
     },
-    
-    // Process environmental indicators for display
-    processedIndicators() {
-      const defaultIndicators = {
-        treeCanopy: { value: 70, unit: '%', trend: '+5.2%' },
-        airQuality: { value: 60, unit: 'AQI', status: 'Moderate' },
-        waterUsage: { value: 50, unit: '%', dailyUsage: '180L' }
-      };
 
-      if (!this.environmentalIndicators.length) {
-        return defaultIndicators;
-      }
-
-      const processed = {};
-      this.environmentalIndicators.forEach(indicator => {
-        const type = indicator.indicatorType?.toLowerCase();
-        switch(type) {
-          case 'tree_canopy':
-          case 'canopy':
-            processed.treeCanopy = {
-              value: Math.round(indicator.value || 70),
-              unit: indicator.unit || '%',
-              trend: this.calculateTrend(indicator) || '+5.2%'
-            };
-            break;
-          case 'air_quality':
-          case 'aqi':
-            processed.airQuality = {
-              value: Math.round(indicator.value || 60),
-              unit: indicator.unit || 'AQI',
-              status: this.getAirQualityStatus(indicator.value || 60)
-            };
-            break;
-          case 'water_usage':
-          case 'water':
-            processed.waterUsage = {
-              value: Math.round(indicator.value || 50),
-              unit: indicator.unit || '%',
-              dailyUsage: this.calculateWaterUsage(indicator.value || 50)
-            };
-            break;
-        }
-      });
-
-      return { ...defaultIndicators, ...processed };
-    }
   },
   watch: {
     selectedSuburb: {
@@ -1398,9 +1409,11 @@ export default {
 
 .indicators-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 2.5rem;
-  max-width: 1200px;
+  justify-items: center;
+  align-items: stretch;
+  max-width: 1300px;
   margin: 0 auto;
 }
 
@@ -1412,6 +1425,9 @@ export default {
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
   border: 2px solid rgba(255, 255, 255, 0.3);
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  width: 100%;
+  max-width: 380;
+  min-width: 300;
 }
 
 .indicator-card:hover {
@@ -2294,11 +2310,6 @@ export default {
     font-size: 2.5rem;
     flex-direction: column;
     gap: 0.5rem;
-  }
-  
-  .indicators-grid {
-    grid-template-columns: 1fr;
-    gap: 2rem;
   }
   
   .forecasting-dashboard {

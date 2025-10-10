@@ -45,7 +45,7 @@
 
         <!-- Compare Now button -->
         <div class="hero-buttons">
-          <button class="btn btn-secondary" @click="scrollToSection('compare-section')">
+          <button @click="goComparePage" class="btn btn-secondary">
             <svg class="btn-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
               <path d="M8 3V5M16 3V5M3 8H5M19 8H21M3 12H21M3 16H5M19 16H21M8 19V21M16 19V21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
               <path d="M12 8V16M8 12H16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -55,85 +55,6 @@
         </div>
       </div>
     </header>
-
-    <!-- Compare Suburbs Section -->
-    <section id="compare-section" class="compare-section">
-      <div class="container">
-        <h2 class="section-title">Compare Suburbs Side-by-Side(Coming soon)</h2>
-        <p class="section-description">
-          Make confident housing decisions by comparing sustainability metrics between different Melbourne suburbs.
-        </p>
-        
-        <div class="compare-form">
-          <div class="suburb-inputs">
-            <div class="input-group">
-              <label>First Suburb</label>
-              <div class="select-wrapper">
-                <select class="suburb-select" v-model="firstSuburb">
-                  <option value="">Select first suburb...</option>
-                  <option v-for="suburb in availableSuburbs" :key="suburb.id" :value="suburb.name">
-                    {{ suburb.name }}
-                  </option>
-                </select>
-                <span class="select-arrow">▼</span>
-              </div>
-            </div>
-            
-            <div class="vs-divider">VS</div>
-            
-            <div class="input-group">
-              <label>Second Suburb</label>
-              <div class="select-wrapper">
-                <select class="suburb-select" v-model="secondSuburb">
-                  <option value="">Select second suburb...</option>
-                  <option v-for="suburb in availableSuburbs" :key="suburb.id" :value="suburb.name">
-                    {{ suburb.name }}
-                  </option>
-                </select>
-                <span class="select-arrow">▼</span>
-              </div>
-            </div>
-          </div>
-          
-          <button class="compare-btn" @click="compareSuburbs" :disabled="!canCompare || comparing">
-            <div v-if="comparing" class="loading-spinner-small"></div>
-            <span v-else class="btn-icon">⚖️</span>
-            {{ comparing ? 'Comparing...' : 'Compare Suburbs' }}
-          </button>
-
-          <!-- Comparison Results -->
-          <div v-if="comparisonData" class="comparison-results">
-            <section id ="compare-tool" class = "compare-section">
-              <h3>Comparison Results</h3>
-              <div class="comparison-cards">
-                <div v-for="suburb in comparisonData.suburbs" :key="suburb.id" class="comparison-card">
-                  <h4>{{ suburb.name }}</h4>
-                  <div class="rating">Rating: {{ suburb.rating }}/5</div>
-                  <div class="scores">
-                    <div class="score-item">
-                      <span>Social:</span>
-                      <span>{{ suburb.sustainabilityScores.social.toFixed(1) }}/5</span>
-                    </div>
-                    <div class="score-item">
-                      <span>Environmental:</span>
-                      <span>{{ suburb.sustainabilityScores.environmental.toFixed(1) }}/5</span>
-                    </div>
-                    <div class="score-item">
-                      <span>Economic:</span>
-                      <span>{{ suburb.sustainabilityScores.economic.toFixed(1) }}/5</span>
-                    </div>
-                    <div class="score-item">
-                      <span>Infrastructure:</span>
-                      <span>{{ suburb.sustainabilityScores.infrastructure.toFixed(1) }}/5</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </section>
-          </div>
-        </div>
-      </div>
-    </section>
 
     <!-- Why Choose MelSustain Section -->
     <section class="why-section">
@@ -467,6 +388,7 @@
 
 <script>
 import { homepageApi, apiUtils, newsApi } from '../services/api.js'
+import ComparePage from './compare/ComparePage.vue';
 
 export default {
   name: 'HomePage',
@@ -688,77 +610,9 @@ export default {
       if (!name) return;
       this.$router.push({ path: '/social', query: { suburb: name } });
     },
-
-    async searchSuburb() {
-      const name = (this.suburbInput || '').trim();
-      if (!name) return;
-      
-      try {
-        // Optionally, you could search for the suburb first to validate it exists
-        const response = await homepageApi.searchSuburbs(name)
-        const result = apiUtils.extractData(response)
-        
-        if (result.success && result.data && result.data.length > 0) {
-          // Suburb found, navigate to social page
-          this.$router.push({ path: '/social', query: { suburb: name } });
-        } else {
-          // Suburb not found, still navigate but let the social page handle it
-          this.$router.push({ path: '/social', query: { suburb: name } });
-        }
-      } catch (error) {
-        console.warn('Search validation failed, proceeding anyway:', error)
-        // Even if search fails, still navigate
-        this.$router.push({ path: '/social', query: { suburb: name } });
-      }
-    },
-
-    navigateToSocial() {
-      this.$router.push('/social');
-    },
-
-    navigateToEnvironment() {
-      this.$router.push('/environment');
-    },
-
-    async loadAvailableSuburbs() {
-      try {
-        const response = await homepageApi.searchSuburbs()
-        const result = apiUtils.extractData(response)
-        
-        if (result.success) {
-          this.availableSuburbs = (result.data || []).map(suburb => 
-            apiUtils.formatSuburbData(suburb)
-          ).filter(suburb => suburb !== null)
-        } else {
-          this.availableSuburbs = []
-        }
-      } catch (error) {
-        console.warn('Failed to load available suburbs:', error)
-      }
-    },
-
-    async compareSuburbs() {
-      if (!this.canCompare) return
-      
-      this.comparing = true
-      this.comparisonData = null
-      
-      try {
-        const suburbNames = [this.firstSuburb, this.secondSuburb]
-        const response = await homepageApi.compareSuburbs(suburbNames)
-        const result = apiUtils.extractData(response)
-        
-        if (result.success) {
-          this.comparisonData = result.data
-        } else {
-          this.error = result.message || 'Failed to compare suburbs'
-        }
-      } catch (error) {
-        console.error('Error comparing suburbs:', error)
-        this.error = 'Failed to compare suburbs'
-      } finally {
-        this.comparing = false
-      }
+    
+    goComparePage(){
+      this.$router.push('/compare')
     },
 
     // News methods

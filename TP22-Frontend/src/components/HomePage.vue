@@ -194,9 +194,13 @@
     <!-- Sustainability News Section -->
     <section class="news-section">
       <div class="container">
-        <h2 class="section-title">Latest Sustainability News</h2>
-        <p class="section-description">
-          Stay updated with the latest sustainability developments in Melbourne CBD
+        <h2 class="section-title news-main-title">
+          <span class="title-accent">Sustainability</span> News
+        </h2>
+        <p class="news-intro">
+          Discover the latest sustainability stories from Melbourne CBD and surrounding areas — 
+          <span class="intro-highlight">Environment • Infrastructure • Social</span> 
+          <span class="intro-meta">• Updated every 30min</span>
         </p>
 
         <!-- Filter Section -->
@@ -274,14 +278,29 @@
           <p>No news articles found</p>
         </div>
 
-        <!-- Pagination -->
+        <!-- Enhanced Pagination -->
         <div v-if="newsTotalPages > 1" class="news-pagination">
+          <button 
+            @click="changePage(1)" 
+            :disabled="newsCurrentPage === 1"
+            class="page-btn page-first"
+            title="Go to first page"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+              <path d="M18 17L13 12L18 7M11 17L6 12L11 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            First
+          </button>
+
           <button 
             @click="changePage(newsCurrentPage - 1)" 
             :disabled="newsCurrentPage === 1"
-            class="page-btn"
+            class="page-btn page-prev"
           >
-            Previous
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+              <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Prev
           </button>
           
           <div class="page-numbers">
@@ -294,14 +313,49 @@
               {{ page }}
             </button>
           </div>
-          
+
           <button 
             @click="changePage(newsCurrentPage + 1)" 
             :disabled="newsCurrentPage === newsTotalPages"
-            class="page-btn"
+            class="page-btn page-next"
           >
             Next
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+              <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
           </button>
+
+          <button 
+            @click="changePage(newsTotalPages)" 
+            :disabled="newsCurrentPage === newsTotalPages"
+            class="page-btn page-last"
+            title="Go to last page"
+          >
+            Last
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+              <path d="M6 17L11 12L6 7M13 17L18 12L13 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+
+          <div class="page-jump">
+            <span class="page-info">Page {{ newsCurrentPage }} of {{ newsTotalPages }}</span>
+            <div class="jump-controls">
+              <input 
+                v-model.number="jumpToPage" 
+                type="number" 
+                :min="1" 
+                :max="newsTotalPages"
+                placeholder="Go to..."
+                class="page-input"
+                @keyup.enter="jumpToPageNumber"
+              />
+              <button @click="jumpToPageNumber" class="jump-btn" title="Jump to page">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                  <path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -453,7 +507,8 @@ export default {
       newsTotal: 0,
       selectedNewsArticle: null,
       newsCacheTime: null,
-      newsCacheDuration: 30 * 60 * 1000 // 30 minutes cache
+      newsCacheDuration: 30 * 60 * 1000, // 30 minutes cache
+      jumpToPage: null // For page jump input
     }
   },
   async mounted() {
@@ -816,6 +871,15 @@ export default {
       if (newsSection) {
         newsSection.scrollIntoView({ behavior: 'smooth' })
       }
+    },
+
+    jumpToPageNumber() {
+      if (!this.jumpToPage || this.jumpToPage < 1 || this.jumpToPage > this.newsTotalPages) {
+        alert(`Please enter a valid page number between 1 and ${this.newsTotalPages}`)
+        return
+      }
+      this.changePage(this.jumpToPage)
+      this.jumpToPage = null // Clear input after jump
     },
 
     openNewsArticle(article) {
@@ -2597,6 +2661,63 @@ export default {
   z-index: 1;
 }
 
+/* Beautiful News Title */
+.news-main-title {
+  font-size: 3.5rem;
+  font-weight: 800;
+  margin-bottom: 1.5rem;
+  background: linear-gradient(135deg, #2c3e50 0%, #34495e 50%, #2c3e50 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -1px;
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
+
+.title-accent {
+  background: linear-gradient(135deg, #4CAF50, #45a049);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 900;
+  position: relative;
+}
+
+.title-accent::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(135deg, #4CAF50, #45a049);
+  border-radius: 2px;
+  opacity: 0.5;
+}
+
+/* News Introduction */
+.news-intro {
+  max-width: 800px;
+  margin: 0 auto 2.5rem;
+  text-align: center;
+  font-size: 1.15rem;
+  color: #666;
+  line-height: 1.8;
+  font-weight: 400;
+}
+
+.intro-highlight {
+  color: #4CAF50;
+  font-weight: 600;
+}
+
+.intro-meta {
+  color: #999;
+  font-size: 0.95rem;
+}
+
 .news-filters {
   display: flex;
   gap: 1.5rem;
@@ -2806,13 +2927,17 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 1rem;
+  gap: 0.75rem;
   margin-top: 3rem;
   flex-wrap: wrap;
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 16px;
+  backdrop-filter: blur(10px);
 }
 
 .page-btn {
-  padding: 0.75rem 1.5rem;
+  padding: 0.6rem 1rem;
   background: white;
   border: 2px solid rgba(76, 175, 80, 0.3);
   border-radius: 8px;
@@ -2820,6 +2945,10 @@ export default {
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.9rem;
 }
 
 .page-btn:hover:not(:disabled) {
@@ -2827,21 +2956,28 @@ export default {
   color: white;
   border-color: #4CAF50;
   transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
 }
 
 .page-btn:disabled {
-  opacity: 0.5;
+  opacity: 0.4;
   cursor: not-allowed;
+}
+
+.page-btn svg {
+  width: 14px;
+  height: 14px;
 }
 
 .page-numbers {
   display: flex;
-  gap: 0.5rem;
+  gap: 0.4rem;
 }
 
 .page-number {
-  width: 40px;
-  height: 40px;
+  min-width: 38px;
+  height: 38px;
+  padding: 0 0.5rem;
   border: 2px solid rgba(76, 175, 80, 0.3);
   border-radius: 8px;
   background: white;
@@ -2857,12 +2993,94 @@ export default {
 .page-number:hover {
   background: rgba(76, 175, 80, 0.1);
   border-color: #4CAF50;
+  transform: translateY(-2px);
 }
 
 .page-number.active {
   background: linear-gradient(135deg, #4CAF50, #45a049);
   color: white;
   border-color: #4CAF50;
+  box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+}
+
+/* Page Jump Controls */
+.page-jump {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding-left: 1rem;
+  border-left: 2px solid rgba(76, 175, 80, 0.2);
+  margin-left: 0.5rem;
+}
+
+.page-info {
+  font-size: 0.9rem;
+  color: #666;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.jump-controls {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.page-input {
+  width: 70px;
+  padding: 0.5rem 0.75rem;
+  border: 2px solid rgba(76, 175, 80, 0.3);
+  border-radius: 6px;
+  font-size: 0.9rem;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.page-input:focus {
+  outline: none;
+  border-color: #4CAF50;
+  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+}
+
+.page-input::placeholder {
+  color: #aaa;
+  font-size: 0.85rem;
+}
+
+/* Remove number input arrows */
+.page-input::-webkit-outer-spin-button,
+.page-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.page-input[type=number] {
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+
+.jump-btn {
+  padding: 0.5rem;
+  background: linear-gradient(135deg, #4CAF50, #45a049);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.jump-btn:hover {
+  background: linear-gradient(135deg, #45a049, #4CAF50);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+}
+
+.jump-btn svg {
+  width: 16px;
+  height: 16px;
 }
 
 /* News Modal Styles */
@@ -3032,6 +3250,23 @@ export default {
     padding: 4rem 1rem;
   }
 
+  .news-main-title {
+    font-size: 2.5rem;
+  }
+
+  .news-intro {
+    font-size: 1rem;
+  }
+
+  .intro-highlight {
+    display: block;
+    margin-top: 0.5rem;
+  }
+
+  .intro-meta {
+    font-size: 0.85rem;
+  }
+
   .news-filters {
     flex-direction: column;
     gap: 1rem;
@@ -3054,17 +3289,50 @@ export default {
 
   .news-pagination {
     gap: 0.5rem;
+    padding: 1rem;
+    flex-direction: column;
   }
 
   .page-btn {
-    padding: 0.5rem 1rem;
-    font-size: 0.9rem;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.85rem;
+  }
+
+  .page-btn svg {
+    width: 12px;
+    height: 12px;
+  }
+
+  .page-first,
+  .page-last {
+    display: none;
   }
 
   .page-number {
-    width: 36px;
-    height: 36px;
+    min-width: 34px;
+    height: 34px;
     font-size: 0.9rem;
+  }
+
+  .page-jump {
+    border-left: none;
+    border-top: 2px solid rgba(76, 175, 80, 0.2);
+    padding-left: 0;
+    padding-top: 1rem;
+    margin-left: 0;
+    width: 100%;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .jump-controls {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .page-input {
+    flex: 1;
+    max-width: 100px;
   }
 
   .modal-overlay {
@@ -3089,6 +3357,26 @@ export default {
 
   .modal-description {
     font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .news-main-title {
+    font-size: 2rem;
+  }
+
+  .news-intro {
+    font-size: 0.95rem;
+  }
+
+  .page-numbers {
+    gap: 0.25rem;
+  }
+
+  .page-number {
+    min-width: 32px;
+    height: 32px;
+    font-size: 0.85rem;
   }
 }
 </style>

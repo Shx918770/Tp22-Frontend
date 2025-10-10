@@ -191,6 +191,163 @@
       </div>
     </section>
 
+    <!-- Sustainability News Section -->
+    <section class="news-section">
+      <div class="container">
+        <h2 class="section-title">Latest Sustainability News</h2>
+        <p class="section-description">
+          Stay updated with the latest sustainability developments in Melbourne CBD
+        </p>
+
+        <!-- Filter Section -->
+        <div class="news-filters">
+          <div class="filter-group">
+            <select v-model="selectedNewsCategory" @change="onNewsCategoryChange" class="news-select">
+              <option value="">All Categories</option>
+              <option value="environment">Environment</option>
+              <option value="infrastructure">Infrastructure</option>
+              <option value="social">Social</option>
+            </select>
+          </div>
+          
+          <div class="search-group">
+            <input 
+              v-model="newsSearchKeywords" 
+              @keyup.enter="searchNews"
+              placeholder="Search news..."
+              class="news-search-input"
+            />
+            <button @click="searchNews" class="search-news-btn">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/>
+                <path d="M20 20l-3.5-3.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Loading State -->
+        <div v-if="newsLoading" class="news-loading">
+          <div class="loading-spinner"></div>
+          <p>Loading news...</p>
+        </div>
+
+        <!-- Error State -->
+        <div v-else-if="newsError" class="news-error">
+          <p>{{ newsError }}</p>
+          <button @click="fetchNews" class="retry-btn">Try Again</button>
+        </div>
+
+        <!-- News Grid -->
+        <div v-else-if="newsList.length > 0" class="news-grid">
+          <article 
+            v-for="article in newsList" 
+            :key="article.id"
+            class="news-card"
+            @click="openNewsArticle(article)"
+          >
+            <div class="news-card-image">
+              <img 
+                :src="article.urlToImage || 'https://via.placeholder.com/400x200?text=News'" 
+                :alt="article.title"
+                @error="handleNewsImageError"
+              />
+              <div class="news-category-badge" :class="'badge-' + article.category">
+                {{ formatCategory(article.category) }}
+              </div>
+            </div>
+            
+            <div class="news-card-content">
+              <h3 class="news-title">{{ article.title }}</h3>
+              <p class="news-description">{{ truncateText(article.description, 100) }}</p>
+              
+              <div class="news-meta">
+                <span class="news-source">{{ article.source }}</span>
+                <span class="news-date">{{ formatNewsDate(article.publishedAt) }}</span>
+              </div>
+            </div>
+          </article>
+        </div>
+
+        <!-- No News State -->
+        <div v-else class="no-news">
+          <p>No news articles found</p>
+        </div>
+
+        <!-- Pagination -->
+        <div v-if="newsTotalPages > 1" class="news-pagination">
+          <button 
+            @click="changePage(newsCurrentPage - 1)" 
+            :disabled="newsCurrentPage === 1"
+            class="page-btn"
+          >
+            Previous
+          </button>
+          
+          <div class="page-numbers">
+            <button
+              v-for="page in displayedPages"
+              :key="page"
+              @click="changePage(page)"
+              :class="['page-number', { active: page === newsCurrentPage }]"
+            >
+              {{ page }}
+            </button>
+          </div>
+          
+          <button 
+            @click="changePage(newsCurrentPage + 1)" 
+            :disabled="newsCurrentPage === newsTotalPages"
+            class="page-btn"
+          >
+            Next
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- News Modal -->
+    <div v-if="selectedNewsArticle" class="modal-overlay" @click="closeNewsModal">
+      <div class="modal-content" @click.stop>
+        <div class="modal-header">
+          <h2>{{ selectedNewsArticle.title }}</h2>
+          <button @click="closeNewsModal" class="close-button">×</button>
+        </div>
+        <div class="modal-body">
+          <div class="modal-meta">
+            <span class="modal-source">{{ selectedNewsArticle.source }}</span>
+            <span class="modal-date">{{ formatNewsDate(selectedNewsArticle.publishedAt) }}</span>
+            <span class="modal-category" :class="'badge-' + selectedNewsArticle.category">
+              {{ formatCategory(selectedNewsArticle.category) }}
+            </span>
+          </div>
+          <img 
+            v-if="selectedNewsArticle.urlToImage" 
+            :src="selectedNewsArticle.urlToImage" 
+            :alt="selectedNewsArticle.title"
+            class="modal-image"
+            @error="handleNewsImageError"
+          />
+          <p class="modal-description">{{ selectedNewsArticle.description || 'No description available.' }}</p>
+          <div class="modal-actions">
+            <a 
+              :href="selectedNewsArticle.url" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              class="external-link-button"
+            >
+              Read Full Article on {{ selectedNewsArticle.source }}
+              <svg class="external-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
+                <path d="M14 3h7v7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M21 3 12 12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+                <path d="M20 14v4a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3h4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Footer Section -->
     <footer class="footer">
       <div class="container">
@@ -255,7 +412,7 @@
 </template>
 
 <script>
-import { homepageApi, apiUtils } from '../services/api.js'
+import { homepageApi, apiUtils, newsApi } from '../services/api.js'
 
 export default {
   name: 'HomePage',
@@ -283,17 +440,47 @@ export default {
         "Southbank",
         "South Yarra",
         "West Melbourne"
-      ]
+      ],
+      // News functionality
+      newsList: [],
+      allNews: [], // Cache all news data
+      newsLoading: false,
+      newsError: null,
+      selectedNewsCategory: '',
+      newsSearchKeywords: '',
+      newsCurrentPage: 1,
+      newsTotalPages: 0,
+      newsTotal: 0,
+      selectedNewsArticle: null,
+      newsCacheTime: null,
+      newsCacheDuration: 30 * 60 * 1000 // 30 minutes cache
     }
   },
   async mounted() {
     await this.loadInitialData()
     await this.loadAvailableSuburbs()
+    await this.fetchNews()
     this.initHeroVideoHD()
   },
   computed: {
     canCompare() {
       return this.firstSuburb && this.secondSuburb && this.firstSuburb !== this.secondSuburb
+    },
+    displayedPages() {
+      const pages = []
+      const maxPagesToShow = 5
+      let startPage = Math.max(1, this.newsCurrentPage - 2)
+      let endPage = Math.min(this.newsTotalPages, startPage + maxPagesToShow - 1)
+      
+      if (endPage - startPage < maxPagesToShow - 1) {
+        startPage = Math.max(1, endPage - maxPagesToShow + 1)
+      }
+      
+      for (let i = startPage; i <= endPage; i++) {
+        pages.push(i)
+      }
+      
+      return pages
     }
   },
   methods: {
@@ -517,6 +704,157 @@ export default {
       } finally {
         this.comparing = false
       }
+    },
+
+    // News methods
+    async fetchNews() {
+      // Check if cache is still valid
+      const now = Date.now()
+      if (this.allNews.length > 0 && this.newsCacheTime && (now - this.newsCacheTime < this.newsCacheDuration)) {
+        console.log('Using cached news data')
+        this.applyNewsFilters()
+        return
+      }
+
+      // Fetch new data
+      this.newsLoading = true
+      this.newsError = null
+      
+      try {
+        // Load all news at once with a large pageSize
+        const response = await newsApi.getMelbourneCBDNews(
+          null, // No category filter - get all
+          null, // No keywords filter - get all
+          1,   // Page 1
+          100  // Large page size to get all news
+        )
+        
+        console.log('HomePage news response:', response.data)
+        
+        if (response.data.success) {
+          this.allNews = response.data.data || []
+          this.newsCacheTime = Date.now()
+          console.log(`Cached ${this.allNews.length} news articles`)
+          
+          // Apply filters and pagination
+          this.applyNewsFilters()
+        } else {
+          this.newsError = response.data.message || 'Failed to load news'
+          this.newsList = []
+        }
+      } catch (error) {
+        console.error('Error fetching news:', error)
+        this.newsError = 'Failed to load news. Please try again later.'
+        this.newsList = []
+      } finally {
+        this.newsLoading = false
+      }
+    },
+
+    applyNewsFilters() {
+      let filtered = [...this.allNews]
+      
+      // Filter by category
+      if (this.selectedNewsCategory) {
+        filtered = filtered.filter(article => 
+          article.category === this.selectedNewsCategory
+        )
+      }
+      
+      // Filter by search keywords
+      if (this.newsSearchKeywords.trim()) {
+        const searchLower = this.newsSearchKeywords.toLowerCase()
+        filtered = filtered.filter(article => {
+          return article.title?.toLowerCase().includes(searchLower) ||
+                 article.description?.toLowerCase().includes(searchLower)
+        })
+      }
+      
+      // Calculate pagination
+      this.newsTotal = filtered.length
+      const pageSize = 6
+      this.newsTotalPages = Math.ceil(this.newsTotal / pageSize)
+      
+      // Ensure current page is valid
+      if (this.newsCurrentPage > this.newsTotalPages && this.newsTotalPages > 0) {
+        this.newsCurrentPage = 1
+      }
+      
+      // Get current page items
+      const startIndex = (this.newsCurrentPage - 1) * pageSize
+      const endIndex = startIndex + pageSize
+      this.newsList = filtered.slice(startIndex, endIndex)
+      
+      console.log(`Showing ${this.newsList.length} of ${this.newsTotal} news articles (page ${this.newsCurrentPage}/${this.newsTotalPages})`)
+    },
+
+    onNewsCategoryChange() {
+      this.newsSearchKeywords = ''
+      this.newsCurrentPage = 1
+      this.applyNewsFilters()
+    },
+
+    searchNews() {
+      if (!this.newsSearchKeywords.trim()) {
+        this.newsCurrentPage = 1
+        this.applyNewsFilters()
+        return
+      }
+      
+      this.selectedNewsCategory = ''
+      this.newsCurrentPage = 1
+      this.applyNewsFilters()
+    },
+
+    changePage(page) {
+      if (page < 1 || page > this.newsTotalPages) return
+      this.newsCurrentPage = page
+      this.applyNewsFilters()
+      
+      // Scroll to news section
+      const newsSection = document.querySelector('.news-section')
+      if (newsSection) {
+        newsSection.scrollIntoView({ behavior: 'smooth' })
+      }
+    },
+
+    openNewsArticle(article) {
+      this.selectedNewsArticle = article
+      document.body.style.overflow = 'hidden'
+    },
+
+    closeNewsModal() {
+      this.selectedNewsArticle = null
+      document.body.style.overflow = 'auto'
+    },
+
+    handleNewsImageError(event) {
+      event.target.src = 'https://via.placeholder.com/400x200?text=News+Image'
+    },
+
+    formatCategory(category) {
+      if (!category) return 'General'
+      return category.charAt(0).toUpperCase() + category.slice(1)
+    },
+
+    formatNewsDate(dateString) {
+      if (!dateString) return 'Unknown date'
+      
+      try {
+        const date = new Date(dateString)
+        return date.toLocaleDateString('en-AU', {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric'
+        })
+      } catch (error) {
+        return 'Unknown date'
+      }
+    },
+
+    truncateText(text, maxLength) {
+      if (!text) return 'No description available.'
+      return text.length > maxLength ? text.substring(0, maxLength) + '...' : text
     }
   }
 }
@@ -2230,6 +2568,527 @@ export default {
   
   .social-icons {
     justify-content: center;
+  }
+}
+
+/* News Section Styles */
+.news-section {
+  padding: 6rem 2rem;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.news-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(circle at 20% 30%, rgba(76, 175, 80, 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 80% 70%, rgba(33, 150, 243, 0.06) 0%, transparent 50%);
+  opacity: 0.7;
+}
+
+.news-section .container {
+  position: relative;
+  z-index: 1;
+}
+
+.news-filters {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+  align-items: center;
+  margin: 2rem 0;
+  flex-wrap: wrap;
+}
+
+.filter-group {
+  position: relative;
+}
+
+.news-select {
+  padding: 0.75rem 2.5rem 0.75rem 1.25rem;
+  border: 2px solid rgba(76, 175, 80, 0.3);
+  border-radius: 12px;
+  background: white;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%234CAF50' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  min-width: 180px;
+}
+
+.news-select:hover,
+.news-select:focus {
+  border-color: #4CAF50;
+  outline: none;
+  box-shadow: 0 4px 15px rgba(76, 175, 80, 0.2);
+}
+
+.search-group {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.news-search-input {
+  padding: 0.75rem 1.25rem;
+  border: 2px solid rgba(76, 175, 80, 0.3);
+  border-radius: 12px;
+  font-size: 1rem;
+  min-width: 250px;
+  transition: all 0.3s ease;
+}
+
+.news-search-input:focus {
+  border-color: #4CAF50;
+  outline: none;
+  box-shadow: 0 4px 15px rgba(76, 175, 80, 0.2);
+}
+
+.search-news-btn {
+  padding: 0.75rem 1rem;
+  background: linear-gradient(135deg, #4CAF50, #45a049);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.search-news-btn:hover {
+  background: linear-gradient(135deg, #45a049, #4CAF50);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(76, 175, 80, 0.3);
+}
+
+.news-loading {
+  text-align: center;
+  padding: 4rem 2rem;
+}
+
+.news-error {
+  text-align: center;
+  padding: 3rem 2rem;
+  background: rgba(244, 67, 54, 0.1);
+  border-radius: 12px;
+  margin: 2rem 0;
+}
+
+.news-error p {
+  color: #d32f2f;
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+}
+
+.news-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 2rem;
+  margin: 3rem 0;
+}
+
+.news-card {
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+}
+
+.news-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+}
+
+.news-card-image {
+  position: relative;
+  height: 200px;
+  overflow: hidden;
+}
+
+.news-card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.news-card:hover .news-card-image img {
+  transform: scale(1.05);
+}
+
+.news-category-badge {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  padding: 0.4rem 1rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: white;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  backdrop-filter: blur(10px);
+}
+
+.badge-environment {
+  background: linear-gradient(135deg, rgba(76, 175, 80, 0.9), rgba(46, 125, 50, 0.9));
+}
+
+.badge-infrastructure {
+  background: linear-gradient(135deg, rgba(33, 150, 243, 0.9), rgba(25, 118, 210, 0.9));
+}
+
+.badge-social {
+  background: linear-gradient(135deg, rgba(255, 152, 0, 0.9), rgba(245, 124, 0, 0.9));
+}
+
+.news-card-content {
+  padding: 1.5rem;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.news-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 0.75rem;
+  line-height: 1.4;
+}
+
+.news-description {
+  color: #666;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+  flex-grow: 1;
+}
+
+.news-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9rem;
+  color: #888;
+  padding-top: 1rem;
+  border-top: 1px solid #f0f0f0;
+}
+
+.news-source {
+  font-weight: 600;
+  color: #4CAF50;
+}
+
+.no-news {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: #666;
+  font-size: 1.1rem;
+}
+
+.news-pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 3rem;
+  flex-wrap: wrap;
+}
+
+.page-btn {
+  padding: 0.75rem 1.5rem;
+  background: white;
+  border: 2px solid rgba(76, 175, 80, 0.3);
+  border-radius: 8px;
+  color: #4CAF50;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.page-btn:hover:not(:disabled) {
+  background: #4CAF50;
+  color: white;
+  border-color: #4CAF50;
+  transform: translateY(-2px);
+}
+
+.page-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.page-numbers {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.page-number {
+  width: 40px;
+  height: 40px;
+  border: 2px solid rgba(76, 175, 80, 0.3);
+  border-radius: 8px;
+  background: white;
+  color: #4CAF50;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.page-number:hover {
+  background: rgba(76, 175, 80, 0.1);
+  border-color: #4CAF50;
+}
+
+.page-number.active {
+  background: linear-gradient(135deg, #4CAF50, #45a049);
+  color: white;
+  border-color: #4CAF50;
+}
+
+/* News Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  padding: 2rem;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.modal-content {
+  background: white;
+  border-radius: 16px;
+  max-width: 800px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal-header {
+  padding: 2rem 2rem 1rem;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  line-height: 1.4;
+  color: #2c3e50;
+  flex: 1;
+}
+
+.close-button {
+  background: none;
+  border: none;
+  font-size: 2rem;
+  cursor: pointer;
+  color: #666;
+  padding: 0;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background-color 0.3s ease;
+  flex-shrink: 0;
+}
+
+.close-button:hover {
+  background: #f5f5f5;
+  color: #333;
+}
+
+.modal-body {
+  padding: 1rem 2rem 2rem;
+}
+
+.modal-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  font-size: 0.9rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.modal-source {
+  font-weight: 600;
+  color: #4CAF50;
+}
+
+.modal-date {
+  color: #666;
+}
+
+.modal-category {
+  padding: 0.3rem 0.8rem;
+  border-radius: 15px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: white;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.modal-image {
+  width: 100%;
+  height: 300px;
+  object-fit: cover;
+  border-radius: 12px;
+  margin-bottom: 1.5rem;
+}
+
+.modal-description {
+  font-size: 1.1rem;
+  line-height: 1.7;
+  color: #333;
+  margin-bottom: 2rem;
+}
+
+.modal-actions {
+  text-align: center;
+}
+
+.external-link-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem 2rem;
+  background: linear-gradient(135deg, #4CAF50, #45a049);
+  color: white;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.external-link-button:hover {
+  background: linear-gradient(135deg, #45a049, #4CAF50);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(76, 175, 80, 0.3);
+}
+
+.external-icon {
+  font-size: 1.2rem;
+}
+
+/* Responsive Design for News Section */
+@media (max-width: 768px) {
+  .news-section {
+    padding: 4rem 1rem;
+  }
+
+  .news-filters {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .news-select,
+  .news-search-input {
+    width: 100%;
+    min-width: auto;
+  }
+
+  .search-group {
+    width: 100%;
+  }
+
+  .news-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .news-pagination {
+    gap: 0.5rem;
+  }
+
+  .page-btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+  }
+
+  .page-number {
+    width: 36px;
+    height: 36px;
+    font-size: 0.9rem;
+  }
+
+  .modal-overlay {
+    padding: 1rem;
+  }
+
+  .modal-header {
+    padding: 1.5rem 1.5rem 1rem;
+  }
+
+  .modal-body {
+    padding: 1rem 1.5rem 1.5rem;
+  }
+
+  .modal-image {
+    height: 200px;
+  }
+
+  .modal-header h2 {
+    font-size: 1.3rem;
+  }
+
+  .modal-description {
+    font-size: 1rem;
   }
 }
 </style>

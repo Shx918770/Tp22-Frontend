@@ -715,18 +715,28 @@ export const aiApi = {
 
 // News API
 export const newsApi = {
-  // Get news by suburb
+  // Get Melbourne CBD news with pagination
+  getMelbourneCBDNews(category = null, keywords = null, page = 1, pageSize = 6) {
+    const params = new URLSearchParams()
+    if (category) params.append('category', category)
+    if (keywords) params.append('keywords', keywords)
+    params.append('page', page.toString())
+    params.append('pageSize', pageSize.toString())
+    return api.get(`/news/melbourne-cbd?${params.toString()}`)
+  },
+
+  // Get news by suburb (legacy - now uses Melbourne CBD)
   getNewsBySuburb(suburb) {
     return api.get(`/news/suburb/${encodeURIComponent(suburb)}`)
   },
 
-  // Get news by category
+  // Get news by category (legacy)
   getNewsByCategory(category, suburb = null) {
     const params = suburb ? `?suburb=${encodeURIComponent(suburb)}` : ''
     return api.get(`/news/category/${encodeURIComponent(category)}${params}`)
   },
 
-  // Search news with keywords
+  // Search news with keywords (legacy)
   searchNews(keywords, suburb = null) {
     const params = new URLSearchParams({ keywords })
     if (suburb) params.append('suburb', suburb)

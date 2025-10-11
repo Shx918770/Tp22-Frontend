@@ -280,88 +280,85 @@
               </div>
                 <div class="section-content">
                   <div class="pie-chart-container">
-                    <svg class="pie-chart-svg" viewBox="0 0 200 200">
-                      <!-- Primary Segment --><!--Design by Rui Wang-->
-                      <circle
-                        cx="100"
-                        cy="100"
-                        r="80"
-                        fill="none"
-                        stroke="#52a3f0"
-                        :stroke-width="40"
-                        :stroke-dasharray="`${getPrimaryPct() * 5.02} 502`"
-                        stroke-dashoffset="0"
-                        transform="rotate(-90 100 100)"
-                      />
-                      <!-- Secondary Segment --><!--Design by Rui Wang-->
-                      <circle
-                        cx="100"
-                        cy="100"
-                        r="80"
-                        fill="none"
-                        stroke="#e74c3c"
-                        :stroke-width="40"
-                        :stroke-dasharray="`${getSecondaryPct() * 5.02} 502`"
-                        :stroke-dashoffset="`-${getPrimaryPct() * 5.02}`"
-                        transform="rotate(-90 100 100)"
-                      />
-                      <!-- Special Segment -->
-                      <circle
-                        cx="100"
-                        cy="100"
-                        r="80"
-                        fill="none"
-                        stroke="#9C27B0"
-                        :stroke-width="40"
-                        :stroke-dasharray="`${getSpecialPct() * 5.02} 502`"
-                        :stroke-dashoffset="`-${(getPrimaryPct() + getSecondaryPct()) * 5.02}`"
-                        transform="rotate(-90 100 100)"
-                      />
-                      <!-- PRI/SEC Segment -->
-                      <circle
-                        cx="100"
-                        cy="100"
-                        r="80"
-                        fill="none"
-                        stroke="#16a085"
-                        :stroke-width="40"
-                        :stroke-dasharray="`${getPriSecPct() * 5.02} 502`"
-                        :stroke-dashoffset="`-${(getPrimaryPct() + getSecondaryPct() + getSpecialPct()) * 5.02}`"
-                        transform="rotate(-90 100 100)"
-                      />
-                    
-                      <!-- Percent Labels -->
-                      <text v-if="getPrimaryPct() >= 3"
-                            :x="getPrimaryLabelPos().x"
-                            :y="getPrimaryLabelPos().y"
-                            text-anchor="middle"
-                            class="pie-percentage-label primary">{{ Math.round(getPrimaryPct()) }}%</text>
-                      <text v-if="getSecondaryPct() >= 3"
-                            :x="getSecondaryLabelPos().x"
-                            :y="getSecondaryLabelPos().y"
-                            text-anchor="middle"
-                            class="pie-percentage-label secondary">{{ Math.round(getSecondaryPct()) }}%</text>
-                      <text v-if="getSpecialPct() >= 3"
-                            :x="getSpecialLabelPos().x"
-                            :y="getSpecialLabelPos().y"
-                            text-anchor="middle"
-                            class="pie-percentage-label special">{{ Math.round(getSpecialPct()) }}%</text>
-                      <text v-if="getPriSecPct() >= 3"
-                            :x="getPriSecLabelPos().x"
-                            :y="getPriSecLabelPos().y"
-                            text-anchor="middle"
-                            class="pie-percentage-label prisecc">{{ Math.round(getPriSecPct()) }}%</text>
-
-                      <!-- Center Text -->
-                    <text x="100" y="95" text-anchor="middle" class="pie-center-text-title">Education</text>
-                    <text x="100" y="110" text-anchor="middle" class="pie-center-text-subtitle">Facilities</text>
+                    <svg class="horizontal-bar-chart-svg" viewBox="0 0 400 250">
+                      <!-- Primary Schools Bar -->
+                      <g>
+                        <rect x="80" y="30" 
+                              :width="Math.max(getPrimaryPct() * 2.2 + 60, 40)" 
+                              height="20" 
+                              fill="#52a3f0" 
+                              rx="10"
+                              class="bar-section clickable"
+                              @click="handleFacilityClick('primary')"
+                              style="cursor: pointer"/>
+                        <text x="75" y="44" text-anchor="end" class="bar-label">Primary</text>
+                        <text :x="85 + Math.max(getPrimaryPct() * 2.2 + 60, 40)" y="44" class="bar-value">{{ getPrimaryCount() }}</text>
+                      </g>
+                      
+                      <!-- Secondary Schools Bar -->
+                      <g>
+                        <rect x="80" y="60" 
+                              :width="Math.max(getSecondaryPct() * 2.2 + 60, 40)" 
+                              height="20" 
+                              fill="#e74c3c" 
+                              rx="10"
+                              class="bar-section clickable"
+                              @click="handleFacilityClick('secondary')"
+                              style="cursor: pointer"/>
+                        <text x="75" y="74" text-anchor="end" class="bar-label">Secondary</text>
+                        <text :x="85 + Math.max(getSecondaryPct() * 2.2 + 60, 40)" y="74" class="bar-value">{{ getSecondaryCount() }}</text>
+                      </g>
+                      
+                      <!-- Special Schools Bar -->
+                      <g>
+                        <rect x="80" y="90" 
+                              :width="Math.max(getSpecialPct() * 2.2 + 60, 40)" 
+                              height="20" 
+                              fill="#9C27B0" 
+                              rx="10"
+                              class="bar-section clickable"
+                              @click="handleFacilityClick('special')"
+                              style="cursor: pointer"/>
+                        <text x="75" y="104" text-anchor="end" class="bar-label">Special</text>
+                        <text :x="85 + Math.max(getSpecialPct() * 2.2 + 60, 40)" y="104" class="bar-value">{{ getSpecialCount() }}</text>
+                      </g>
+                      
+                      <!-- PRI/SEC Schools Bar -->
+                      <g>
+                        <rect x="80" y="120" 
+                              :width="Math.max(getPriSecPct() * 2.2 + 60, 40)" 
+                              height="20" 
+                              fill="#16a085" 
+                              rx="10"
+                              class="bar-section clickable"
+                              @click="handleFacilityClick('prisec')"
+                              style="cursor: pointer"/>
+                        <text x="75" y="134" text-anchor="end" class="bar-label">PRI/SEC</text>
+                        <text :x="85 + Math.max(getPriSecPct() * 2.2 + 60, 40)" y="134" class="bar-value">{{ getPriSecCount() }}</text>
+                      </g>
+                      
+                      <!-- Childcare Bar -->
+                      <g>
+                        <rect x="80" y="150" 
+                              :width="Math.max(getChildcarePct() * 2.2 + 60, 40)" 
+                              height="20" 
+                              fill="#f39c12" 
+                              rx="10"
+                              class="bar-section clickable"
+                              @click="handleFacilityClick('childcare')"
+                              style="cursor: pointer"/>
+                        <text x="75" y="164" text-anchor="end" class="bar-label">Childcare</text>
+                        <text :x="85 + Math.max(getChildcarePct() * 2.2 + 60, 40)" y="164" class="bar-value">{{ getChildcareCount() }}</text>
+                      </g>
+                      
+                      <!-- Subtle background grid -->
+                      <g class="background-grid" opacity="0.1">
+                        <line x1="80" y1="20" x2="80" y2="180" stroke="#94a3b8" stroke-width="1"/>
+                        <line x1="160" y1="20" x2="160" y2="180" stroke="#94a3b8" stroke-width="0.5"/>
+                        <line x1="240" y1="20" x2="240" y2="180" stroke="#94a3b8" stroke-width="0.5"/>
+                        <line x1="320" y1="20" x2="320" y2="180" stroke="#94a3b8" stroke-width="0.5"/>
+                      </g>
                     </svg>
-                  </div>
-                  <div class="chart-legend">
-                    <div class="legend-item"><div class="color primary"></div> Primary</div>
-                    <div class="legend-item"><div class="color secondary"></div> Secondary</div>
-                    <div class="legend-item"><div class="color special"></div> Special</div>
-                    <div class="legend-item"><div class="color prisecc"></div> PRI/SEC</div>
                   </div>
               </div>
             </div>
@@ -614,7 +611,6 @@
           </div>
         </div>
       </section>
-
       <!-- Recreation Facilities Overview Section -->
       <section id="community-conditions-detail" class="education-detail">
         <div class="container">
@@ -1046,9 +1042,35 @@
         <path d="M7 14L12 9L17 14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
     </button>
+
+    <!-- Facility Details Modal -->
+    <div v-if="showFacilityDetails && selectedFacilityType" class="modal-overlay" @click="closeFacilityDetails">
+      <div class="modal-content facility-details-modal" @click.stop>
+        <div class="modal-header">
+          <h3>{{ getFacilityTypeInfo(selectedFacilityType)?.name }}</h3>
+          <button class="modal-close" @click="closeFacilityDetails">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="facility-count-display">
+            <div class="count-icon" :style="{ backgroundColor: getFacilityTypeInfo(selectedFacilityType)?.color }">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div class="count-info">
+              <div class="count-number">{{ getFacilityTypeInfo(selectedFacilityType)?.count }}</div>
+              <div class="count-label">{{ getFacilityTypeInfo(selectedFacilityType)?.name }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
-
 <script>
 import { socialApi, schoolApi, childCareApi, apiUtils, healthApi, hospitalityApi, recreationApi } from '../../services/api.js'
 import Header from '../header/Header.vue';
@@ -1102,6 +1124,8 @@ export default {
         content: ''
       },
       selectedSchool: null,
+      selectedFacilityType: null, // Track clicked facility type
+      showFacilityDetails: false, // Show/hide details modal
       sortSchoolsAlphabetically: false,
       showBackToTop: false,
       mapLegendState: {
@@ -2025,26 +2049,149 @@ export default {
 
     getPrimaryPct() {
       const c = this.getTypeCounts()
-      const total = c.primary + c.secondary + c.special + c.prisec
+      const schoolTotal = c.primary + c.secondary + c.special + c.prisec
+      const childcareTotal = this.childCares.length
+      const total = schoolTotal + childcareTotal
       return total > 0 ? (c.primary / total) * 100 : 0
     },
 
     getSecondaryPct() {
       const c = this.getTypeCounts()
-      const total = c.primary + c.secondary + c.special + c.prisec
+      const schoolTotal = c.primary + c.secondary + c.special + c.prisec
+      const childcareTotal = this.childCares.length
+      const total = schoolTotal + childcareTotal
       return total > 0 ? (c.secondary / total) * 100 : 0
     },
 
     getSpecialPct() {
       const c = this.getTypeCounts()
-      const total = c.primary + c.secondary + c.special + c.prisec
+      const schoolTotal = c.primary + c.secondary + c.special + c.prisec
+      const childcareTotal = this.childCares.length
+      const total = schoolTotal + childcareTotal
       return total > 0 ? (c.special / total) * 100 : 0
     },
 
     getPriSecPct() {
       const c = this.getTypeCounts()
-      const total = c.primary + c.secondary + c.special + c.prisec
+      const schoolTotal = c.primary + c.secondary + c.special + c.prisec
+      const childcareTotal = this.childCares.length
+      const total = schoolTotal + childcareTotal
       return total > 0 ? (c.prisec / total) * 100 : 0
+    },
+
+    getChildcarePct() {
+      const c = this.getTypeCounts()
+      const schoolTotal = c.primary + c.secondary + c.special + c.prisec
+      const childcareTotal = this.childCares.length
+      const total = schoolTotal + childcareTotal
+      return total > 0 ? (childcareTotal / total) * 100 : 0
+    },
+
+    // Building height calculations (total height is 120px)
+    getPrimaryHeight() {
+      return (this.getPrimaryPct() / 100) * 120
+    },
+
+    getSecondaryHeight() {
+      return (this.getSecondaryPct() / 100) * 120
+    },
+
+    getSpecialHeight() {
+      return (this.getSpecialPct() / 100) * 120
+    },
+
+    getPriSecHeight() {
+      return (this.getPriSecPct() / 100) * 120
+    },
+
+    getChildcareHeight() {
+      return (this.getChildcarePct() / 100) * 120
+    },
+
+    // Get actual counts for each type
+    getPrimaryCount() {
+      const c = this.getTypeCounts()
+      return c.primary
+    },
+
+    getSecondaryCount() {
+      const c = this.getTypeCounts()
+      return c.secondary
+    },
+
+    getSpecialCount() {
+      const c = this.getTypeCounts()
+      return c.special
+    },
+
+    getPriSecCount() {
+      const c = this.getTypeCounts()
+      return c.prisec
+    },
+
+    getChildcareCount() {
+      return this.childCares.length
+    },
+
+    getTotalFacilities() {
+      const c = this.getTypeCounts()
+      const schoolTotal = c.primary + c.secondary + c.special + c.prisec
+      const childcareTotal = this.childCares.length
+      return schoolTotal + childcareTotal
+    },
+
+    // Handle facility type click
+    handleFacilityClick(type) {
+      this.selectedFacilityType = type
+      this.showFacilityDetails = true
+    },
+
+    closeFacilityDetails() {
+      this.showFacilityDetails = false
+      this.selectedFacilityType = null
+    },
+
+    getFacilityTypeInfo(type) {
+      const counts = this.getTypeCounts()
+      switch(type) {
+        case 'primary':
+          return {
+            name: 'Primary Schools',
+            count: counts.primary,
+            percentage: this.getPrimaryPct(),
+            color: '#52a3f0'
+          }
+        case 'secondary':
+          return {
+            name: 'Secondary Schools', 
+            count: counts.secondary,
+            percentage: this.getSecondaryPct(),
+            color: '#e74c3c'
+          }
+        case 'special':
+          return {
+            name: 'Special Schools',
+            count: counts.special,
+            percentage: this.getSpecialPct(),
+            color: '#9C27B0'
+          }
+        case 'prisec':
+          return {
+            name: 'PRI/SEC Schools',
+            count: counts.prisec,
+            percentage: this.getPriSecPct(),
+            color: '#16a085'
+          }
+        case 'childcare':
+          return {
+            name: 'Childcare Centers',
+            count: this.childCares.length,
+            percentage: this.getChildcarePct(),
+            color: '#f39c12'
+          }
+        default:
+          return null
+      }
     },
 
     // Label positions per segment based on cumulative angles
@@ -2797,7 +2944,6 @@ export default {
   z-index: 100;
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
 }
-
 .nav-container {
   max-width: 1200px;
   margin: 0 auto;
@@ -3598,7 +3744,6 @@ export default {
   border-radius: 15px;
   border: 2px dashed #dee2e6;
 }
-
 .map-placeholder h3 {
   color: #6c757d;
   margin-bottom: 0.5rem;
@@ -3932,6 +4077,97 @@ export default {
   filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.1));
 }
 
+.school-building-svg {
+  width: 250px;
+  height: 200px;
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.1));
+}
+
+.horizontal-bar-chart-svg {
+  width: 400px;
+  height: 200px;
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.08));
+}
+
+.chart-title {
+  font-size: 16px;
+  font-weight: 600;
+  fill: #1e293b;
+  font-family: 'Inter', sans-serif;
+}
+
+.bar-label {
+  font-size: 13px;
+  font-weight: 500;
+  fill: #475569;
+  font-family: 'Inter', sans-serif;
+}
+
+.bar-value {
+  font-size: 13px;
+  font-weight: 700;
+  fill: #1e293b;
+  font-family: 'Inter', sans-serif;
+}
+
+.scale-label {
+  font-size: 10px;
+  font-weight: 400;
+  fill: #94a3b8;
+  font-family: 'Inter', sans-serif;
+}
+
+.bar-section:hover {
+  opacity: 0.85;
+  transition: all 0.3s ease;
+  filter: brightness(1.05);
+}
+
+.bar-section.clickable:hover {
+  opacity: 0.9;
+  transform: translateX(2px);
+  filter: brightness(1.1) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+.background-grid {
+  pointer-events: none;
+}
+
+.building-title {
+  font-size: 18px;
+  font-weight: 700;
+  fill: #2c3e50;
+  font-family: 'Inter', sans-serif;
+}
+
+.building-subtitle {
+  font-size: 14px;
+  font-weight: 500;
+  fill: #64748b;
+  font-family: 'Inter', sans-serif;
+}
+
+.building-percentage-label {
+  font-size: 14px;
+  font-weight: 700;
+  font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+  fill: #ffffff;
+  text-shadow: 
+    0 1px 3px rgba(0, 0, 0, 0.8),
+    0 0 6px rgba(0, 0, 0, 0.6);
+  letter-spacing: -0.02em;
+}
+
+.facility-section:hover {
+  opacity: 0.9 !important;
+  transition: opacity 0.2s ease;
+}
+
+.facility-section.clickable:hover {
+  opacity: 1 !important;
+  filter: brightness(1.1);
+}
+
 .pie-center-text-title {
   font-size: 16px;
   font-weight: 700;
@@ -4061,6 +4297,10 @@ export default {
 .chart-legend .color.prisecc { 
   background: linear-gradient(135deg, #16a085, #0e766e);
   box-shadow: 0 2px 8px rgba(22, 160, 133, 0.3);
+}
+.chart-legend .color.childcare { 
+  background: linear-gradient(135deg, #f39c12, #e67e22);
+  box-shadow: 0 2px 8px rgba(243, 156, 18, 0.3);
 }
 
 /* Reduce legend color dot size for single-row layout */
@@ -4303,7 +4543,6 @@ export default {
 .student-count-chart {
   margin-top: 1rem;
 }
-
 /* Chart Container with optimized layout */
 .chart-container {
   position: relative;
@@ -4491,6 +4730,69 @@ export default {
   animation: pulseChart 3s ease-in-out infinite;
 }
 
+/* Facility Details Modal */
+.facility-details-modal {
+  max-width: 400px;
+  width: 90%;
+}
+
+.facility-details-modal .modal-header {
+  padding: 1.5rem;
+  border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.facility-details-modal .modal-header h3 {
+  margin: 0;
+  color: #1e293b;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.facility-details-modal .modal-body {
+  padding: 2rem;
+}
+
+.facility-count-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  text-align: center;
+}
+
+.count-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.count-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.count-number {
+  font-size: 3rem;
+  font-weight: 700;
+  color: #1e293b;
+  line-height: 1;
+}
+
+.count-label {
+  font-size: 1.1rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
 @keyframes pulseChart {
   0%, 100% { transform: scale(1); opacity: 0.5; }
   50% { transform: scale(1.05); opacity: 0.8; }
@@ -4601,6 +4903,16 @@ export default {
     height: 180px;
   }
   
+  .school-building-svg {
+    width: 200px;
+    height: 160px;
+  }
+  
+  .horizontal-bar-chart-svg {
+    width: 350px;
+    height: 180px;
+  }
+  
   .school-list {
     max-height: 250px;
   }
@@ -4650,6 +4962,28 @@ export default {
   .pie-chart-svg {
     width: 160px;
     height: 160px;
+  }
+  
+  .school-building-svg {
+    width: 180px;
+    height: 140px;
+  }
+  
+  .horizontal-bar-chart-svg {
+    width: 320px;
+    height: 160px;
+  }
+  
+  .building-title {
+    font-size: 16px;
+  }
+  
+  .building-subtitle {
+    font-size: 12px;
+  }
+  
+  .building-percentage-label {
+    font-size: 12px;
   }
   
   .pie-percentage-label {
@@ -5000,7 +5334,6 @@ export default {
   display: flex;
   flex-direction: column;
 }
-
 .stage-detail-content h4 {
   font-size: 1rem;
   font-weight: 600;
@@ -5798,7 +6131,6 @@ export default {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 100;
 }
-
 .progress-indicator-enhanced:hover .progress-tooltip {
   opacity: 1;
   visibility: visible;
@@ -6599,7 +6931,6 @@ export default {
   align-items: center;
   gap: 0.5rem;
 }
-
 .legend-item {
   display: flex;
   align-items: center;

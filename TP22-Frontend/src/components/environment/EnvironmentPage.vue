@@ -105,19 +105,13 @@
                               stroke-dasharray="314" stroke-dashoffset="157" transform="rotate(-90 60 60)"/>
                     </svg>
                     <div class="progress-text">
-                      <div class="progress-value">65%</div>
-                      <div class="progress-label">Efficiency</div>
+                      <div class="progress-value">{{ energyCardInfo.score !== null ? energyCardInfo.score : '-' }}</div>
+                      <div class="progress-label">score</div>
                     </div>
                   </div>
                   <div class="indicator-details">
                     <h3 class="indicator-title">Energy</h3>
-                    <p class="indicator-description">Energy consumption efficiency compared to targets</p>
-                    <div class="indicator-metrics">
-                      <div class="metric">
-                        <span class="metric-value">↓ 12%</span>
-                        <span class="metric-label">vs Last Year</span>
-                      </div>
-                    </div>
+                    <p class="indicator-description">{{ energyCardInfo.description || 'No data available' }}</p>
                   </div>
                 </div>
               </div>
@@ -360,6 +354,10 @@ export default {
         aqi: null,
         description: ''
       },
+      energyCardInfo:{
+        score: null,
+        description: ''
+      },
 
 
       //for button which back to top
@@ -490,12 +488,6 @@ export default {
         this.airQualityInfo = { aqi: null, description: 'Error loading data'};
       }
     },
-    getAirStatus(aqi) {
-      if (aqi == null) return 'Unknown';
-      if (aqi <= 25) return 'Good';
-      if (aqi <= 30) return 'Moderate';
-      return 'Poor';
-    },
 
     // data for air trend
     async loadAirTrend(suburb) {
@@ -506,6 +498,26 @@ export default {
       } catch (e) {
         console.error("Failed to load air trend", e);
         this.airTrendData = [];
+      }
+    },
+
+    //data for energy card
+    async loadEnergyCardScore(suburb) {
+      try {
+        const res = await environmentApi.getEnergyCardBySuburb(suburb);
+        const data = res.data?.data;
+
+        if (data) {
+          this.energyCardInfo = {
+            score: data.score || null,
+            description: data.description || 'No description available',
+          };
+        } else {
+          this.energyCardInfo = { score: null, description: 'No data'};
+        }
+      } catch (e) {
+        console.error('Failed to load air quality info', e);
+        this.energyCardInfo = { score: null, description: 'Error loading data'};
       }
     },
     
@@ -662,6 +674,7 @@ export default {
         await this.loadAirTrend(suburb);
         await this.loadAirQuality(suburb);
         await this.loadTreeCard(suburb);
+        await this.loadEnergyCardScore(suburb);
       } catch (e) {
         console.error("Failed to load environmental data", e);
         this.error = `Failed to load data for ${suburb}`;

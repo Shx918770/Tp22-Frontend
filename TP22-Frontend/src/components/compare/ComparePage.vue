@@ -18,7 +18,6 @@
       <section class="compare-hero">
         <h1 class="page-title">
           Compare Suburbs Side-by-Side
-          <span class="coming">(Coming soon)</span>
         </h1>
         <p class="page-description">
           Make confident housing decisions by comparing sustainability metrics
@@ -74,25 +73,48 @@
               >
               {{ secondSuburb }}
             </div>
+          </div> 
+          <div
+            v-for="(metric, index) in metrics"
+            :key="'main-' + index"
+            class="table-row"
+          >
+            <div class="cell label">
+              {{ metric.icon }} {{ metric.label }}
+            </div>
+            <div class="cell">
+              <!-- {{ result[firstSuburb][metric.key] ?? "-" }} -->
+              30
+            </div>
+            <div class="cell">
+              <!-- {{ result[secondSuburb][metric.key] ?? "-" }} -->
+              35
+            </div>
+          </div>
+          <div v-if="!showDetails" class="show-more-row">
+            <button class="show-more-btn" @click="showDetails = true">
+              ↓ Show More Details
+            </button>
           </div>
 
-          <div class="table-row">
-            <div class="cell label">🚋 Tram</div>
-            <div class="cell">{{ result[firstSuburb].tramStops }}</div>
-            <div class="cell">{{ result[secondSuburb].tramStops }}</div>
+          <div v-else class="show-more-row">
+            <button class="show-more-btn" @click="showDetails = false">
+              ↑ Hide Details
+            </button>
           </div>
-
-          <div class="table-row">
-            <div class="cell label">🚆 Train</div>
-            <div class="cell">{{ result[firstSuburb].trainStations }}</div>
-            <div class="cell">{{ result[secondSuburb].trainStations }}</div>
-          </div>
-
-          <div class="table-row">
-            <div class="cell label">🚌 Bus</div>
-            <div class="cell">{{ result[firstSuburb].busStops }}</div>
-            <div class="cell">{{ result[secondSuburb].busStops }}</div>
-          </div>
+          <template v-if="showDetails">
+            <div
+              v-for="(metric, index) in detailMetrics"
+              :key="'detail-' + index"
+              class="table-row detail-row"
+            >
+              <div class="cell label small">
+                {{ metric.icon }} {{ metric.label }}
+              </div>
+              <div class="cell">{{ result[firstSuburb][metric.key] ?? "-" }}</div>
+              <div class="cell">{{ result[secondSuburb][metric.key] ?? "-" }}</div>
+            </div>
+          </template>
         </div>
       </section>
 
@@ -109,7 +131,7 @@
 
 <script>
 import Header from "@/components/header/Header.vue";
-import { infrastructureApi, apiUtils,aiApi } from "@/services/api.js";
+import { infrastructureApi, environmentApi, socialApi, schoolApi, childCareApi, healthApi, recreationApi, hospitalityApi,apiUtils, aiApi } from "@/services/api.js";
 
 export default {
   name: "ComparePage",
@@ -132,7 +154,33 @@ export default {
       ],
       result: null,
       aiResult:[],
-      loading: false
+      loading: false,
+
+      metrics: [
+        {key: "environment", label: "Environment Score", icon: "🌿" },
+        {key: "social", label: "Social Score", icon: "🚋"},
+        { key: "infrastructure", label: "Infrastructure Score", icon: "🚧" },
+      ],
+
+      detailMetrics: [
+        { group: "infrastructure", key: "tramStops", label: "Tram Stops", icon: "🚋" },
+        { group: "infrastructure", key: "trainStations", label: "Train Stations", icon: "🚆" },
+        { group: "infrastructure", key: "busStops", label: "Bus Stops", icon: "🚌" },
+        { group: "infrastructure", key: "bikeLanes", label: "Bike Lanes", icon: "🚴" },
+        { group: "infrastructure", key: "parking", label: "Parking", icon: "🅿️" },
+        { group: "environment", key: "numberOfTree", label: "NumberOfTree", icon: "🌳"},
+        { group: "environment", key: "aqi", label: "AQI", icon: "🌬️"},
+        { group: "environment", key: "ses", label: "SES", icon: "⚡"},
+        { group: "social", key: "schools", label: "Schools", icon: "🏫" },
+        { group: "social", key: "childcare", label: "Childcare", icon: "🧸" },
+        { group: "social", key: "hospitals", label: "Hospitals", icon: "🏥" },
+        { group: "social", key: "practitioners", label: "Practitioners", icon: "🩺" },
+        { group: "social", key: "playgrounds", label: "Playgrounds", icon: "🎠" },
+        { group: "social", key: "communityCenters", label: "Community Centers", icon: "🏛️" },
+        { group: "social", key: "cafes", label: "Cafes & Restaurants", icon: "☕" },
+        { group: "social", key: "bars", label: "Bars", icon: "🍸" },
+      ],
+      showDetails: false,
     };
   },
   methods: {
@@ -150,6 +198,103 @@ export default {
         return { trainStations: 0, tramStops: 0, busStops: 0 };
       }
     },
+    async loadCyclingData(suburb) {
+      try {
+        const [statsRes, lengthRes] = await Promise.all([
+          infrastructureApi.getCyclingStats(suburb),
+          infrastructureApi.getCyclingLenth(suburb),
+        ]);
+
+        const statsRows = apiUtils.extractData(statsRes).data || [];
+        const totalKm = lengthRes?.data?.bike_km_total ?? 0;
+
+        return {
+          bikeLanes: totalKm || statsRows.length || 0,
+        };
+      } catch (e) {
+        console.error("Cycling data load failed:", e);
+        return { bikeLanes: 0 };
+      }
+    },
+    async loadParkingData(suburb) {
+      try {
+        const res = await infrastructureApi.getParkingStats(suburb);
+        const rows = apiUtils.extractData(res).data || [];
+        return {
+          parking: rows.length || 0,
+        };
+      } catch (e) {
+        console.error("Parking data load failed:", e);
+        return { parking: 0 };
+      }
+    },
+    async loadEnvironmentData(suburb) {
+      try {
+        const [treeRes, airRes, energyRes] = await Promise.all([
+          environmentApi.getTreeCardBySuburb(suburb),
+          environmentApi.getAirBySuburb(suburb),
+          environmentApi.getEnergyCardBySuburb(suburb),
+        ]);
+
+        return {
+          numberOfTree: treeRes?.data?.data?.score ?? 0,
+          aqi: airRes?.data?.data?.score ?? 0,
+          ses: energyRes?.data?.data?.score ?? 0,
+        };
+      } catch (e) {
+        console.error("Environment data load failed:", e);
+        return { numberOfTree: 0, aqi: 0, ses: 0 };
+      }
+    },
+    
+    async loadSocialData(suburb) {
+      try {
+        console.log("🔍 Loading social data for:", suburb);
+
+        const [
+          schoolsRes,
+          childcareRes,
+          hospitalRes,
+          practitionerRes,
+          cafeRes,
+          barRes,
+          playgroundRes,
+          communityRes
+        ] = await Promise.all([
+          schoolApi.getSchoolsBySuburb(suburb),
+          childCareApi.getChildCareBySuburb(suburb),
+          healthApi.getHospitals(suburb),
+          healthApi.getPractitioners(suburb),
+          hospitalityApi.getCafesBySuburb(suburb),
+          hospitalityApi.getBarsBySuburb(suburb),
+          recreationApi.getPlaygroundsBySuburb(suburb),
+          recreationApi.getCommunityCentersBySuburb(suburb)
+        ]);
+
+        return {
+          schools: apiUtils.extractData(schoolsRes).data?.length || 0,
+          childcare: apiUtils.extractData(childcareRes).data?.length || 0,
+          hospitals: apiUtils.extractData(hospitalRes).data?.length || 0,
+          practitioners: apiUtils.extractData(practitionerRes).data?.length || 0,
+          cafes: apiUtils.extractData(cafeRes).data?.length || 0,
+          bars: apiUtils.extractData(barRes).data?.length || 0,
+          playgrounds: apiUtils.extractData(playgroundRes).data?.length || 0,
+          communityCenters: apiUtils.extractData(communityRes).data?.length || 0
+        };
+      } catch (e) {
+        console.error("❌ Social data load failed:", e);
+        return {
+          schools: 0,
+          childcare: 0,
+          hospitals: 0,
+          practitioners: 0,
+          cafes: 0,
+          bars: 0,
+          playgrounds: 0,
+          communityCenters: 0
+        };
+      }
+    },
 
     async handleCompareClick() {
       await this.compareSuburbs();
@@ -161,17 +306,39 @@ export default {
       this.result = null;
       try {
         const [first, second] = await Promise.all([
-          this.loadTransportData(this.firstSuburb),
-          this.loadTransportData(this.secondSuburb)
+          this.aggregateAllData(this.firstSuburb),
+          this.aggregateAllData(this.secondSuburb)
         ]);
         this.result = {
           [this.firstSuburb]: first,
           [this.secondSuburb]: second
         };
+        console.log("Compare result:", this.result);
+      } catch (e){
+        console.error("Compare failed:", e);
       } finally {
         this.loading = false;
       }
     },
+
+    async aggregateAllData(suburb) {
+      const [transport, cycling, parking, environment, social ] = await Promise.all([
+        this.loadTransportData(suburb),
+        this.loadCyclingData(suburb),
+        this.loadParkingData(suburb),
+        this.loadEnvironmentData(suburb),
+        this.loadSocialData(suburb),
+      ]);
+
+      return {
+        ...transport,
+        ...cycling,
+        ...parking,
+        ...environment,
+        ...social,
+      };
+    },
+
     async getAIComparison() {
       this.aiResult = ["Thinking... 🤔"];
       try {
@@ -357,6 +524,38 @@ export default {
     grid-template-columns: 1fr 1fr 1fr;
   }
 }
+
+/* detail part style */
+.detail-row .cell.label.small {
+  font-size: 0.95rem;
+  font-weight: 500;
+  padding-left: 25px;
+  color: #555;
+}
+
+/* show more detail button */
+.show-more-row {
+  grid-column: 1 / span 3;
+  text-align: right;
+  margin-top: 0.8rem;
+  margin-bottom: 0.5rem;
+}
+.show-more-btn {
+  background: none;
+  border: 1.5px solid #4caf50;
+  color: #4caf50;
+  font-size: 0.95rem;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.show-more-btn:hover {
+  background: #4caf50;
+  color: white;
+}
+
 
 /* ai part */
 .ai-result-section {

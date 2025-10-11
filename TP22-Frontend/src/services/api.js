@@ -202,6 +202,9 @@ export const environmentApi = {
   getAirTrend: (suburb) =>
     api.get(`/environment/air/trend`, { params: { suburb } }),
 
+  getEnergyCardBySuburb: (suburb) =>
+    api.get(`/environment/energy/card`,{ params: { suburb }}),
+
   getEnergyMap(suburb) {
     return api.get(`/environment/energy/map`, { params: { suburb } })
   },

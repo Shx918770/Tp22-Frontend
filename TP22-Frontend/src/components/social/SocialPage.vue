@@ -155,6 +155,23 @@
       <!-- Map Section -->
       <section class="map-section">
         <div class="container">
+          <!-- Map Header -->
+          <div class="detail-header">
+            <h2>Community Facilities & Essential Amenities Map</h2>
+            <button 
+              class="info-icon" 
+              @click="showMapExplanation = true"
+              title="Click to see detailed description"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M12 17h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+            <p>Interactive map showing key community facilities within the selected suburb</p>
+          </div>
+          
           <div class="map-container">
             <div class="map-area">
               <SocialMap 
@@ -1000,6 +1017,29 @@
       </div>
     </div>
 
+    <!-- Map Explanation Modal -->
+    <div v-if="showMapExplanation" class="modal-overlay" @click="showMapExplanation = false">
+      <div class="modal-content" @click.stop>
+        <div class="modal-header">
+          <h3>Community Facilities Map</h3>
+          <button class="modal-close" @click="showMapExplanation = false">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <path d="M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="map-explanation">
+            <div class="explanation-text">
+              <p><strong>This interactive map visualizes key community facilities within the selected suburb</strong> - including schools, hospitals, childcare centers, playgrounds, cafes, and more.</p>
+              <p>The legend enables selective visibility of each facility type, allowing focused assessment of the area's social and service accessibility. This representation supports an evidence-based understanding of how well a suburb is equipped to meet residents' daily needs and contribute to overall sustainability.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Back to Top Button -->
     <button class="back-to-top" @click="scrollToTop" :class="{ 'visible': showBackToTop }">
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -1025,6 +1065,7 @@ export default {
       // Social Score Data
       socialScore: null,
       showScoreExplanation: false,
+      showMapExplanation: false,
       
       // Existing facility data
       facilityStats: null,
@@ -2404,6 +2445,14 @@ export default {
   text-align: left;
 }
 
+.map-explanation .explanation-text p {
+  margin-bottom: 1rem;
+}
+
+.map-explanation .explanation-text p:last-child {
+  margin-bottom: 0;
+}
+
 /* Responsive design */
 @media (max-width: 768px) {
   .modal-content {
@@ -3659,6 +3708,14 @@ export default {
 .detail-header {
   text-align: center;
   margin-bottom: 3rem;
+  position: relative;
+}
+
+.detail-header .info-icon {
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin-top: 1rem;
 }
 
 .detail-header h2 {

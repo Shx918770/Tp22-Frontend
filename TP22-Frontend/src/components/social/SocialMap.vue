@@ -1,6 +1,13 @@
 <template>
   <div class="social-map">
     <div id="map" class="map-container"></div>
+    <button 
+      class="map-reset-button" 
+      @click="resetMapView"
+      title="Reset map view"
+    >
+      Reset
+    </button>
   </div>
 </template>
 
@@ -83,6 +90,8 @@ export default {
   data() {
     return {
       map: null,
+      defaultZoom: 15, 
+      defaultCenter: [-37.8136, 144.9631], 
       schoolMarkers: [],
       childCareMarkers: [],
       hospitalMarkers: [],
@@ -178,8 +187,8 @@ export default {
   },
   methods: {
     initMap() {
-      // Initialize map centered on Melbourne
-      this.map = L.map('map').setView([-37.8136, 144.9631], 12)
+      // Initialize map centered on Melbourne with default zoom
+      this.map = L.map('map').setView(this.defaultCenter, this.defaultZoom)
 
       // Add OpenStreetMap tiles
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -198,6 +207,11 @@ export default {
       this.updateBarMarkers()
       this.updatePlaygroundPolygons()
       this.updateCommunityCenterMarkers()
+    },
+
+    resetMapView() {
+      // Reset map to default center and zoom level
+      this.map.setView(this.defaultCenter, this.defaultZoom)
     },
 
     updateSchoolMarkers() {
@@ -843,13 +857,30 @@ export default {
       }
       
       if (visibleLayers.length > 0) {
+        // Calculate center from all markers and set to default zoom
         const group = new L.featureGroup(visibleLayers)
-        this.map.fitBounds(group.getBounds().pad(0.1))
+        const bounds = group.getBounds()
+        const center = bounds.getCenter()
+        
+        // Update default center based on current data
+        this.defaultCenter = [center.lat, center.lng]
+        
+        // Set view to calculated center with default zoom level
+        this.map.setView(this.defaultCenter, this.defaultZoom)
       } else if (this.schoolMarkers.length > 0 || this.childCareMarkers.length > 0 || this.hospitalMarkers.length > 0 || this.practitionerMarkers.length > 0 || this.playgroundPolygons.length > 0 || this.communityCenterMarkers.length > 0) {
-        // If no layers are visible but we have data, show all layers for fitting
+        // If no layers are visible but we have data, calculate center from all data
         const allLayers = [...this.schoolMarkers, ...this.childCareMarkers, ...this.hospitalMarkers, ...this.practitionerMarkers, ...this.playgroundPolygons, ...this.communityCenterMarkers]
-        const group = new L.featureGroup(allLayers)
-        this.map.fitBounds(group.getBounds().pad(0.1))
+        if (allLayers.length > 0) {
+          const group = new L.featureGroup(allLayers)
+          const bounds = group.getBounds()
+          const center = bounds.getCenter()
+          
+          // Update default center based on current data
+          this.defaultCenter = [center.lat, center.lng]
+          
+          // Set view to calculated center with default zoom level
+          this.map.setView(this.defaultCenter, this.defaultZoom)
+        }
       }
     },
 
@@ -940,6 +971,7 @@ export default {
 .social-map {
   width: 100%;
   height: 100%;
+  position: relative;
 }
 
 .map-container {
@@ -947,6 +979,38 @@ export default {
   height: 400px;
   border-radius: 15px;
   overflow: hidden;
+}
+
+.map-reset-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 1000;
+  background: white;
+  border: 2px solid #ccc;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #333;
+}
+
+.map-reset-button:hover {
+  background: #f8f9fa;
+  border-color: #007bff;
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.2);
+  transform: translateY(-1px);
+}
+
+.map-reset-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 }
 
 /* Custom marker styles */

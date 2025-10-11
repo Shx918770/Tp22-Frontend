@@ -276,7 +276,20 @@
                     <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                   </svg>
                 </div>
-                <h3>School Type Distribution</h3>
+                <h3>
+                  School Type Distribution
+                  <button 
+                    class="info-icon" 
+                    @click="showSchoolTypeInfo = true"
+                    title="Click to see explanation"
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                      <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+                      <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                      <path d="M12 17h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </button>
+                </h3>
               </div>
                 <div class="section-content">
                   <div class="pie-chart-container">
@@ -405,7 +418,20 @@
                     <path d="M18.7 8l-5-5L9 7.5l-4.7-2L2 13.5l2.3-1.5L9 16l4.7-4.5z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                   </svg>
                 </div>
-                <h3>Student Statistics</h3>
+                <h3>
+                  Student Statistics
+                  <button 
+                    class="info-icon" 
+                    @click="showStudentStatsInfo = true"
+                    title="Click to see explanation"
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                      <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+                      <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                      <path d="M12 17h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </button>
+                </h3>
               </div>
               <div class="section-content">
                 <div class="school-selector">
@@ -463,7 +489,20 @@
                     <path d="M12 13l5-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
                   </svg>
                 </div>
-                <h3>Hospital Beds per 1,000 Residents</h3>
+                <h3>
+                  Hospital Beds per 1,000 Residents
+                  <button 
+                    class="info-icon" 
+                    @click="showHospitalBedsInfo = true"
+                    title="Click to see explanation"
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                      <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+                      <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                      <path d="M12 17h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </button>
+                </h3>
               </div>
               <div class="section-content">
                 <div class="pie-chart-container gauge-container-compact">
@@ -615,11 +654,82 @@
       <section id="community-conditions-detail" class="education-detail">
         <div class="container">
           <div class="detail-header">
-            <h2>Recreation Facilities Overview</h2>
+            <h2>
+              Recreation Facilities Overview
+              <button 
+                class="info-icon" 
+                @click="showRecreationFacilitiesInfo = true"
+                title="Click to see explanation"
+                style="display: inline-flex; margin-left: 0.5rem; vertical-align: middle; position: relative; top: -0.2rem;"
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                  <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+                  <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M12 17h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+            </h2>
             <p>Comprehensive analysis of recreation facilities conditions and sports infrastructure distribution in {{ selectedSuburb }}</p>
           </div>
           
           <div class="community-conditions-content">
+            <!-- Sports & Recreation Facilities -->
+            <div v-if="sportsStats.length > 0" class="sports-chart-redesign sports-chart-expanded">
+              <div class="chart-title-bar">
+                <div class="title-section">
+                  <div class="title-icon sports-title-icon">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+                      <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
+                      <path d="M12 2v4M12 18v4M2 12h4M18 12h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                      <path d="M8.5 8.5L12 12l3.5-3.5M15.5 15.5L12 12l-3.5 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                    </svg>
+                  </div>
+                  <div class="title-content">
+                    <h3 class="main-title">Sports Facilities</h3>
+                    <p class="title-subtitle">Discover local sports venues and activities</p>
+                  </div>
+                </div>
+                <div class="chart-legend-enhanced">
+                  <div class="legend-example-tile">
+                    <span class="legend-tile-count">1</span>
+                  </div>
+                  <div class="legend-explanation">
+                    <span class="legend-text">Number of facilities of this type</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Expanded layout: Better mosaic grid with dynamic sizing -->
+              <div class="sports-mosaic sports-mosaic-expanded" :style="{ minHeight: dynamicGridHeight }">
+                <div 
+                  class="mosaic-grid mosaic-grid-expanded mosaic-grid-dynamic"
+                  :style="{ 
+                    gridTemplateColumns: `repeat(${optimalGridColumns}, 1fr)`,
+                    minHeight: dynamicGridHeight
+                  }"
+                >
+                  <div 
+                    v-for="(stat, index) in processedSportsStats" 
+                    :key="'tile-'+stat.sport"
+                    class="mosaic-tile mosaic-tile-enhanced clickable-tile"
+                    :style="{ 
+                      gridColumn: 'span ' + getImprovedTileSpans(stat.count).cols,
+                      gridRow: 'span ' + getImprovedTileSpans(stat.count).rows,
+                      backgroundColor: getSportsColor(index) + '15',
+                      borderColor: getSportsColor(index),
+                      '--tile-color': getSportsColor(index)
+                    }"
+                    @click="handleSportsTileClick($event, stat)"
+                  >
+                    <div class="tile-content">
+                      <span class="tile-text">{{ formatSportName(stat.sport) }}</span>
+                      <span class="tile-count">{{ stat.count }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
             <!-- No data message -->
             <div v-if="communityCenters.length === 0" class="no-data-message">
               <div class="no-data-icon">&#x1F3E2;</div>
@@ -729,94 +839,8 @@
                           <!-- Gradient overlay -->
                           <div class="progress-overlay"></div>
                         </div>
-                        
-                        <!-- Interactive indicator dot with emoji -->
-                        <div 
-                          class="progress-indicator-enhanced"
-                          :style="{ left: `${getConditionPercentage(center.conditionOfFacility)}%` }"
-                          :class="getConditionClass(center.conditionOfFacility)"
-                        >
-                          <div class="indicator-ring"></div>
-                          <div class="indicator-emoji">
-                            <!-- Emoji based on rating -->
-                            <div class="emoji-face" :class="getEmojiClass(center.conditionOfFacility)">
-                              <div class="emoji-eyes">
-                                <div class="eye left-eye"></div>
-                                <div class="eye right-eye"></div>
-                              </div>
-                              <div class="emoji-mouth"></div>
-                            </div>
-                          </div>
-                          
-                          <!-- Tooltip on hover -->
-                          <div class="progress-tooltip">
-                            <div class="tooltip-content">
-                              <div class="tooltip-title">{{ center.name }}</div>
-                              <div class="tooltip-rating" :class="getConditionClass(center.conditionOfFacility)">
-                                {{ getConditionText(center.conditionOfFacility) }}
-                              </div>
-                              <div class="tooltip-score">{{ getConditionRating(center.conditionOfFacility) }}/5</div>
-                            </div>
-                            <div class="tooltip-arrow"></div>
-                          </div>
-                        </div>
                       </div>
                       
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            <!-- Sports & Recreation Facilities -->
-            <div v-if="sportsStats.length > 0" class="sports-chart-redesign sports-chart-expanded">
-              <div class="chart-title-bar">
-                <div class="title-section">
-                  <div class="title-icon sports-title-icon">
-                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
-                      <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
-                      <path d="M12 2v4M12 18v4M2 12h4M18 12h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                      <path d="M8.5 8.5L12 12l3.5-3.5M15.5 15.5L12 12l-3.5 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                    </svg>
-                  </div>
-                  <div class="title-content">
-                    <h3 class="main-title">Sports Facilities</h3>
-                    <p class="title-subtitle">Discover local sports venues and activities</p>
-                  </div>
-                </div>
-                <div class="chart-legend">
-                  <div class="legend-item">
-                    <div class="legend-box"></div>
-                    <span class="legend-text">Count</span>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Expanded layout: Better mosaic grid with dynamic sizing -->
-              <div class="sports-mosaic sports-mosaic-expanded" :style="{ minHeight: dynamicGridHeight }">
-                <div 
-                  class="mosaic-grid mosaic-grid-expanded mosaic-grid-dynamic"
-                  :style="{ 
-                    gridTemplateColumns: `repeat(${optimalGridColumns}, 1fr)`,
-                    minHeight: dynamicGridHeight
-                  }"
-                >
-                  <div 
-                    v-for="(stat, index) in processedSportsStats" 
-                    :key="'tile-'+stat.sport"
-                    class="mosaic-tile mosaic-tile-enhanced clickable-tile"
-                    :style="{ 
-                      gridColumn: 'span ' + getImprovedTileSpans(stat.count).cols,
-                      gridRow: 'span ' + getImprovedTileSpans(stat.count).rows,
-                      backgroundColor: getSportsColor(index) + '15',
-                      borderColor: getSportsColor(index),
-                      '--tile-color': getSportsColor(index)
-                    }"
-                    @click="handleSportsTileClick($event, stat)"
-                  >
-                    <div class="tile-content">
-                      <span class="tile-text">{{ formatSportName(stat.sport) }}</span>
-                      <span class="tile-count">{{ stat.count }}</span>
                     </div>
                   </div>
                 </div>
@@ -840,8 +864,42 @@
       <section id="hospitality-detail" class="education-detail">
         <div class="container">
           <div class="detail-header">
-            <h2>Hospitality Development</h2>
+            <h2>
+              Hospitality Development
+              <button
+                class="info-icon"
+                @click="showHospitalityDevelopmentInfo = true"
+                title="Click to see explanation"
+                style="display: inline-flex; margin-left: 0.5rem; vertical-align: middle; position: relative; top: -0.2rem;"
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                  <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+                  <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M12 17h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+            </h2>
             <p>Restaurant and bar evolution timeline in {{ selectedSuburb }}</p>
+          </div>
+
+          <!-- Hospitality Development Info Modal -->
+          <div v-if="showHospitalityDevelopmentInfo" class="modal-overlay" @click="showHospitalityDevelopmentInfo = false">
+            <div class="modal-content" @click.stop>
+              <div class="modal-header">
+                <h3>Description</h3>
+                <button class="modal-close" @click="showHospitalityDevelopmentInfo = false">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <path d="M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </button>
+              </div>
+              <div class="modal-body">
+                <div class="explanation-text">
+                  <p>This interactive timeline visualizes the growth and evolution of the local hospitality sector over time. It tracks the cumulative number of restaurants and bars established in the area, providing insights into dining and entertainment trends, economic development, and community vibrancy. Each data point represents a milestone in the suburb's culinary landscape, helping you understand how the food and beverage scene has transformed and whether the area is experiencing growth or decline in hospitality offerings.</p>
+                </div>
+              </div>
+            </div>
           </div>
           
           <!-- Timeline -->
@@ -1036,6 +1094,91 @@
       </div>
     </div>
 
+    <!-- Student Statistics Info Modal -->
+    <div v-if="showStudentStatsInfo" class="modal-overlay" @click="showStudentStatsInfo = false">
+      <div class="modal-content" @click.stop>
+        <div class="modal-header">
+          <h3>Description</h3>
+          <button class="modal-close" @click="showStudentStatsInfo = false">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <path d="M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="explanation-text">
+            <p>Displays the total number of students enrolled in each academic year level. Hover over a bar to view exact figures.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- School Type Distribution Info Modal -->
+    <div v-if="showSchoolTypeInfo" class="modal-overlay" @click="showSchoolTypeInfo = false">
+      <div class="modal-content" @click.stop>
+        <div class="modal-header">
+          <h3>Description</h3>
+          <button class="modal-close" @click="showSchoolTypeInfo = false">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <path d="M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="explanation-text">
+            <p>This chart visualizes the distribution of educational facilities across different categories including Primary Schools, Secondary Schools, Special Education Schools, Combined Primary/Secondary Schools, and Childcare Centers. Each bar represents the count of facilities in that category. Click on any bar to filter the facility list by that type.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Hospital Beds Info Modal -->
+    <div v-if="showHospitalBedsInfo" class="modal-overlay" @click="showHospitalBedsInfo = false">
+      <div class="modal-content" @click.stop>
+        <div class="modal-header">
+          <h3>Description</h3>
+          <button class="modal-close" @click="showHospitalBedsInfo = false">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <path d="M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="explanation-text">
+            <p>This gauge chart illustrates the availability of hospital beds relative to the local population. It provides a clear visual representation of healthcare capacity within a suburb, indicating whether the area meets, exceeds, or falls below recommended service levels. The colour-coded scale (low, medium, high) enables quick interpretation of infrastructure sufficiency and helps users assess community preparedness for both everyday medical needs and emergency situations.</p>
+            <p style="margin-top: 1rem;"><strong>Benchmark Values:</strong></p>
+            <ul style="margin-top: 0.5rem;">
+              <li><strong>3.2 beds per 1,000 residents:</strong> International benchmark recommended by the World Health Organization (WHO) for adequate healthcare capacity.</li>
+              <li><strong>3.8 beds per 1,000 residents:</strong> Melbourne metropolitan average, representing the typical healthcare capacity across the region.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recreation Facilities Info Modal -->
+    <div v-if="showRecreationFacilitiesInfo" class="modal-overlay" @click="showRecreationFacilitiesInfo = false">
+      <div class="modal-content" @click.stop>
+        <div class="modal-header">
+          <h3>Description</h3>
+          <button class="modal-close" @click="showRecreationFacilitiesInfo = false">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <path d="M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="explanation-text">
+            <p>This section presents an overview of local community and sports facilities, highlighting both the range of activities available and the condition of existing infrastructure. The facility type chart summarises the diversity of recreational options - such as fitness centres, tennis courts, swimming pools, and team sports venues - while the condition rating chart evaluates the quality and maintenance level of each facility. Together, these visualisations provide a balanced view of accessibility, variety, and amenity standards within the suburb.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Back to Top Button -->
     <button class="back-to-top" @click="scrollToTop" :class="{ 'visible': showBackToTop }">
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -1088,6 +1231,11 @@ export default {
       socialScore: null,
       showScoreExplanation: false,
       showMapExplanation: false,
+      showStudentStatsInfo: false,
+      showSchoolTypeInfo: false,
+      showHospitalBedsInfo: false,
+      showRecreationFacilitiesInfo: false,
+      showHospitalityDevelopmentInfo: false,
       
       // Existing facility data
       facilityStats: null,
@@ -3985,6 +4133,19 @@ export default {
   letter-spacing: -0.02em;
   margin: 0;
   position: relative;
+  display: flex;
+  align-items: flex-end;
+  gap: 0.25rem;
+}
+
+.section-header h3 .info-icon {
+  margin-bottom: 0.1rem;
+  padding: 0;
+}
+
+.section-header h3 .info-icon svg {
+  width: 14px;
+  height: 14px;
 }
 
 .section-header h3::after {
@@ -5428,6 +5589,7 @@ export default {
 }
 
 .conditions-assessment {
+  margin-top: 3rem;
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.9));
   border-radius: 24px;
   padding: 2rem;
@@ -6940,6 +7102,50 @@ export default {
   border: 1px solid rgba(226, 232, 240, 0.6);
   border-radius: 12px;
   backdrop-filter: blur(10px);
+}
+
+/* Enhanced Legend for Sports Facilities */
+.chart-legend-enhanced {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 1.25rem;
+  background: linear-gradient(135deg, rgba(248, 250, 252, 0.95), rgba(241, 245, 249, 0.9));
+  border: 2px solid rgba(148, 163, 184, 0.2);
+  border-radius: 14px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.legend-example-tile {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.legend-tile-count {
+  font-size: 14px;
+  font-weight: 900;
+  color: #6366f1;
+  padding: 5px 7px;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 10px;
+  border: 1.5px solid #6366f1;
+  line-height: 1;
+  text-align: center;
+}
+
+.legend-explanation {
+  display: flex;
+  flex-direction: column;
+}
+
+.legend-text {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #475569;
+  line-height: 1.4;
 }
 
 .legend-box {

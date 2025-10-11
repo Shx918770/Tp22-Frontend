@@ -37,15 +37,29 @@
       <!-- Social Facilities - Modern Compact Grid --><!--Design by Rui Wang-->
       <section class="social-facilities">
         <div class="container">
-          <!-- Header with Total --><!--Design by Rui Wang-->
+          <!-- Header with Social Score --><!--Design by Rui Wang-->
           <div class="facilities-header">
             <div class="total-counter">
-              <div class="counter-number">{{ totalSocialFacilities }}</div>
-              <div class="counter-label">Social Facilities</div>
+              <div class="counter-number">{{ socialScore?.score ? socialScore.score.toFixed(1) : '--' }}</div>
+              <div class="counter-label">
+                Social Score
+                <button 
+                  v-if="socialScore?.reason" 
+                  class="info-icon" 
+                  @click="showScoreExplanation = true"
+                  title="Click to see explanation"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                    <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+                    <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M12 17h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </button>
+              </div>
             </div>
             <div class="header-subtitle">
-              <span v-if="selectedSuburb">{{ selectedSuburb }}'s community infrastructure</span>
-              <span v-else>Discover Melbourne's community infrastructure</span>
+              <span v-if="selectedSuburb">{{ selectedSuburb }}'s social sustainability performance</span>
+              <span v-else>Discover Melbourne's social sustainability</span>
             </div>
           </div>
 
@@ -960,6 +974,32 @@
 
     </main>
 
+    <!-- Score Explanation Modal -->
+    <div v-if="showScoreExplanation" class="modal-overlay" @click="showScoreExplanation = false">
+      <div class="modal-content" @click.stop>
+        <div class="modal-header">
+          <h3>Social Score Explanation</h3>
+          <button class="modal-close" @click="showScoreExplanation = false">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <path d="M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="score-explanation">
+            <div class="explanation-score">
+              <span class="explanation-number">{{ socialScore?.score ? socialScore.score.toFixed(1) : '--' }}</span>
+              <span class="explanation-label">{{ selectedSuburb || 'This area' }}</span>
+            </div>
+            <div class="explanation-text">
+              {{ socialScore?.reason || 'No explanation available for this area.' }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Back to Top Button -->
     <button class="back-to-top" @click="scrollToTop" :class="{ 'visible': showBackToTop }">
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -982,6 +1022,11 @@ export default {
   },
   data() {
     return {
+      // Social Score Data
+      socialScore: null,
+      showScoreExplanation: false,
+      
+      // Existing facility data
       facilityStats: null,
       facilities: [],
       schools: [],
@@ -1282,6 +1327,28 @@ export default {
     document.removeEventListener('click', this.handleDocumentClick);
   },
   methods: {
+    // Fetch social score data
+    async fetchSocialScore() {
+      if (!this.selectedSuburb) return
+      
+      try {
+        console.log('Fetching social score for:', this.selectedSuburb)
+        const response = await socialApi.getSocialScore(this.selectedSuburb)
+        const result = apiUtils.extractData(response)
+        
+        if (result.success && result.data) {
+          this.socialScore = result.data
+          console.log('Social score loaded:', this.socialScore)
+        } else {
+          console.warn('No social score data found for', this.selectedSuburb)
+          this.socialScore = null
+        }
+      } catch (error) {
+        console.error('Error fetching social score:', error)
+        this.socialScore = null
+      }
+    },
+
     scrollToHealthDetail() {
       const el = document.getElementById('health-detail')
       if (el) {
@@ -1533,6 +1600,9 @@ export default {
       this.error = null
       
       try {
+        // Load social score first
+        await this.fetchSocialScore()
+        
         // Load all social data in parallel
         const [statsResponse, facilitiesResponse, schoolsResponse, childCareResponse, educationStatsResponse, hospitalsResp, practitionersResp, bedsResp, hospitalityStatsResp, cafesResp, barsResp, growthDataResp, playgroundsResp, communityCentersResp, sportsStatsResp] = await Promise.allSettled([
           socialApi.getFacilityStats(suburb),
@@ -2203,6 +2273,154 @@ export default {
 </script>
 
 <style scoped>
+/* Info icon styles */
+.counter-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.info-icon {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 2px;
+  border-radius: 50%;
+  color: #6b7280;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.info-icon:hover {
+  background: rgba(59, 130, 246, 0.1);
+  color: #3b82f6;
+  transform: scale(1.1);
+}
+
+/* Modal styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 2rem;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 16px;
+  max-width: 500px;
+  width: 100%;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+  animation: modalSlideIn 0.3s ease;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.5rem 2rem 1rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.modal-header h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #374151;
+  margin: 0;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 8px;
+  color: #6b7280;
+  transition: all 0.2s ease;
+}
+
+.modal-close:hover {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.modal-body {
+  padding: 1.5rem 2rem 2rem;
+}
+
+.score-explanation {
+  text-align: center;
+}
+
+.explanation-score {
+  margin-bottom: 1.5rem;
+}
+
+.explanation-number {
+  display: block;
+  font-size: 2.5rem;
+  font-weight: 700;
+  line-height: 1;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.explanation-label {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #6b7280;
+}
+
+.explanation-text {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: #374151;
+  text-align: left;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .modal-content {
+    margin: 1rem;
+    max-height: 90vh;
+  }
+  
+  .modal-header,
+  .modal-body {
+    padding: 1rem 1.5rem;
+  }
+  
+  .explanation-number {
+    font-size: 2rem;
+  }
+}
+
 /* Gauge styles */
 .gauge-svg {
   width: 100%;
@@ -2677,26 +2895,26 @@ export default {
 
 /* Social Facilities - Compact Inline Layout */
 .social-facilities {
-  padding: 2.5rem 0;
+  padding: 1.5rem 0;
   position: relative;
 }
 
 .facilities-header {
   text-align: center;
-  margin-bottom: 2rem;
+  margin-bottom: 1.2rem;
 }
 
 .total-counter {
   display: inline-flex;
   align-items: center;
-  gap: 0.8rem;
+  gap: 0.6rem;
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.95));
   backdrop-filter: blur(30px);
   border-radius: 40px;
-  padding: 0.8rem 1.5rem;
+  padding: 0.6rem 1.2rem;
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
   border: 2px solid rgba(255, 255, 255, 0.3);
-  margin-bottom: 0.8rem;
+  margin-bottom: 0.5rem;
   animation: counterBounce 3s ease-in-out infinite;
 }
 

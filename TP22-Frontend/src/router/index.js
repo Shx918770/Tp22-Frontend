@@ -61,12 +61,20 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  const access = localStorage.getItem("siteAccess")
-  if (!access && to.path !== "/password") {
-    next("/password")
-  } else {
-    next()
+  const suburb = localStorage.getItem("selectedSuburb")
+
+  if (to.path === "/") {
+    localStorage.removeItem("selectedSuburb")
   }
+
+  const restrictedPages = ["/social", "/environment", "/infrastructure"]
+
+  if (restrictedPages.includes(to.path) && !suburb) {
+    alert("⚠️ Please select a suburb on the homepage first.")
+    next("/")
+    return
+  }
+  next()
 })
 
 

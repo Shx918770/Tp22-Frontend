@@ -4,7 +4,6 @@
     <!-- return button -->
     <button class="back-btn" @click="$router.push('/')">← Back to Home</button>
 
-    <!-- 动态背景 -->
     <div class="dynamic-background">
       <div class="floating-shapes">
         <div class="shape shape-1"></div>
@@ -14,7 +13,6 @@
     </div>
 
     <main class="main-content">
-      <!-- 标题 -->
       <section class="compare-hero">
         <h1 class="page-title">
           Compare Suburbs Side-by-Side
@@ -25,10 +23,8 @@
         </p>
       </section>
 
-      <!-- 对比模块 -->
       <section class="compare-section">
         <div class="compare-box">
-          <!-- 左 -->
           <div class="suburb-select">
             <label>First Suburb</label>
             <select v-model="firstSuburb">
@@ -37,10 +33,8 @@
             </select>
           </div>
 
-          <!-- 中 -->
           <div class="vs">VS</div>
 
-          <!-- 右 -->
           <div class="suburb-select">
             <label>Second Suburb</label>
             <select v-model="secondSuburb">
@@ -55,7 +49,6 @@
         </button>
       </section>
 
-      <!-- 展示结果 -->
       <p class="tip-text">💡 Tip: Click suburb names below to view their Social Insights</p>
       <section v-if="result" class="result-table">
         <div class="result-wrapper">
@@ -83,12 +76,10 @@
               {{ metric.icon }} {{ metric.label }}
             </div>
             <div class="cell">
-              <!-- {{ result[firstSuburb][metric.key] ?? "-" }} -->
-              30
+              {{ result[firstSuburb][metric.key] ?? "-" }}
             </div>
             <div class="cell">
-              <!-- {{ result[secondSuburb][metric.key] ?? "-" }} -->
-              35
+              {{ result[secondSuburb][metric.key] ?? "-" }}
             </div>
           </div>
           <div v-if="!showDetails" class="show-more-row">
@@ -184,6 +175,49 @@ export default {
     };
   },
   methods: {
+
+    async loadEnvironmentScore(suburb) {
+      try {
+        const res = await environmentApi.getEnvironmentScore(suburb)
+        const data = res.data?.data
+        return data?.environment_score ?? null
+      } catch (e) {
+        console.error("❌ Failed to load environment score:", e)
+        return null
+      }
+    },
+
+    async loadSocialScore(suburb) {
+      try {
+        const res = await socialApi.getSocialScore(suburb);
+        const data = res.data?.data;
+        console.log("📊 Social API result:", data);
+        return (
+          data?.social_sustainability_score ??
+          data?.socialSustainabilityScore ??
+          data?.score ?? // ✅ 加上这个
+          null
+        );
+      } catch (e) {
+        console.error("❌ Failed to load social score:", e);
+        return null;
+      }
+    },
+
+    async loadInfrastructureScore(suburb) {
+      try {
+        const res = await infrastructureApi.getInfrastructureScore(suburb)
+        const data = res.data?.data
+        // 你的后端返回的是 data: [ { suburb, infrastructure_sustainability_score, insight } ]
+        if (Array.isArray(data) && data.length > 0)
+          return data[0].infrastructure_sustainability_score
+        return null
+      } catch (e) {
+        console.error("❌ Failed to load infrastructure score:", e)
+        return null
+      }
+    },
+
     async loadTransportData(suburb) {
       try {
         const res = await infrastructureApi.getTransportStats(suburb);
@@ -322,7 +356,19 @@ export default {
     },
 
     async aggregateAllData(suburb) {
-      const [transport, cycling, parking, environment, social ] = await Promise.all([
+      const [
+        envScore,
+        socScore,
+        infraScore,
+        transport,
+        cycling,
+        parking,
+        environment,
+        social
+      ] = await Promise.all([
+        this.loadEnvironmentScore(suburb),
+        this.loadSocialScore(suburb),
+        this.loadInfrastructureScore(suburb),
         this.loadTransportData(suburb),
         this.loadCyclingData(suburb),
         this.loadParkingData(suburb),
@@ -331,6 +377,9 @@ export default {
       ]);
 
       return {
+        environment: envScore,
+        social: socScore,
+        infrastructure: infraScore,
         ...transport,
         ...cycling,
         ...parking,

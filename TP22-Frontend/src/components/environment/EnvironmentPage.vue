@@ -29,6 +29,12 @@
               Explore suburb-level environmental data including tree canopy, air quality, and energy to understand ecological health and predict future sustainability challenges.
             </p>
           </div>
+          <ScoreHeader
+            :score="environmentScore"
+            :suburb="selectedSuburb"
+            label="Environment Score"
+            @show-info="showScoreExplanation = true"
+          />
           <!-- Key Environmental Indicators -->
           <div class="indicators">
             <div class="indicators-grid">
@@ -289,6 +295,7 @@ import L from "leaflet";
 import LineChart from "@/components/environment/LineChart.vue";
 import DoughnutChart from "@/components/environment/DoughnutChart.vue";
 import Header from '../header/Header.vue';
+import ScoreHeader from '../scoreheader/ScoreHeader.vue';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -339,12 +346,16 @@ export default {
     LPopup,
     LineChart,
     DoughnutChart,
-    Header
+    Header,
+    ScoreHeader,
   },
 
   name: 'EnvironmentPage',
   data() {
     return {
+      environmentScore: null,
+      showScoreExplanation: false,
+
       //for three card
       treeCardInfo: {
         score: null,
@@ -423,6 +434,26 @@ export default {
     },
     scrollToTop() {
       window.scrollTo({ top: 0, behavior: "smooth" });
+    },
+
+    async fetchEnvironmentScore(suburb) {
+      if (!suburb) return;
+
+      try {
+        const response = await environmentApi.getEnvironmentScore(suburb);
+        const result = response.data;
+        if (result.success && result.data) {
+          this.environmentScore = {
+            value: result.data.environment_score,
+            reason: "Environmental sustainability performance based on multiple ecological indicators."
+          };
+        } else {
+          this.environmentScore = null;
+        }
+      } catch (error) {
+        console.error("Error fetching environment score:", error);
+        this.environmentScore = null;
+      }
     },
 
     // data for air card
@@ -675,6 +706,7 @@ export default {
         await this.loadAirQuality(suburb);
         await this.loadTreeCard(suburb);
         await this.loadEnergyCardScore(suburb);
+        await this.fetchEnvironmentScore(suburb);
       } catch (e) {
         console.error("Failed to load environmental data", e);
         this.error = `Failed to load data for ${suburb}`;
@@ -820,7 +852,7 @@ export default {
       if (this.selectedSuburb) {
         this.loadTrendData(this.selectedSuburb, newPeriod);
       }
-    }
+    },
   }
 }
 </script>

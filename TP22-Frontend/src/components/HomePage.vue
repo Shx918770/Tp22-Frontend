@@ -509,6 +509,7 @@ export default {
     },
 
     viewSuburbDetails(suburbName) {
+      localStorage.setItem("selectedSuburb", suburbName)
       const name = (suburbName || '').toString();
       if (!name) return;
       this.$router.push({ path: '/social', query: { suburb: name } });

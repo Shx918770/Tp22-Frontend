@@ -188,6 +188,10 @@ export const childCareApi = {
 // Environment API
 export const environmentApi = {
 
+  //score
+  getEnvironmentScore:(suburb) =>
+    api.get(`/environment/score`, { params: { suburb }}),
+
   //tree card
   getTreeCardBySuburb: (suburb) =>
     api.get(`/environment/tree/card`, { params: { suburb } }),
@@ -257,6 +261,8 @@ export const environmentApi = {
 }
 
 export const infrastructureApi = {
+  getInfrastructureScore: (suburb) =>
+    api.get(`/infrastructure/score`, { params: { suburb }}),
   getTransportStats: (suburb) =>
     api.get(`/infrastructure/publicTransport`, { params: { suburb } }),
   getCyclingStats: (suburb) =>
@@ -265,6 +271,10 @@ export const infrastructureApi = {
     api.get(`/infrastructure/bicycle/card`, { params: { suburb } }),
   getParkingStats: (suburb) =>
     api.get(`/infrastructure/parking`, { params: { suburb } }),
+  getCulturalCard: (suburb) =>
+    api.get(`/infrastructure/cultural/card`, { params: { suburb }}),
+  getCulturalStats: (suburb) =>
+    api.get(`/infrastructure/cultural`, { params: { suburb }}),
 
   getPtDemand: (suburb, year = null) =>
     api.get('/infrastructure/demand/pt', { params: { suburb, ...(year ? { year } : {}) } }),

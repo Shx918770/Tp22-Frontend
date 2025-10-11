@@ -33,6 +33,12 @@
         </div>
       </section>
     </main>
+    <ScoreHeader
+      :score="infrastructureScore"
+      :suburb="selectedSuburb"
+      label="Infrastructure Score"
+      @show-info="showScoreExplanation = true"
+    />
     <!-- Infrastructure Cards --><!--Design by HongxiangShao-->
     <div class="facilities-grid">
       <!-- Public Transport Bubble --><!--Design by HongxiangShao-->
@@ -89,6 +95,23 @@
         </div>
         <div class="bubble-glow"></div>
       </div>
+      <!-- Cultural Bubble --><!--Design by HongxiangShao-->
+      <div class="facility-bubble cultural" role= "button" tabindex="0">
+        <div class="bubble-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="#8B5CF6" stroke-width="2"/>
+          </svg>
+        </div>
+        <div class="bubble-content">
+          <div class="bubble-label">Cultural Facilities</div>
+          <div class="bubble-details">
+            <span class="detail-pill">{{ stats.cultural.artGallery || 0 }} Art Galleries</span>
+            <span class="detail-pill">{{ stats.cultural.worship || 0 }} Worship Places</span>
+          </div>
+        </div>
+        <div class="bubble-glow"></div>
+      </div>
+
     </div>
     <div class="map-container">
       <div class="map-area">
@@ -123,6 +146,14 @@
               >
                 <span class="facility-legend-icon" style="background: #FF9800"></span>
                 <span>Parking</span>
+              </button>
+              <button
+                class="legend-item"
+                :class="{ disabled: !visibleLayers.cultural }"
+                @click="toggleLayer('cultural')"
+              >
+                <span class="facility-legend-icon" style="background: #a855f7"></span>
+                <span>Cultural</span>
               </button>
             </div>
           </div>
@@ -176,10 +207,20 @@
             </div>
             <div class="section-content">
               <div class="stop-list">
-                <div v-for="stop in filteredStops" :key="stop.STOP_ID" class="stop-item">
-                  <div class="stop-name">{{ stop.STOP_NAME }}</div>
-                  <div class="stop-type">{{ stop.MODE }}</div>
-                  <div class="stop-locality">{{ stop.LOCALITY }}</div>
+                <template v-if="filteredStops.length">
+                  <div v-for="stop in filteredStops" :key="stop.STOP_ID" class="stop-item">
+                    <div class="stop-name">{{ stop.STOP_NAME }}</div>
+                    <div class="stop-type">{{ stop.MODE }}</div>
+                    <div class="stop-locality">{{ stop.LOCALITY }}</div>
+                  </div>
+                </template>
+                <div v-else class="stop-empty">
+                  There are no 
+                  <strong>
+                    {{ stopFilter === 'all' ? 'public transport' : stopFilter.toLowerCase() }}
+                  </strong>
+                  stops available in 
+                  <strong>{{ selectedSuburb || 'this suburb' }}</strong>.
                 </div>
               </div>
             </div>
@@ -223,13 +264,11 @@
             </div>
 
             <div class="card-body insight-body">
-              <!-- 上半：固定洞察 -->
               <p v-if="ptTrend.insight" class="insight-text">{{ ptTrend.insight }}</p>
               <p v-else class="insight-empty">No insight available.</p>
 
               <div class="insight-divider"></div>
 
-              <!-- 下半：按年份详情 -->
               <div class="year-detail-head">
                 <span class="detail-title">Details by year</span>
                 <div class="year-switch">
@@ -279,19 +318,16 @@
             <div class="card-body" style="height:auto;padding:1rem 0 0;">
               <div class="gauge-container-compact">
                 <svg viewBox="0 0 320 200" class="gauge-svg">
-                  <!-- 背景三段：Low / Medium / High -->
-                  <!-- Low: 0–12 -->
+                  <!-- Low: 0-12 -->
                   <path :d="arcPath(GAUGE_START, a12)" stroke="#ef4444" stroke-width="18" fill="none" stroke-linecap="round" />
-                  <!-- Medium: 12–20 -->
+                  <!-- Medium: 12-20 -->
                   <path :d="arcPath(a12, a20)" stroke="#f59e0b" stroke-width="18" fill="none" stroke-linecap="round" />
-                  <!-- High: 20–30 -->
+                  <!-- High: 20-30 -->
                   <path :d="arcPath(a20, GAUGE_END)" stroke="#22c55e" stroke-width="18" fill="none" stroke-linecap="round" />
 
-                  <!-- 阈值刻度文字 -->
                   <text x="120" y="55" class="gauge-tick" text-anchor="middle">12</text>
                   <text x="210" y="55" class="gauge-tick" text-anchor="middle">20</text>
 
-                  <!-- 动态指针（颜色随 zone 或后端 gauge_color） -->
                   <g :transform="`rotate(${getNeedleAngle(kmPer1k)} 160 160)`">
                     <!-- Drop shadow -->
                     <path d="M 162 162 L 235 162 L 240 160 L 235 158 L 162 158 Z" fill="rgba(0,0,0,0.15)"/>
@@ -304,7 +340,6 @@
                           :fill="`url(#needleHighlight-${gaugeZoneCY})`" opacity="0.7"/>
                   </g>
 
-                  <!-- 渐变定义（按 zone 提供；若后端给了 gauge_color 则使用它） -->
                   <defs>
                     <linearGradient id="needleGradient-low" x1="0%" y1="0%" x2="100%" y2="0%">
                       <stop offset="0%"  :style="`stop-color:${getNeedleColors('low').needle[0]}`"/>
@@ -349,7 +384,6 @@
                     </linearGradient>
                   </defs>
 
-                  <!-- 中心圆（随 zone/后端色） -->
                   <circle cx="160" cy="160" r="10"
                           :fill="getNeedleColors(gaugeZoneCY).needle[1]"
                           :stroke="getNeedleColors(gaugeZoneCY).border[1]" stroke-width="2"/>
@@ -378,13 +412,11 @@
             </div>
 
             <div class="card-body insight-body">
-              <!-- 上半：固定洞察 -->
               <p v-if="selectedInsightCY" class="insight-text">{{ selectedInsightCY }}</p>
               <p v-else class="insight-empty">No insight available.</p>
 
               <div class="insight-divider"></div>
 
-              <!-- 下半：按年份详情 -->
               <div class="year-detail-head">
                 <span class="detail-title">Details by year</span>
                 <div class="year-switch">
@@ -446,13 +478,11 @@
             </div>
 
             <div class="card-body insight-body">
-              <!-- 每年不同的 insight -->
               <p v-if="selectedInsightPK" class="insight-text">{{ selectedInsightPK }}</p>
               <p v-else class="insight-empty">No insight available.</p>
 
               <div class="insight-divider"></div>
 
-              <!-- 按年份详情 -->
               <div class="year-detail-head">
                 <span class="detail-title">Details by year</span>
                 <div class="year-switch">
@@ -478,6 +508,51 @@
         </div>
       </div>
     </section>
+    <!-- Score Explanation Modal -->
+    <div
+      v-if="showScoreExplanation"
+      class="modal-overlay"
+      @click="showScoreExplanation = false"
+    >
+      <div class="modal-content" @click.stop>
+        <div class="modal-header">
+          <h3>Infrastructure Score Explanation</h3>
+          <button class="modal-close" @click="showScoreExplanation = false">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <path
+                d="M18 6L6 18"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+              <path
+                d="M6 6l12 12"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="score-explanation">
+            <div class="explanation-score">
+              <span class="explanation-number">
+                {{ infrastructureScore?.value ? infrastructureScore.value.toFixed(1) : '--' }}
+              </span>
+              <span class="explanation-label">
+                {{ selectedSuburb || 'This area' }}
+              </span>
+            </div>
+            <div class="explanation-text">
+              {{ infrastructureScore?.reason || 'No explanation available for this area.' }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -489,27 +564,33 @@ import 'leaflet/dist/leaflet.css'
 import RadialRingsChart from '../infrastructure/RadialRingsChart.vue';
 
 import Chart from 'chart.js/auto';
+import ScoreHeader from "../scoreheader/ScoreHeader.vue";
 
 export default {
   name: "InfrastructurePage",
   components: {
     Header,
-    RadialRingsChart
+    RadialRingsChart,
+    ScoreHeader,
   },
   data() {
     return {
+      infrastructureScore: null,
+      showScoreExplanation: false,
       stats: {
         transport: {},
         cycling: {},
-        parking: {}
+        parking: {},
+        cultural: {},
       },
       map: null,
       layers: {
         transport: null,
         bicycle: null,
         parking: null,
+        cultural: null,
       },
-      visibleLayers: { transport: true, bicycle: true, parking: true },
+      visibleLayers: { transport: true, bicycle: true, parking: true, cultural: true},
       ptTrend: {
         points: [],
         year: null,
@@ -577,9 +658,6 @@ export default {
       if (cls === 'low' || cls === 'medium' || cls === 'high') return cls;
       return this.getCurrentZone(this.gaugeValueCY);
     },
-    // gaugeAngleCY() {
-    //   return this.getCorrectNeedleAngle(this.gaugeValueCY);
-    // },
     kmPer1k() {
       return Number(this.selectedYearDataCY?.km_per_1000 ?? 0);
     },
@@ -596,37 +674,22 @@ export default {
 
     ptModeItems() {
       const ORDER = [
-        'Interstate Train',               // 这里的名字是展示名；不会用来匹配 MODE
         'Metro Bus',
         'Metro Train',
-        'Metro Tram',
-        'Regional coach',
-        'Regional train',
-        'Sky bus'
+        'Metro Tram'
       ];
-      // 你的真实 7 类来自 MODE 字段（REGIONAL/INTERSTATE/METRO...）
-      // 这里给出「展示名 → MODE 的正则」映射（你可以按需要调整）。
+
       const MAP = {
-        'Interstate Train':               /(INTERSTATE\s*TRAIN)/i,
         'Metro Bus':               /(METRO\s*BUS)/i,
         'Metro Train':          /(METRO\s*TRAIN)/i,
-        'Metro Tram':              /(METRO\s*TRAM)/i,
-        'Regional coach':    /(REGIONAL\s*COACH)/i,
-        'Regional train':          /(REGIONAL\s*TRAIN)/i,
-        'Sky bus':              /(SKYBUS)/i
+        'Metro Tram':              /(METRO\s*TRAM)/i
       };
       const COLORS = {
-        'Interstate Train': '#FFA500',
         'Metro Bus': '#FF7F50',
         'Metro Train': '#FF6B81',
         'Metro Tram': '#FF5CA8',
-        'Regional coach': '#B36CFF',
-        'Regional train': '#8A63FF',
-        'Sky bus': '#5B6BFF'
       };
 
-      // 统计：如果你已在 loadStats 里有 this.stats.transport.modes，就优先用它；
-      // 否则对 stops 做一次兜底聚合
       const modesCount = { ...(this.stats.transport?.modes || {}) };
       const rows = this.stats.transport?.stops || [];
       if (!Object.keys(modesCount).length && rows.length) {
@@ -636,11 +699,9 @@ export default {
         });
       }
 
-      // 根据映射生成 items（外→内），没命中的计 0
       return ORDER.map(name => {
         const re = MAP[name];
         let count = 0;
-        // 如果有现成聚合：遍历 key 匹配正则；否则直接 0
         Object.keys(modesCount).forEach(k => {
           if (re && re.test(k)) count += Number(modesCount[k] || 0);
         });
@@ -663,6 +724,7 @@ export default {
           this.loadPtTrend(newSuburb)
           this.loadCyclingTrend(newSuburb)
           this.loadParkingTrend(newSuburb)
+          this.fetchInfrastructureScore(newSuburb)
         }
       }
     }
@@ -671,11 +733,12 @@ export default {
     async loadStats(suburb) {
       this.loading = true
       try {
-        const [transportRes, cyclingRes, cyclingLen, parkingRes] = await Promise.allSettled([
+        const [transportRes, cyclingRes, cyclingLen, parkingRes, culturalRes] = await Promise.allSettled([
           infrastructureApi.getTransportStats(suburb),
           infrastructureApi.getCyclingStats(suburb),
           infrastructureApi.getCyclingLenth(suburb),
-          infrastructureApi.getParkingStats(suburb)
+          infrastructureApi.getParkingStats(suburb),
+          infrastructureApi.getCulturalCard(suburb),
         ])
 
         if (transportRes.status === 'fulfilled') {
@@ -723,6 +786,23 @@ export default {
             shortTerm: 0
             }
         }
+        if (culturalRes.status === 'fulfilled') {
+          const payload = apiUtils.extractData(culturalRes.value)
+          const raw = payload?.data || payload || {}
+
+          console.log('[Cultural payload]', payload)
+          console.log('[Cultural raw]', raw)
+
+          const data = Array.isArray(raw) ? raw[0] : raw
+
+          this.stats.cultural = {
+            artGallery: Number(data?.art_gallery || 0),
+            worship: Number(data?.worship || 0),
+            total: Number(data?.art_gallery || 0) + Number(data?.worship || 0)
+          }
+
+          console.log('[Cultural stats]', this.stats.cultural)
+        }
       } catch (err) {
         console.error('Error loading infrastructure stats:', err)
         this.error = 'Failed to load infrastructure data.'
@@ -730,21 +810,43 @@ export default {
         this.loading = false
       }
     },
+
+    async fetchInfrastructureScore() {
+      const suburb = this.selectedSuburb;
+      if (!suburb) return;
+
+      try {
+        const response = await infrastructureApi.getInfrastructureScore(suburb);
+        const result = response.data;
+
+        if (result.success && Array.isArray(result.data) && result.data.length > 0) {
+          const record = result.data[0];
+          this.infrastructureScore = {
+            value: record.infrastructure_sustainability_score,
+            reason: record.insight || "Infrastructure sustainability performance based on transport, cycling, and parking metrics."
+          };
+        } else {
+          this.infrastructureScore = null;
+        }
+      } catch (error) {
+        console.error("Error fetching infrastructure score:", error);
+        this.infrastructureScore = null;
+      }
+    },
+
     scrollToSection(selector, extraOffset = 12) {
-      // 1) 读取 Header 高度（优先用 Header 设置的 CSS 变量）
       const cssVar = getComputedStyle(document.documentElement)
                       .getPropertyValue('--nav-height');
       const headerH = cssVar ? parseInt(cssVar, 10) :
                     (document.querySelector('.nav-bar')?.offsetHeight || 0);
 
-      // 2) 找到目标元素并计算位置
+
       const el = document.querySelector(selector);
       if (!el) return;
 
       const top = el.getBoundingClientRect().top + window.pageYOffset
-                - headerH - extraOffset; // 预留一点间距
+                - headerH - extraOffset;
 
-      // 3) 平滑滚动
       window.scrollTo({ top, behavior: 'smooth' });
     },
     initMap() {
@@ -758,10 +860,11 @@ export default {
         const suburb = this.selectedSuburb
         if (!suburb) return
 
-        const [transportRes, bicycleRes,parkingRes] = await Promise.all([
+        const [transportRes, bicycleRes,parkingRes,culturalRes] = await Promise.all([
             infrastructureApi.getTransportStats(suburb),
             infrastructureApi.getCyclingStats(suburb),
             infrastructureApi.getParkingStats(suburb),
+            infrastructureApi.getCulturalStats(suburb),
         ])
 
         // Transport
@@ -798,6 +901,31 @@ export default {
                 .bindPopup(`<b>Parking Space</b><br/>${item.RoadSegmentDescription}`)
             })
             .filter(m => m)
+        ).addTo(this.map)
+
+        //cultural
+        this.layers.cultural = L.layerGroup(
+          (culturalRes.data?.data || []).map(item => {
+            const coords = this.parsePoint(item.geometry)
+            if (!coords) return null
+
+            // 根据 type 判断颜色
+            const fillColor =
+              item.type?.toLowerCase().includes('gallery') ? '#8B5CF6' : '#F472B6' // 紫或粉
+            const iconLabel =
+              item.type?.toLowerCase().includes('gallery')
+                ? '🎨 Art Gallery'
+                : '⛪ Place of Worship'
+
+            return L.circleMarker(coords, {
+              radius: 6,
+              color: '#fff',
+              weight: 2,
+              fillColor,
+              fillOpacity: 1,
+              className: 'marker-circle cultural-circle'
+            }).bindPopup(`<b>${item.name}</b><br/>${iconLabel}`)
+          }).filter(m => m)
         ).addTo(this.map)
         await this.$nextTick()
         this.setFilter('all')
@@ -852,7 +980,6 @@ export default {
         const r = res.data?.data || res.data || null
         if (!r) return
 
-        // 统一字段：后端多半是小写；若不是则用大写兜底
         const norm = {
           year: r.year ?? r.Year,
           demand_ratio: Number((r.demand_ratio ?? r.Demand_ratio)),
@@ -890,11 +1017,11 @@ export default {
     async renderPtTrendChart() {
       const canvas = document.getElementById('ptTrendChart');
       if (!canvas) return;
-      await this.$nextTick();                 // ✅ 等 DOM
+      await this.$nextTick();          
       const ctx = canvas.getContext('2d');
-      if (!ctx) return;                        // ✅ 防御
+      if (!ctx) return;                 
 
-      if (this.ptTrendChart) {                 // ✅ 先干净销毁
+      if (this.ptTrendChart) {           
         this.ptTrendChart.destroy();
         this.ptTrendChart = null;
       }
@@ -908,7 +1035,7 @@ export default {
       const max = Math.max(...values);
       const pad = Math.max((max - min) * 0.15, 10);
 
-      // ✅ 用 rAF 确保在可见尺寸下绘制；关闭动画避免 destroy 竞态
+
       requestAnimationFrame(() => {
         this.ptTrendChart = new Chart(ctx, {
           type: 'line',
@@ -920,7 +1047,7 @@ export default {
           }]},
           options: {
             responsive: true, maintainAspectRatio: false, resizeDelay: 0,
-            animation: { duration: 0 },                      // ✅
+            animation: { duration: 0 },                     
             plugins: { legend: { display: false },
               tooltip: { callbacks: { label: c => `Demand ratio: ${c.parsed.y}` } } },
             scales: {
@@ -943,13 +1070,13 @@ export default {
         y: cy + r * Math.sin(rad),
       };
     },
-    // 生成圆弧 path（半径=100，圆心=160,160；你的 SVG 已是这个几何）
+
     arcPath(startDeg, endDeg, r = 100, cx = 160, cy = 160) {
       const s = this.polarToXY(startDeg, r, cx, cy);
       const e = this.polarToXY(endDeg,   r, cx, cy);
-      // 大弧标志：>180° 才为 1；我们 0–180° 的半圆段始终是 0
+
       const largeArc = Math.abs(endDeg - startDeg) > 180 ? 1 : 0;
-      const sweep = 1; // 顺时针
+      const sweep = 1;
       return `M ${s.x} ${s.y} A ${r} ${r} 0 ${largeArc} ${sweep} ${e.x} ${e.y}`;
     },
     getNeedleAngle(value) {
@@ -958,38 +1085,37 @@ export default {
           + (v - this.GAUGE_MIN) / (this.GAUGE_MAX - this.GAUGE_MIN)
           * (this.GAUGE_END - this.GAUGE_START);
     },
-    // 根据阈值给区间
+
     getCurrentZone(value) {
       const v = Number(value) || 0;
       if (v < 12) return 'low';
       if (v < 20) return 'medium';
       return 'high';
     },
-    // 指针/边框/高光/中心的颜色；若后端给了 gauge_color 就全部用它
+
     getNeedleColors(zone) {
       const override = (this.selectedYearDataCY?.gauge_color || '').trim();
       if (override) {
-        // 用后端色
         return {
           needle:   [override, override, override],
           border:   [override, override],
           highlight:['#ffffff', '#ffffff'],
         };
       }
-      // 按区间的默认色
+
       const map = {
         low: {
-          needle: ['#f87171', '#ef4444', '#dc2626'],   // 红
+          needle: ['#f87171', '#ef4444', '#dc2626'],
           border: ['#7f1d1d', '#991b1b'],
           highlight: ['#ffe4e6', '#fecaca'],
         },
         medium: {
-          needle: ['#fbbf24', '#f59e0b', '#d97706'],   // 橙
+          needle: ['#fbbf24', '#f59e0b', '#d97706'],
           border: ['#7c2d12', '#b45309'],
           highlight: ['#ffedd5', '#fed7aa'],
         },
         high: {
-          needle: ['#34d399', '#22c55e', '#16a34a'],   // 绿
+          needle: ['#34d399', '#22c55e', '#16a34a'],
           border: ['#064e3b', '#065f46'],
           highlight: ['#d1fae5', '#bbf7d0'],
         }
@@ -1027,7 +1153,6 @@ export default {
       this.cyTrend.latest = rows[rows.length-1] || null;
       this.cyTrend.insight = this.cyTrend.latest?.insight || '';
 
-      // 若 2026 没数据，就用第一个有数据的年份
       if (!this.cyTrend.byYear[this.selectedYearCY]) {
         this.selectedYearCY = this.cyTrend.byYear[2026] ? 2026 : (rows[0]?.year ?? this.selectedYearCY);
       }
@@ -1058,7 +1183,6 @@ export default {
 
       results.forEach(res => {
         if (!res.success) return;
-        // 后端是 { success, data: { ... } }
         const payload = res.data?.data ?? res.data ?? null;
         if (!payload) return;
 
@@ -1074,7 +1198,7 @@ export default {
       rows.sort((a, b) => a.year - b.year);
 
       this.pkTrend.byYear = rows.reduce((acc, r) => (acc[r.year] = r, acc), {});
-      this.pkTrend.points = rows.map(r => ({ year: r.year, ratio: r.bays_per_1000 })); // 用 Bays_per_1000 画线
+      this.pkTrend.points = rows.map(r => ({ year: r.year, ratio: r.bays_per_1000 }));
 
       const latest = rows[rows.length - 1] || null;
       this.pkTrend.latest = latest;
@@ -1334,6 +1458,10 @@ export default {
 .facility-bubble.parking .bubble-icon {
   background: linear-gradient(135deg, rgba(76, 175, 80, 0.2), rgba(76, 175, 80, 0.3));
   color: #4CAF50;
+}
+.facility-bubble.cultural .bubble-icon {
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(139, 92, 246, 0.3));
+  color: #8B5CF6;
 }
 
 .facility-bubble:hover .bubble-icon {
@@ -1899,6 +2027,18 @@ export default {
   font-size: 0.8rem;
 }
 
+.stop-empty {
+  text-align: center;
+  color: #64748b;
+  font-size: 0.95rem;
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px dashed rgba(203, 213, 225, 0.8);
+  padding: 1rem;
+  border-radius: 12px;
+  margin-top: 1rem;
+  line-height: 1.5;
+}
+
 .stats-list {
   list-style: none;
   padding: 0;
@@ -1984,7 +2124,7 @@ export default {
 
 .card-body {
   margin-top: 1rem;
-  height: 360px; /* 让图表更高一点 */
+  height: 360px;
 }
 .chart-card .card-body canvas {
   width: 100% !important;
@@ -2143,5 +2283,112 @@ export default {
   -webkit-text-fill-color: transparent;
 }
 /* parking Trend Section End */
+
+/* score explanation Start*/
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+  animation: fadeIn 0.3s ease;
+}
+
+.modal-content {
+  background: #fff;
+  border-radius: 16px;
+  padding: 2rem;
+  width: 90%;
+  max-width: 480px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+  position: relative;
+  animation: scaleIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scaleIn {
+  from { transform: scale(0.9); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  margin-bottom: 1rem;
+}
+
+.modal-header h3 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #1e293b;
+  background: linear-gradient(135deg, #4CAF50, #2196F3);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #64748b;
+  transition: all 0.2s ease;
+}
+.modal-close:hover {
+  color: #1e293b;
+  transform: rotate(90deg);
+}
+
+.score-explanation {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 1rem;
+}
+
+.explanation-score {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.explanation-number {
+  font-size: 3rem;
+  font-weight: 900;
+  color: #16a34a;
+  background: linear-gradient(135deg, #16a34a, #22c55e, #3b82f6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.explanation-label {
+  color: #64748b;
+  font-weight: 600;
+  margin-top: 0.25rem;
+}
+
+.explanation-text {
+  font-size: 1rem;
+  color: #334155;
+  line-height: 1.6;
+  background: rgba(248, 250, 252, 0.7);
+  padding: 1rem 1.2rem;
+  border-radius: 12px;
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+/* .explanation end */
 
 </style>

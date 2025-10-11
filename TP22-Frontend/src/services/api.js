@@ -78,24 +78,39 @@ export const homepageApi = {
 
 // Social API
 export const socialApi = {
-  // Get facility statistics by suburb name
+  // Get social score by suburb name
+  getSocialScore(suburb) {
+    return api.get(`/social/score/${encodeURIComponent(suburb)}`)
+  },
+
+  // Get all social scores
+  getAllSocialScores() {
+    return api.get('/social/scores/all')
+  },
+
+  // Get top social scores
+  getTopSocialScores(limit = 10) {
+    return api.get(`/social/scores/top?limit=${limit}`)
+  },
+
+  // Get facility statistics by suburb name (legacy)
   getFacilityStats(suburb) {
     return api.get(`/social/facilities/stats?suburb=${encodeURIComponent(suburb)}`)
   },
 
-  // Get facilities by suburb name
+  // Get facilities by suburb name (legacy)
   getFacilities(suburb, type = null) {
     const params = new URLSearchParams({ suburb })
     if (type) params.append('type', type)
     return api.get(`/social/facilities?${params.toString()}`)
   },
 
-  // Get facility accessibility by suburb name
+  // Get facility accessibility by suburb name (legacy)
   getFacilityAccessibility(suburb) {
     return api.get(`/social/accessibility?suburb=${encodeURIComponent(suburb)}`)
   },
 
-  // Get facility statistics by suburb ID
+  // Get facility statistics by suburb ID (legacy)
   getFacilityStatsBySuburbId(suburbId) {
     return api.get(`/social/facilities/stats/${suburbId}`)
   },

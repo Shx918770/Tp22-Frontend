@@ -760,7 +760,7 @@
               <!-- Facility Rows with Scroll -->
               <div class="assessment-rows scrollable-facility-container">
                 <div 
-                  v-for="(center, index) in communityCenters" 
+                  v-for="(center, index) in sortedCommunityCenters" 
                   :key="index"
                   class="assessment-row"
                 >
@@ -1496,6 +1496,17 @@ export default {
     
     communityCenterCount() {
       return this.communityCenters?.length || 0
+    },
+
+    // Sort community centers by condition rating (low to high)
+    sortedCommunityCenters() {
+      if (!this.communityCenters || this.communityCenters.length === 0) return []
+      
+      return [...this.communityCenters].sort((a, b) => {
+        const ratingA = this.getConditionRating(a.conditionOfFacility)
+        const ratingB = this.getConditionRating(b.conditionOfFacility)
+        return ratingA - ratingB
+      })
     },
 
     // Calculate total social facilities count from all 8 facility types

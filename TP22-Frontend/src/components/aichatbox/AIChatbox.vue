@@ -35,22 +35,18 @@ export default {
     async sendMessage() {
       if (!this.input.trim()) return;
 
-      // 加入用户消息
       const userMsg = { role: "user", text: this.input };
       this.messages.push(userMsg);
 
       try {
-        // 调 Spring Boot 后端
         const res = await aiApi.chat(this.input);
 
-        // 加入 AI 回复
         this.messages.push({ role: "ai", text: res.data.reply });
       } catch (err) {
         console.error("Backend fault:", err);
         this.messages.push({ role: "ai", text: "❌ Flaut, try again" });
       }
 
-      // 清空输入框
       this.input = "";
     }
   }

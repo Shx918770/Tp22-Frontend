@@ -245,7 +245,7 @@
                   <path d="M4 19V5M4 19H20M8 15L12 11L15 13L20 8" stroke="currentColor" stroke-width="2" />
                 </svg>
               </div>
-              <h3>Demand Ratio (2021–2036)</h3>
+              <h3>Demand Ratio (2021-2036)</h3>
             </div>
             <div class="card-body">
               <canvas id="ptTrendChart"></canvas>
@@ -393,8 +393,8 @@
 
               <!-- Legend -->
               <div class="gauge-legend expanded" style="margin-top:.75rem">
-                <div class="legend-item"><span class="dot low"></span><span>Low (0 – 12.0)</span></div>
-                <div class="legend-item"><span class="dot medium"></span><span>Medium (12.0 – 20.0)</span></div>
+                <div class="legend-item"><span class="dot low"></span><span>Low (0 - 12.0)</span></div>
+                <div class="legend-item"><span class="dot medium"></span><span>Medium (12.0 - 20.0)</span></div>
                 <div class="legend-item"><span class="dot high"></span><span>High (20.0+)</span></div>
               </div>
             </div>
@@ -459,7 +459,7 @@
                   <path d="M4 19V5M4 19H20M8 15L12 11L15 13L20 8" stroke="currentColor" stroke-width="2" />
                 </svg>
               </div>
-              <h3>Bays per 1,000 (2021–2036)</h3>
+              <h3>Bays per 1,000 (2021-2036)</h3>
             </div>
             <div class="card-body">
               <canvas id="pkTrendChart"></canvas>
@@ -909,9 +909,8 @@ export default {
             const coords = this.parsePoint(item.geometry)
             if (!coords) return null
 
-            // 根据 type 判断颜色
             const fillColor =
-              item.type?.toLowerCase().includes('gallery') ? '#8B5CF6' : '#F472B6' // 紫或粉
+              item.type?.toLowerCase().includes('gallery') ? '#8B5CF6' : '#F472B6'
             const iconLabel =
               item.type?.toLowerCase().includes('gallery')
                 ? '🎨 Art Gallery'
@@ -1247,7 +1246,7 @@ export default {
           }]},
           options: {
             responsive: true, maintainAspectRatio: false, resizeDelay: 0,
-            animation: { duration: 0 },                       // ✅
+            animation: { duration: 0 },
             plugins: { legend: { display: false },
               tooltip: { callbacks: { label: c => `Bays per 1,000: ${c.parsed.y}` } } },
             scales: {
@@ -2221,15 +2220,13 @@ export default {
 
 .cy-trend-header p { color: #475569; font-size: 1.05rem; }
 
-/* 关键：左右分布（两列） */
 .cy-trend-grid {
   display: grid;
-  grid-template-columns: 1.6fr 1fr;  /* 左图宽一些，右侧 insight 窄一些 */
+  grid-template-columns: 1.6fr 1fr;
   gap: 2rem;
   align-items: stretch;
 }
 
-/* 复用与 pt 一致的卡片风格 */
 .cy-trend-card {
   background: linear-gradient(135deg, rgba(248,250,252,.95), rgba(241,245,249,.9));
   border-radius: 20px;
@@ -2241,7 +2238,6 @@ export default {
 }
 .cy-trend-card:hover { transform: translateY(-4px); box-shadow: 0 22px 60px rgba(0,0,0,.12); }
 
-/* 与 pt 一致的头部样式，保持对齐 */
 .cy-trend-card .card-head {
   display: flex; align-items: center; gap: .75rem;
   padding-bottom: .75rem; border-bottom: 2px solid rgba(148,163,184,.2);
@@ -2253,7 +2249,6 @@ export default {
   background: rgba(34,197,94,.12); border: 1px solid rgba(34,197,94,.25);
 }
 
-/* 左卡片内部的仪表盘容器高度 */
 .cy-trend-card.chart-card .card-body { height: auto; }
 
 .gauge-container-compact { display:flex; justify-content:center; }

@@ -10,11 +10,9 @@ import * as echarts from 'echarts';
 export default {
   name: 'RadialRingsChart',
   props: {
-    // 由“外→内”的顺序传入：[{ name, value, color }]
     items: { type: Array, default: () => [] },
-    sweepDeg:   { type: Number, default: 270 }, // 显示角度范围
-    startAngle: { type: Number, default: 90 },  // 0° 在正上
-    // ✅ 新增：是否把“数值最大”的放在最里层（默认 true）
+    sweepDeg:   { type: Number, default: 270 },
+    startAngle: { type: Number, default: 90 },
     innerLargest: { type: Boolean, default: true }
   },
   data() {
@@ -47,23 +45,18 @@ export default {
       if (this.chart) { this.chart.dispose(); this.chart = null; }
       const chart = this.chart = echarts.init(el);
 
-      // —— 数据预处理
       let itemsOuterIn = (this.items || []).map(it => ({
         name: String(it?.name ?? ''),
         value: Number(it?.value ?? 0),
         color: it?.color || '#9CA3AF'
       }));
 
-      // ✅ 让“最大值在最里层”
-      // 组件约定：props 为“外→内”，所以升序即可使最大值位于数组末尾（=最里层）
       if (this.innerLargest) {
         itemsOuterIn = itemsOuterIn.sort((a, b) => a.value - b.value);
       }
 
-      // echarts 的半径类目是由内到外，因此反转数据
       const itemsRev = [...itemsOuterIn].reverse();
 
-      // ✅ 最大值线性映射到 sweepDeg（保证“最大=270°”）
       const maxV = Math.max(1, ...itemsOuterIn.map(it => it.value));
       const toAngle = v => (Math.max(0, v) / maxV) * this.sweepDeg;
 
@@ -80,7 +73,6 @@ export default {
         backgroundColor: '#2B3150',
         polar: { radius: ['10%','92%'], center: ['45%','50%'] },
 
-        // 角度轴作为数值映射，不显示射线
         angleAxis: {
           type: 'value',
           startAngle: this.startAngle,
@@ -121,7 +113,6 @@ export default {
           label: { show: false }
         }],
 
-        // 中心总数
         graphic: [{
           id: 'center-total',
           type: 'text',
@@ -148,7 +139,6 @@ export default {
     drawAlignedLabels(itemsRev, radiusCats, itemsOuterIn) {
         if (!this.chart) return;
 
-        // 1) 正确地移除旧标签（不会影响 center-total）
         if (this._labelIds.length) {
             this.chart.setOption({
             graphic: this._labelIds.map(id => ({ id, $action: 'remove' }))
@@ -156,16 +146,13 @@ export default {
             this._labelIds = [];
         }
 
-        // 2) 计算每条环在 0° 起点的像素位置（[radiusCat, angleValue]）
         const pts = radiusCats.map(cat =>
             this.chart.convertToPixel({ polarIndex: 0 }, [cat, 0])
         );
 
-        // 左侧对齐的锚点 x
         const xs = pts.map(p => p[0]);
         const anchorX = Math.min(...xs) - 8;
 
-        // 3) 生成标签，简单防碰撞
         const minGap = 18;
         const labelObjs = pts
             .map((pt, i) => {
@@ -201,7 +188,6 @@ export default {
             };
         });
 
-        // 4) 追加标签，同时“merge”中心文本，保证不被覆盖
         this.chart.setOption({
             graphic: [{ id: 'center-total', $action: 'merge' }, ...graphics]
         }, false, true);

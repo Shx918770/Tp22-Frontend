@@ -18,7 +18,7 @@
         <p>We value your feedback and inquiries.</p>
         <ul class="styled-list">
           <li>📧 Email: <a href="mailto:contact.melsustain@gmail.com">contact.melsustain@gmail.com</a></li>
-          <li>💬 Response Time: We aim to respond within 2–3 business days.</li>
+          <li>💬 Response Time: We aim to respond within 2-3 business days.</li>
         </ul>
         <p>When contacting us, please include:</p>
         <ol class="styled-ol">

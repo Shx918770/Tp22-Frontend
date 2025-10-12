@@ -52,6 +52,50 @@
       </div>
     </header>
 
+    <!-- How to Use Section -->
+    <section class="how-to-use full-height">
+      <div class="how-container">
+        <h1 class="how-title">🌿 How to Explore Sustainability in Melbourne</h1>
+
+        <div class="steps">
+          <!-- Step 1 -->
+          <div class="step">
+            <div class="step-number">1</div>
+            <h2 class="step-title">Choose a Suburb</h2>
+            <p class="step-desc">
+              Scroll down or use the search bar on the homepage to explore Melbourne suburbs.
+              Click a suburb card to view its <strong>Sustainability Overview</strong>, including Environmental, Infrastructure, and Social insights.
+            </p>
+            <!-- <img src="/img/guide-step1.png" alt="Choose a suburb" class="step-img" /> -->
+          </div>
+
+          <!-- Step 2 -->
+          <div class="step">
+            <div class="step-number">2</div>
+            <h2 class="step-title">Dive into Details</h2>
+            <p class="step-desc">
+              On each suburb page, navigate between <strong>Environment 🌿</strong>, <strong>Infrastructure 🚧</strong>, 
+              and <strong>Social 🏙️</strong> tabs to explore detailed data — 
+              such as air quality, tree coverage, public transport, and community facilities.
+            </p>
+            <!-- <img src="/img/guide-step2.png" alt="View details" class="step-img" /> -->
+          </div>
+
+          <!-- Step 3 -->
+          <div class="step">
+            <div class="step-number">3</div>
+            <h2 class="step-title">Compare Suburbs</h2>
+            <p class="step-desc">
+              Open the <strong>Compare</strong> page from the top navigation bar.
+              Select two suburbs and click <strong>“⚖️ Compare Suburbs”</strong> to see a side-by-side sustainability comparison.
+            </p>
+            <!-- <img src="/img/guide-step3.png" alt="Compare suburbs" class="step-img" /> -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+
     <!-- Why Choose MelSustain Section -->
     <section class="why-section">
       <div class="container">
@@ -364,14 +408,14 @@
           </div>
 
           <!-- Right Column - Newsletter -->
-          <div class="footer-newsletter">
+          <!-- <div class="footer-newsletter">
             <h4>Connect</h4>
             <p>Stay updated with the latest sustainability insights</p>
             <div class="newsletter-form">
               <input type="email" placeholder="Your email" class="newsletter-input">
               <button class="newsletter-btn">📤</button>
             </div>
-          </div>
+          </div> -->
         </div>
         
         <div class="footer-bottom">
@@ -719,7 +763,7 @@ export default {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  filter: brightness(0.6) saturate(1.1); /* ✅ 轻微暗化增强文字对比 */
+  filter: brightness(0.6) saturate(1.1);
   transform: scale(1.1);
   transition: transform 15s ease-in-out;
   animation: zoomBg 30s ease-in-out infinite alternate;
@@ -1020,6 +1064,99 @@ export default {
   .hero-section {
     background-attachment: scroll;
     min-height: 85vh;
+  }
+}
+
+/* --- How to Use Section --- */
+.how-to-use {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(to bottom right, #f0fdf4, #ffffff);
+  position: relative;
+  text-align: center;
+  padding: 4rem 2rem;
+}
+
+.how-container {
+  max-width: 1100px;
+}
+
+.how-title {
+  font-size: 3rem;
+  font-weight: 800;
+  color: #1b5e20;
+  margin-bottom: 3rem;
+}
+
+.steps {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  gap: 2rem;
+}
+
+.step {
+  flex: 1 1 300px;
+  background: #fff;
+  border-radius: 20px;
+  padding: 2rem 1.5rem;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.step:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.12);
+}
+
+.step-number {
+  width: 65px;
+  height: 65px;
+  border-radius: 50%;
+  background: #4caf50;
+  color: white;
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin: 0 auto 1rem auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.step-title {
+  color: #2e7d32;
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-bottom: 0.8rem;
+}
+
+.step-desc {
+  color: #555;
+  font-size: 1.05rem;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+.step-img {
+  width: 100%;
+  max-width: 260px;
+  border-radius: 12px;
+  margin-top: 1rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+@media (max-width: 768px) {
+  .how-title {
+    font-size: 2.2rem;
+  }
+  .steps {
+    flex-direction: column;
+    align-items: center;
+  }
+  .step {
+    max-width: 420px;
   }
 }
 

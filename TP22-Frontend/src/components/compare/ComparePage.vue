@@ -289,7 +289,7 @@ export default {
         return (
           data?.social_sustainability_score ??
           data?.socialSustainabilityScore ??
-          data?.score ?? // ✅ 加上这个
+          data?.score ??
           null
         );
       } catch (e) {
@@ -302,7 +302,6 @@ export default {
       try {
         const res = await infrastructureApi.getInfrastructureScore(suburb)
         const data = res.data?.data
-        // 你的后端返回的是 data: [ { suburb, infrastructure_sustainability_score, insight } ]
         if (Array.isArray(data) && data.length > 0)
           return data[0].infrastructure_sustainability_score
         return null

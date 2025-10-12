@@ -5,7 +5,7 @@
       <div class="nav-container" ref="navContainer">
         <!-- first line logo + suburb -->
         <div class="nav-top">
-          <div class="logo">
+          <router-link to="/" class="logo">
             <!-- <div class="logo-icon">
               <svg width="32" height="32" viewBox="0 0 40 40" fill="none">
                 <rect width="40" height="40" rx="8" fill="#4CAF50"/>
@@ -15,7 +15,7 @@
               </svg>
             </div> -->
             <span class="logo-text">MelSustain</span>
-          </div>
+          </router-link>
           <span v-if="selectedSuburb" class="suburb-display">
             <span class="pin"></span>{{ selectedSuburb }}
           </span>
@@ -61,14 +61,13 @@ export default {
     return {
       isMenuOpen: false,
       allTabs: [
-        { label: "HomePage", path: "/" },
         { label: "Social", path: "/social" },
-        // { label: "Economic", path: "/economic" },
-        // { label: "AI Chat", path: "/aichatbox" },
         { label: "Infrastructure", path: "/infrastructure" },
         { label: "Environment", path: "/environment" },
+        { label: "Compare", path: "/compare" }
+        // { label: "Economic", path: "/economic" },
+        // { label: "AI Chat", path: "/aichatbox" },
         // { label: "News", path: "/news" },  
-        // { label: "Compare", path: "/#compare-section" }
       ],
       visibleTabs: [],
       hiddenTabs: []
@@ -275,6 +274,14 @@ export default {
   font-size: 1.5rem;
   font-weight: 700;
   color: #2c3e50;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.logo:hover {
+  transform: scale(1.05);
+  color: #4CAF50;
 }
 
 .logo-icon {

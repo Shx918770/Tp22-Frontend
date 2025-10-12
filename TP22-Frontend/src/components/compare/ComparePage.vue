@@ -2,7 +2,7 @@
   <div class="compare-page">
 
     <!-- return button -->
-    <button class="back-btn" @click="$router.push('/')">← Back to Home</button>
+    <button class="back-btn" @click="$router.push('/')">← Back to Homepage</button>
 
     <div class="dynamic-background">
       <div class="floating-shapes">
@@ -121,12 +121,10 @@
 </template>
 
 <script>
-import Header from "@/components/header/Header.vue";
 import { infrastructureApi, environmentApi, socialApi, schoolApi, childCareApi, healthApi, recreationApi, hospitalityApi,apiUtils, aiApi } from "@/services/api.js";
 
 export default {
   name: "ComparePage",
-  components: { Header },
   data() {
     return {
       firstSuburb: "",

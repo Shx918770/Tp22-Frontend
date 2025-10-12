@@ -64,7 +64,7 @@ export default {
         { label: "HomePage", path: "/" },
         { label: "Social", path: "/social" },
         // { label: "Economic", path: "/economic" },
-        { label: "AI Chat", path: "/aichatbox" },
+        // { label: "AI Chat", path: "/aichatbox" },
         { label: "Infrastructure", path: "/infrastructure" },
         { label: "Environment", path: "/environment" },
         // { label: "News", path: "/news" },  

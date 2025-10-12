@@ -38,30 +38,12 @@
       <section class="social-facilities">
         <div class="container">
           <!-- Header with Social Score --><!--Design by Rui Wang-->
-          <div class="facilities-header">
-            <div class="total-counter">
-              <div class="counter-number">{{ socialScore?.score ? socialScore.score.toFixed(1) : '--' }}</div>
-              <div class="counter-label">
-                Social Score
-                <button 
-                  v-if="socialScore?.reason" 
-                  class="info-icon" 
-                  @click="showScoreExplanation = true"
-                  title="Click to see explanation"
-                >
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                    <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
-                    <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M12 17h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                  </svg>
-                </button>
-              </div>
-            </div>
-            <div class="header-subtitle">
-              <span v-if="selectedSuburb">{{ selectedSuburb }}'s social sustainability performance</span>
-              <span v-else>Discover Melbourne's social sustainability</span>
-            </div>
-          </div>
+          <ScoreHeader
+            :score="{ value: socialScore?.score, reason: socialScore?.reason }"
+            :suburb="selectedSuburb"
+            label="Social Score"
+            @show-info="showScoreExplanation = true"
+          />
 
           <!-- Loading state --><!--Design by Rui Wang-->
           <div v-if="loading" class="loading-container">
@@ -1422,13 +1404,15 @@
 <script>
 import { socialApi, schoolApi, childCareApi, apiUtils, healthApi, hospitalityApi, recreationApi } from '../../services/api.js'
 import Header from '../header/Header.vue';
+import ScoreHeader from '../scoreheader/ScoreHeader.vue';
 import SocialMap from './SocialMap.vue'
 
 export default {
   name: 'SocialPage',
   components: {
     SocialMap,
-    Header
+    Header,
+    ScoreHeader,
   },
   data() {
     return {

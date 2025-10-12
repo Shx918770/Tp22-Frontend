@@ -274,85 +274,93 @@
                 </h3>
               </div>
                 <div class="section-content">
-                  <div class="pie-chart-container">
-                    <svg class="horizontal-bar-chart-svg" viewBox="0 0 400 250">
+                  <div class="chart-subtitle">Number of Facilities by Type</div>
+                  <div class="school-type-chart-wrapper">
+                    <svg class="school-type-bar-chart" viewBox="0 0 400 200">
                       <!-- Primary Schools Bar -->
-                      <g>
-                        <rect x="80" y="30" 
-                              :width="Math.max(getPrimaryPct() * 2.2 + 60, 40)" 
-                              height="20" 
-                              fill="#52a3f0" 
-                              rx="10"
-                              class="bar-section clickable"
-                              @click="handleFacilityClick('primary')"
-                              style="cursor: pointer"/>
-                        <text x="75" y="44" text-anchor="end" class="bar-label">Primary</text>
-                        <text :x="85 + Math.max(getPrimaryPct() * 2.2 + 60, 40)" y="44" class="bar-value">{{ getPrimaryCount() }}</text>
+                      <g class="bar-group">
+                        <text x="20" y="26" class="bar-label">Primary</text>
+                        <rect x="110" y="17" 
+                              :width="getBarWidth(getPrimaryCount())" 
+                              height="16" 
+                              fill="url(#primaryGradient)" 
+                              rx="8"
+                              class="bar-section"/>
+                        <text :x="getBarWidth(getPrimaryCount()) + 118" y="27" class="bar-value">{{ getPrimaryCount() }}</text>
                       </g>
                       
                       <!-- Secondary Schools Bar -->
-                      <g>
-                        <rect x="80" y="60" 
-                              :width="Math.max(getSecondaryPct() * 2.2 + 60, 40)" 
-                              height="20" 
-                              fill="#e74c3c" 
-                              rx="10"
-                              class="bar-section clickable"
-                              @click="handleFacilityClick('secondary')"
-                              style="cursor: pointer"/>
-                        <text x="75" y="74" text-anchor="end" class="bar-label">Secondary</text>
-                        <text :x="85 + Math.max(getSecondaryPct() * 2.2 + 60, 40)" y="74" class="bar-value">{{ getSecondaryCount() }}</text>
+                      <g class="bar-group">
+                        <text x="20" y="61" class="bar-label">Secondary</text>
+                        <rect x="110" y="52" 
+                              :width="getBarWidth(getSecondaryCount())" 
+                              height="16" 
+                              fill="url(#secondaryGradient)" 
+                              rx="8"
+                              class="bar-section"/>
+                        <text :x="getBarWidth(getSecondaryCount()) + 118" y="62" class="bar-value">{{ getSecondaryCount() }}</text>
                       </g>
                       
                       <!-- Special Schools Bar -->
-                      <g>
-                        <rect x="80" y="90" 
-                              :width="Math.max(getSpecialPct() * 2.2 + 60, 40)" 
-                              height="20" 
-                              fill="#9C27B0" 
-                              rx="10"
-                              class="bar-section clickable"
-                              @click="handleFacilityClick('special')"
-                              style="cursor: pointer"/>
-                        <text x="75" y="104" text-anchor="end" class="bar-label">Special</text>
-                        <text :x="85 + Math.max(getSpecialPct() * 2.2 + 60, 40)" y="104" class="bar-value">{{ getSpecialCount() }}</text>
+                      <g class="bar-group">
+                        <text x="20" y="96" class="bar-label">Special</text>
+                        <rect x="110" y="87" 
+                              :width="getBarWidth(getSpecialCount())" 
+                              height="16" 
+                              fill="url(#specialGradient)" 
+                              rx="8"
+                              class="bar-section"/>
+                        <text :x="getBarWidth(getSpecialCount()) + 118" y="97" class="bar-value">{{ getSpecialCount() }}</text>
                       </g>
                       
                       <!-- PRI/SEC Schools Bar -->
-                      <g>
-                        <rect x="80" y="120" 
-                              :width="Math.max(getPriSecPct() * 2.2 + 60, 40)" 
-                              height="20" 
-                              fill="#16a085" 
-                              rx="10"
-                              class="bar-section clickable"
-                              @click="handleFacilityClick('prisec')"
-                              style="cursor: pointer"/>
-                        <text x="75" y="134" text-anchor="end" class="bar-label">PRI/SEC</text>
-                        <text :x="85 + Math.max(getPriSecPct() * 2.2 + 60, 40)" y="134" class="bar-value">{{ getPriSecCount() }}</text>
+                      <g class="bar-group">
+                        <text x="20" y="131" class="bar-label">PRI/SEC</text>
+                        <rect x="110" y="122" 
+                              :width="getBarWidth(getPriSecCount())" 
+                              height="16" 
+                              fill="url(#prisecGradient)" 
+                              rx="8"
+                              class="bar-section"/>
+                        <text :x="getBarWidth(getPriSecCount()) + 118" y="132" class="bar-value">{{ getPriSecCount() }}</text>
                       </g>
                       
                       <!-- Childcare Bar -->
-                      <g>
-                        <rect x="80" y="150" 
-                              :width="Math.max(getChildcarePct() * 2.2 + 60, 40)" 
-                              height="20" 
-                              fill="#f39c12" 
-                              rx="10"
-                              class="bar-section clickable"
-                              @click="handleFacilityClick('childcare')"
-                              style="cursor: pointer"/>
-                        <text x="75" y="164" text-anchor="end" class="bar-label">Childcare</text>
-                        <text :x="85 + Math.max(getChildcarePct() * 2.2 + 60, 40)" y="164" class="bar-value">{{ getChildcareCount() }}</text>
+                      <g class="bar-group">
+                        <text x="20" y="166" class="bar-label">Childcare</text>
+                        <rect x="110" y="157" 
+                              :width="getBarWidth(getChildcareCount())" 
+                              height="16" 
+                              fill="url(#childcareGradient)" 
+                              rx="8"
+                              class="bar-section"/>
+                        <text :x="getBarWidth(getChildcareCount()) + 118" y="167" class="bar-value">{{ getChildcareCount() }}</text>
                       </g>
                       
-                      <!-- Subtle background grid -->
-                      <g class="background-grid" opacity="0.1">
-                        <line x1="80" y1="20" x2="80" y2="180" stroke="#94a3b8" stroke-width="1"/>
-                        <line x1="160" y1="20" x2="160" y2="180" stroke="#94a3b8" stroke-width="0.5"/>
-                        <line x1="240" y1="20" x2="240" y2="180" stroke="#94a3b8" stroke-width="0.5"/>
-                        <line x1="320" y1="20" x2="320" y2="180" stroke="#94a3b8" stroke-width="0.5"/>
-                      </g>
+                      <!-- Gradient Definitions -->
+                      <defs>
+                        <linearGradient id="primaryGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                          <stop offset="0%" style="stop-color:#52a3f0;stop-opacity:1" />
+                          <stop offset="100%" style="stop-color:#2d82d9;stop-opacity:1" />
+                        </linearGradient>
+                        <linearGradient id="secondaryGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                          <stop offset="0%" style="stop-color:#e74c3c;stop-opacity:1" />
+                          <stop offset="100%" style="stop-color:#c0392b;stop-opacity:1" />
+                        </linearGradient>
+                        <linearGradient id="specialGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                          <stop offset="0%" style="stop-color:#9C27B0;stop-opacity:1" />
+                          <stop offset="100%" style="stop-color:#7B1FA2;stop-opacity:1" />
+                        </linearGradient>
+                        <linearGradient id="prisecGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                          <stop offset="0%" style="stop-color:#16a085;stop-opacity:1" />
+                          <stop offset="100%" style="stop-color:#0e7c68;stop-opacity:1" />
+                        </linearGradient>
+                        <linearGradient id="childcareGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                          <stop offset="0%" style="stop-color:#f39c12;stop-opacity:1" />
+                          <stop offset="100%" style="stop-color:#d68910;stop-opacity:1" />
+                        </linearGradient>
+                      </defs>
+                      
                     </svg>
                   </div>
               </div>
@@ -2489,6 +2497,21 @@ export default {
       return this.childCares.length
     },
 
+    getBarWidth(count) {
+      const maxCount = Math.max(
+        this.getPrimaryCount(),
+        this.getSecondaryCount(),
+        this.getSpecialCount(),
+        this.getPriSecCount(),
+        this.getChildcareCount(),
+        1 // Avoid division by zero
+      )
+      const maxWidth = 200
+      const minWidth = 30
+      if (count === 0) return minWidth
+      return minWidth + (count / maxCount) * (maxWidth - minWidth)
+    },
+
     getTotalFacilities() {
       const c = this.getTypeCounts()
       const schoolTotal = c.primary + c.secondary + c.special + c.prisec
@@ -4316,10 +4339,21 @@ export default {
   display: flex;
   align-items: center;
   gap: 1rem;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
   padding: 0;
   border-bottom: 2px solid rgba(148, 163, 184, 0.2);
   padding-bottom: 1rem;
+}
+
+.chart-subtitle {
+  text-align: center;
+  font-size: 15px;
+  font-weight: 600;
+  color: #475569;
+  margin-bottom: 1.5rem;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 .section-icon {
@@ -4439,17 +4473,16 @@ export default {
 }
 
 /* New Pie Chart Styles */
-.pie-chart-container {
+.school-type-chart-wrapper {
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 1rem;
-  padding: 2.5rem;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.9));
-  border-radius: 20px;
-  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.08);
-  border: 2px solid rgba(59, 130, 246, 0.15);
-  backdrop-filter: blur(20px);
+  padding: 0.5rem 0;
+}
+
+.pie-chart-section .section-content {
+  padding-top: 0.5rem;
 }
 
 .pie-chart-svg {
@@ -4464,10 +4497,30 @@ export default {
   filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.1));
 }
 
-.horizontal-bar-chart-svg {
-  width: 400px;
-  height: 200px;
-  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.08));
+.school-type-bar-chart {
+  width: 100%;
+  max-width: 500px;
+  height: auto;
+}
+
+.school-type-bar-chart .bar-section {
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.12));
+}
+
+.school-type-bar-chart .bar-label {
+  fill: #475569;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  text-anchor: start;
+}
+
+.school-type-bar-chart .bar-value {
+  fill: #1e293b;
+  font-size: 15px;
+  font-weight: 700;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  text-anchor: start;
 }
 
 .chart-title {
@@ -5299,11 +5352,16 @@ export default {
     flex-direction: column;
     gap: 0.8rem;
     text-align: center;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem;
   }
   
   .section-header h3 {
     font-size: 1.3rem;
+  }
+  
+  .chart-subtitle {
+    font-size: 13px;
+    margin-bottom: 1.25rem;
   }
   
   .chart-with-labels {
@@ -5329,9 +5387,8 @@ export default {
     height: 160px;
   }
   
-  .horizontal-bar-chart-svg {
-    width: 350px;
-    height: 180px;
+  .school-type-bar-chart {
+    max-width: 420px;
   }
   
   .school-list {
@@ -5370,11 +5427,16 @@ export default {
   
   .section-header {
     gap: 0.6rem;
-    margin-bottom: 1rem;
+    margin-bottom: 0.75rem;
   }
   
   .section-header h3 {
     font-size: 1.1rem;
+  }
+  
+  .chart-subtitle {
+    font-size: 12px;
+    margin-bottom: 1rem;
   }
   
   .section-icon {
@@ -5397,9 +5459,16 @@ export default {
     height: 140px;
   }
   
-  .horizontal-bar-chart-svg {
-    width: 320px;
-    height: 160px;
+  .school-type-bar-chart {
+    max-width: 380px;
+  }
+  
+  .school-type-bar-chart .bar-label {
+    font-size: 12px;
+  }
+  
+  .school-type-bar-chart .bar-value {
+    font-size: 13px;
   }
   
   .building-title {

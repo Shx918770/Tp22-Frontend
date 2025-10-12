@@ -166,23 +166,30 @@
           </div>
 
           <transition name="expand-rows">
-            <div v-if="showDetails" class="detail-rows">
-              <div 
-                v-for="(metric, index) in detailMetrics"
-                :key="'detail-' + index"
-                  class="mini-row"
-                  :data-group="metric.group"
-              >
-                  <div class="mini-label">
-                    <span class="mini-emoji">{{ metric.icon }}</span>
-                    <span class="mini-name">{{ metric.label }}</span>
+            <div v-if="showDetails" class="details-content-wrapper">
+              <div class="detail-rows">
+                <div 
+                  v-for="(metric, index) in detailMetrics"
+                  :key="'detail-' + index"
+                    class="mini-row"
+                    :data-group="metric.group"
+                >
+                    <div class="mini-label">
+                      <span class="mini-emoji">{{ metric.icon }}</span>
+                      <span class="mini-name">{{ metric.label }}</span>
+                    </div>
+                  <div class="mini-value first">
+                    <span class="mini-num">{{ result[firstSuburb][metric.key] ?? '-' }}</span>
                   </div>
-                <div class="mini-value first">
-                  <span class="mini-num">{{ result[firstSuburb][metric.key] ?? '-' }}</span>
+                  <div class="mini-value second">
+                    <span class="mini-num">{{ result[secondSuburb][metric.key] ?? '-' }}</span>
+                  </div>
                 </div>
-                <div class="mini-value second">
-                  <span class="mini-num">{{ result[secondSuburb][metric.key] ?? '-' }}</span>
-                </div>
+              </div>
+              
+              <!-- Tetris Game -->
+              <div class="tetris-wrapper">
+                <TetrisGame />
               </div>
             </div>
           </transition>
@@ -207,9 +214,13 @@
 
 <script>
 import { infrastructureApi, environmentApi, socialApi, schoolApi, childCareApi, healthApi, recreationApi, hospitalityApi,apiUtils, aiApi } from "@/services/api.js";
+import TetrisGame from "./TetrisGame.vue";
 
 export default {
   name: "ComparePage",
+  components: {
+    TetrisGame
+  },
   data() {
     return {
       firstSuburb: "",
@@ -1009,6 +1020,7 @@ export default {
 .metric-title {
   background: linear-gradient(135deg, #16a34a, #22c55e);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
@@ -1373,8 +1385,30 @@ export default {
   letter-spacing: 0.02em;
 }
 
+/* Details Content Wrapper - Flex container for table and game */
+.details-content-wrapper {
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+}
+
 /* Detail Rows */
-.detail-rows { background: linear-gradient(180deg, #fbfdfb, #f7faf8); max-width: 640px; margin-left: 0; border-left: 3px solid #e2e8f0; border-radius: 12px; box-shadow: 0 6px 18px rgba(0,0,0,0.04); overflow: hidden; }
+.detail-rows { 
+  background: linear-gradient(180deg, #fbfdfb, #f7faf8); 
+  max-width: 640px; 
+  flex: 0 0 640px;
+  margin-left: 0; 
+  border-left: 3px solid #e2e8f0; 
+  border-radius: 12px; 
+  box-shadow: 0 6px 18px rgba(0,0,0,0.04); 
+  overflow: hidden; 
+}
+
+/* Tetris Game Wrapper */
+.tetris-wrapper {
+  flex: 0 0 auto;
+  min-height: 100%;
+}
 
 /* Minimal two-column mini stats */
 .mini-row { display: grid; grid-template-columns: 1.7fr 1fr 1fr; align-items: center; gap: 0.6rem; padding: 0.6rem 0.9rem; border-top: 1px dashed #e2e8f0; }
@@ -1464,8 +1498,6 @@ export default {
   display: none;
 }
 
-.insight-item:hover { }
-
 .insight-number { display: none; }
 
 .insight-text {
@@ -1518,6 +1550,22 @@ export default {
   
   .value-number {
     font-size: 1.5rem;
+  }
+
+  .details-content-wrapper {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .detail-rows {
+    flex: 1 1 auto;
+    max-width: 100%;
+  }
+
+  .tetris-wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: center;
   }
 }
 

@@ -116,6 +116,13 @@
     <div class="map-container">
       <div class="map-area">
         <div id="map" class="map"></div>
+        <button 
+          class="map-reset-button" 
+          @click="resetMapView"
+          title="Reset map view"
+        >
+          Reset
+        </button>
       </div>
         <div class="map-legend">
           <h4>Facility Legend</h4>
@@ -584,6 +591,8 @@ export default {
         cultural: {},
       },
       map: null,
+      defaultCenter: [-37.8136, 144.9631],
+      defaultZoom: 15,
       layers: {
         transport: null,
         bicycle: null,
@@ -716,20 +725,50 @@ export default {
     this.loadParkingTrend(this.selectedSuburb)
   },
   watch: {
-    selectedSuburb: {
+    '$route.query.suburb': {
       immediate: true,
-      handler(newSuburb) {
-        if (newSuburb) {
-          this.loadStats(newSuburb)
-          this.loadPtTrend(newSuburb)
-          this.loadCyclingTrend(newSuburb)
-          this.loadParkingTrend(newSuburb)
-          this.fetchInfrastructureScore(newSuburb)
+      async handler(newSuburb, oldSuburb) {
+        if (!newSuburb) return;
+        console.log('[Suburb changed]', oldSuburb, '→', newSuburb);
+
+        this.loading = true;
+        try {
+          await this.refreshInfrastructure(newSuburb);
+
+          if (this.map) {
+            Object.values(this.layers).forEach(layer => {
+              if (layer && this.map.hasLayer(layer)) {
+                this.map.removeLayer(layer);
+              }
+            });
+          }
+
+          await this.loadData();
+
+          console.log('[Infrastructure fully refreshed for]', newSuburb);
+        } catch (err) {
+          console.error('Error refreshing suburb:', err);
+        } finally {
+          this.loading = false;
         }
       }
     }
   },
   methods: {
+    async refreshInfrastructure(suburb) {
+      this.loading = true;
+      try {
+        await Promise.all([
+          this.loadStats(suburb),
+          this.loadPtTrend(suburb),
+          this.loadCyclingTrend(suburb),
+          this.loadParkingTrend(suburb),
+          this.fetchInfrastructureScore(suburb)
+        ]);
+      } finally {
+        this.loading = false;
+      }
+    },
     async loadStats(suburb) {
       this.loading = true
       try {
@@ -856,6 +895,33 @@ export default {
         attribution: '&copy; OpenStreetMap contributors',
       }).addTo(this.map)
     },
+
+    resetMapView() {
+      if (!this.map || !this.layers) return;
+
+      const allCoords = [];
+      Object.values(this.layers).forEach(layer => {
+        if (layer && typeof layer.eachLayer === 'function') {
+          layer.eachLayer(marker => {
+            if (marker.getLatLng) allCoords.push(marker.getLatLng());
+          });
+        }
+      });
+
+      if (allCoords.length) {
+        const bounds = L.latLngBounds(allCoords);
+        const maxZoom = this.map.getBoundsZoom(bounds);
+        const targetZoom = Math.max(maxZoom + 2, 5);
+        const center = bounds.getCenter();
+
+        this.map.flyTo(center, targetZoom, {
+          duration: 1.2,
+          easeLinearity: 0.25
+        });
+      } else {
+        console.warn("No coordinates found to reset map view.");
+      }
+    },
     async loadData() {
         const suburb = this.selectedSuburb
         if (!suburb) return
@@ -926,6 +992,24 @@ export default {
             }).bindPopup(`<b>${item.name}</b><br/>${iconLabel}`)
           }).filter(m => m)
         ).addTo(this.map)
+        const allCoords = []
+        Object.values(this.layers).forEach(layer => {
+          if (layer) {
+            layer.eachLayer(marker => {
+              if (marker.getLatLng) allCoords.push(marker.getLatLng())
+            })
+          }
+        })
+
+        if (allCoords.length) {
+          const bounds = L.latLngBounds(allCoords)
+
+          const maxZoom = this.map.getBoundsZoom(bounds)
+          const targetZoom = Math.max(maxZoom + 2 , 5)
+          const center = bounds.getCenter()
+
+          this.map.setView(center, targetZoom)
+        }
         await this.$nextTick()
         this.setFilter('all')
     },
@@ -1634,6 +1718,38 @@ export default {
   width: 100%;
   height: 100%;
   flex: 1;
+}
+
+.map-reset-button {
+  position: absolute;
+  top: 30px;
+  right: 30px;
+  z-index: 1000;
+  background: white;
+  border: 2px solid #ccc;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #333;
+}
+
+.map-reset-button:hover {
+  background: #f8f9fa;
+  border-color: #007bff;
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.2);
+  transform: translateY(-1px);
+}
+
+.map-reset-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 }
 .filter-buttons {
   position: absolute;

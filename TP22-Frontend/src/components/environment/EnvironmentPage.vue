@@ -180,7 +180,7 @@
 
             <!-- trend -->
             <div class="card-panel trend-panel">
-              <h3 class="panel-title">Number of trees planted</h3>
+              <h3 class="panel-title">Total Number of Trees</h3>
               <LineChart :chart-data="plantedTrendData" />
             </div>
           </div>
@@ -754,21 +754,28 @@ export default {
         .sort((a, b) => a - b)
         .map(String);
 
+      const cumulativeCounts = [];
+      let runningTotal = 0;
+      for (const year of sortedYears) {
+        runningTotal += yearCounts[year] || 0;
+        cumulativeCounts.push(runningTotal);
+      }
+
       const aqiData = Array.isArray(this.airTrendData) ? this.airTrendData : [];
 
       return {
         labels: sortedYears,
         datasets: [
           {
-            label: "Number of Trees",
-            data: sortedYears.map(year => yearCounts[year]),
+            label: "Total Number of Trees 🌳",
+            data: cumulativeCounts,
             borderColor: "green",
             backgroundColor: "rgba(0,128,0,0.3)",
             fill: true,
-            tAxisID:"y",
+            yAxisID: "y",
           },
           {
-            label: "Air Quality (AQI)",
+            label: "Air Quality (AQI) 🌤️",
             data: sortedYears.map(year => {
               const match = aqiData.find(row => String(row.year) === String(year));
               return match ? match.aqi : null;

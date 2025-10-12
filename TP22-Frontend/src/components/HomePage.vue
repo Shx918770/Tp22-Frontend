@@ -409,7 +409,7 @@ export default {
         "Kensington",
         "North Melbourne",
         "Parkville",
-        "Southbank",
+        "South Bank",
         "South Yarra",
         "West Melbourne"
       ],

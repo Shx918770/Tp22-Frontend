@@ -234,7 +234,7 @@ export default {
         "Kensington",
         "Docklands",
         "South Yarra",
-        "Southbank",
+        "South Bank",
         "Melbourne"
       ],
       result: null,

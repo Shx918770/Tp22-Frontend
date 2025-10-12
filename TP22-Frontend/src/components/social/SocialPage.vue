@@ -1043,6 +1043,204 @@
         </div>
       </section>
 
+      <!-- FAQ Section -->
+      <section class="faq-section">
+        <div class="container">
+          <div class="faq-header">
+            <h2 class="faq-title">FAQ</h2>
+            <div class="faq-divider">
+              <p class="faq-subtitle">General information</p>
+            </div>
+            <p class="faq-description">Frequently asked questions mainly relating to social sustainability indicators.</p>
+          </div>
+
+          <div class="faq-list">
+            <!-- FAQ Item 1 -->
+            <div class="faq-item" :class="{ 'active': activeFaq === 0 }">
+              <button class="faq-question" @click="toggleFaq(0)">
+                <span>How can a school distribution chart help me when choosing a suburb?</span>
+                <svg class="faq-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
+                  <path d="M19 9L12 16L5 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+              <div class="faq-answer" v-show="activeFaq === 0">
+                <div class="faq-answer-content">
+                  <p>This chart helps assess how well a suburb supports family and lifestyle needs through its <strong>range of educational facilities</strong>. A balanced distribution of school types often indicates <strong>greater convenience, stronger community networks, and reduced travel requirements</strong> - key features of a sustainable and family-friendly area. Identifying suburbs with limited options can also guide expectations about future schooling choices or commuting needs.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- FAQ Item 2 -->
+            <div class="faq-item" :class="{ 'active': activeFaq === 1 }">
+              <button class="faq-question" @click="toggleFaq(1)">
+                <span>How does this chart support informed suburb evaluation?</span>
+                <svg class="faq-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
+                  <path d="M19 9L12 16L5 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+              <div class="faq-answer" v-show="activeFaq === 1">
+                <div class="faq-answer-content">
+                  <p>The student enrollment distribution chart enables users to interpret the educational profile of schools within a suburb in a concise and data-driven manner. By analysing enrollment proportions across year levels, users can whether a school primarily caters to early education, secondary studies, or specialised programs. This information is valuable for families assessing the suitability of a suburb's educational offerings, as well as for community planners seeking to understand local demographic and institutional balance. The chart therefore serves as an evidence-based visual tool supporting educational accessibility, planning, and informed decision-making.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- FAQ Item 3 -->
+            <div class="faq-item" :class="{ 'active': activeFaq === 2 }">
+              <button class="faq-question" @click="toggleFaq(2)">
+                <span>How does hospital per 1000 indicator help evaluate community wellbeing and healthcare access?</span>
+                <svg class="faq-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
+                  <path d="M19 9L12 16L5 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+              <div class="faq-answer" v-show="activeFaq === 2">
+                <div class="faq-answer-content">
+                  <p>The hospital bed availability indicator is a key measure of healthcare accessibility and service adequacy within a suburb. It helps users understand whether local medical infrastructure aligns with population needs - an essential factor in assessing livability and resilience. Areas with higher ratios generally offer stronger healthcare support and reduced pressure on nearby facilities, while lower ratios may signal a need for improved planning and investment.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- FAQ Item 4 -->
+            <div class="faq-item" :class="{ 'active': activeFaq === 3 }">
+              <button class="faq-question" @click="toggleFaq(3)">
+                <span>What does the community facility list and quality rating indicate?</span>
+                <svg class="faq-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
+                  <path d="M19 9L12 16L5 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+              <div class="faq-answer" v-show="activeFaq === 3">
+                <div class="faq-answer-content">
+                  <p>The facility list and condition ratings provide an evidence-based overview of the suburb's recreational and community infrastructure. Each entry represents a specific venue or activity type, accompanied by a quality score reflecting its physical condition, accessibility, and maintenance standard.</p>
+                  <p style="margin-top: 1rem;">The ratings highlight how well the suburb's facilities are preserved and managed - distinguishing between modern, high-quality venues and those requiring refurbishment. When viewed alongside the facility type distribution, the chart helps identify whether the suburb offers a balanced range of amenities or an uneven concentration of certain activity types.</p>
+                  <p style="margin-top: 1rem;">Overall, this dataset serves as an indicator of <strong>community investment and service reliability</strong>, helping planners, policymakers, and residents understand the standard and sustainability of local public infrastructure.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- FAQ Item 5 -->
+            <div class="faq-item" :class="{ 'active': activeFaq === 4 }">
+              <button class="faq-question" @click="toggleFaq(4)">
+                <span>What does the Sustainability Score measure?</span>
+                <svg class="faq-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
+                  <path d="M19 9L12 16L5 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+              <div class="faq-answer" v-show="activeFaq === 4">
+                <div class="faq-answer-content">
+                  <p>It quantifies each suburb's <strong>social, health, community, and economic sustainability</strong> on a <strong>65-95 scale</strong>, using international benchmarks.</p>
+                  <p style="margin-top: 1rem;">The score reflects how well essential services (schools, hospitals, recreation, economy, practitioners) meet global access standards relative to population size and service diversity.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- FAQ Item 6 -->
+            <div class="faq-item" :class="{ 'active': activeFaq === 5 }">
+              <button class="faq-question" @click="toggleFaq(5)">
+                <span>How is the score calculated?</span>
+                <svg class="faq-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
+                  <path d="M19 9L12 16L5 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+              <div class="faq-answer" v-show="activeFaq === 5">
+                <div class="faq-answer-content">
+                  <p>Scores are derived by combining five weighted domains - <strong>Education (20%), Healthcare (25%), Community & Recreation (20%), Economic Vibrancy (15%)</strong>, and <strong>Practitioner Access (20%)</strong> - then modifying that composite with coverage and balance adjustments, and applying lighter penalties.</p>
+                  <div style="margin: 1.5rem 0; padding: 1rem; background: rgba(241, 245, 249, 0.8); border-radius: 8px; font-family: 'Courier New', monospace; font-size: 0.9rem;">
+                    Score = 65 + 30 × ([0.20E + 0.25H + 0.20C + 0.15V + 0.20P] × F<sub>cov</sub> × F<sub>bal</sub>) - Penalties
+                  </div>
+                  <ul style="margin-top: 1rem; padding-left: 1.5rem;">
+                    <li style="margin-bottom: 0.5rem;"><em>E, H, C, V, P</em> are the domain sub-scores normalized to [0, 1].</li>
+                    <li style="margin-bottom: 0.5rem;"><em>F<sub>cov</sub></em> = coverage factor between 0.8 and 1.0, scaling based on how many essential services (schools, hospital, GP, community, playground) a suburb has.</li>
+                    <li style="margin-bottom: 0.5rem;"><em>F<sub>bal</sub></em> = balance factor (in [0.85, 1.0]), derived from the ratio of geometric mean to arithmetic mean of the five domain scores, penalizing skewed profiles.</li>
+                    <li style="margin-bottom: 0.5rem;">Penalties: up to -5 for missing essential services (e.g. no internal GP, hospital) and up to -2 for extreme vibrancy/density (bars + cafés in top percentile).</li>
+                    <li>The result is then constrained to the 65-95 range, preserving differentiation across suburbs.</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <!-- FAQ Item 7 -->
+            <div class="faq-item" :class="{ 'active': activeFaq === 6 }">
+              <button class="faq-question" @click="toggleFaq(6)">
+                <span>What benchmarks and assumptions were used?</span>
+                <svg class="faq-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
+                  <path d="M19 9L12 16L5 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+              <div class="faq-answer" v-show="activeFaq === 6">
+                <div class="faq-answer-content">
+                  <div class="faq-table-container" style="overflow-x: auto; margin: 1rem 0;">
+                    <table class="faq-table">
+                      <thead>
+                        <tr>
+                          <th>Domain</th>
+                          <th>Benchmark</th>
+                          <th>Rationale / Source</th>
+                          <th>Role in normalization</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td>Schools</td>
+                          <td>1.5 schools per 10,000 population</td>
+                          <td>Global urban-access goals</td>
+                          <td>Major normalization baseline for education domain</td>
+                        </tr>
+                        <tr>
+                          <td>Childcare</td>
+                          <td>1.2 per 10,000</td>
+                          <td>OECD / family service targets</td>
+                          <td>Governs childcare component of education domain</td>
+                        </tr>
+                        <tr>
+                          <td>Hospitals</td>
+                          <td>1.0 per 100,000 population</td>
+                          <td>Standard health access target</td>
+                          <td>Governs hospital count normalization</td>
+                        </tr>
+                        <tr>
+                          <td>Hospital Beds</td>
+                          <td>~3.8 beds per 1,000</td>
+                          <td>General Australian average benchmark</td>
+                          <td>Caps bed domain contribution (avoids runaway scores)</td>
+                        </tr>
+                        <tr>
+                          <td>Community & Playgrounds</td>
+                          <td>0.75 per 10,000</td>
+                          <td>Quality-of-life / ISO 37120 style norms</td>
+                          <td>Sets community domain normalization</td>
+                        </tr>
+                        <tr>
+                          <td>Practitioners (GPs)</td>
+                          <td>4.5 per 10,000</td>
+                          <td>WHO primary care target</td>
+                          <td>Normalizes GP/ practitioner domain</td>
+                        </tr>
+                        <tr>
+                          <td>Economic Vibrancy</td>
+                          <td>Log-scaled cafés + bars per 10,000</td>
+                          <td>Reflects the diminishing returns of densification</td>
+                          <td>Normalizes vibrancy domain (prevents overshoot)</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <div style="margin-top: 1.5rem;">
+                    <p style="font-weight: 600; margin-bottom: 0.75rem;">Assumptions & adjustments:</p>
+                    <ul style="padding-left: 1.5rem;">
+                      <li style="margin-bottom: 0.5rem;">Domain scores above the benchmark are capped at 1.0 (i.e., no suburb can exceed benchmark).</li>
+                      <li style="margin-bottom: 0.5rem;">Coverage factor ensures suburbs missing essential services are penalized, but not eliminated.</li>
+                      <li style="margin-bottom: 0.5rem;">Balance factor ensures a suburb strong in one domain cannot dominate if others are weak.</li>
+                      <li style="margin-bottom: 0.5rem;">Penalties are moderated to avoid collapsing the score to baseline for high-performing suburbs.</li>
+                      <li>Final scores are bounded at 65 (minimum) and 95 (maximum), so no suburb is perfect but differences remain meaningful.</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
     </main>
 
     <!-- Score Explanation Modal -->
@@ -1186,6 +1384,13 @@
       </svg>
     </button>
 
+    <!-- Scroll to Bottom Button -->
+    <button class="scroll-to-bottom" @click="scrollToBottom" :class="{ 'visible': showScrollToBottom }">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+        <path d="M7 10L12 15L17 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+
     <!-- Facility Details Modal -->
     <div v-if="showFacilityDetails && selectedFacilityType" class="modal-overlay" @click="closeFacilityDetails">
       <div class="modal-content facility-details-modal" @click.stop>
@@ -1276,6 +1481,7 @@ export default {
       showFacilityDetails: false, // Show/hide details modal
       sortSchoolsAlphabetically: false,
       showBackToTop: false,
+      showScrollToBottom: false,
       mapLegendState: {
         schools: true,
         hospitals: true,
@@ -1290,7 +1496,9 @@ export default {
       schoolFilter: 'all', // 'all', 'primary', 'secondary', 'special', 'childcare'
       maxGauge: 8,
       showAllChips: false,
-      chipDisplayLimit: 12
+      chipDisplayLimit: 12,
+      // FAQ state
+      activeFaq: null
     }
   },
   computed: {
@@ -1540,6 +1748,11 @@ export default {
     document.removeEventListener('click', this.handleDocumentClick);
   },
   methods: {
+    // Toggle FAQ item
+    toggleFaq(index) {
+      this.activeFaq = this.activeFaq === index ? null : index
+    },
+
     // Fetch social score data
     async fetchSocialScore() {
       if (!this.selectedSuburb) return
@@ -2400,11 +2613,23 @@ export default {
     },
 
     handleScroll() {
-      this.showBackToTop = window.scrollY > 300
+      const scrollY = window.scrollY
+      const windowHeight = window.innerHeight
+      const documentHeight = document.documentElement.scrollHeight
+      
+      // Show back to top when scrolled down
+      this.showBackToTop = scrollY > 300
+      
+      // Show scroll to bottom when not at bottom (with 100px threshold)
+      this.showScrollToBottom = scrollY + windowHeight < documentHeight - 100
     },
 
     scrollToTop() {
       window.scrollTo({ top: 0, behavior: 'smooth' })
+    },
+
+    scrollToBottom() {
+      window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' })
     },
 
     toggleLegendItem(itemKey) {
@@ -4827,7 +5052,7 @@ export default {
 /* Back to Top Button */
 .back-to-top {
   position: fixed;
-  bottom: 2rem;
+  bottom: 6.5rem;
   right: 2rem;
   width: 60px;
   height: 60px;
@@ -4862,6 +5087,46 @@ export default {
 
 .back-to-top:hover svg {
   transform: translateY(-2px);
+}
+
+/* Scroll to Bottom Button */
+.scroll-to-bottom {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, #4CAF50, #45a049);
+  border: none;
+  border-radius: 50%;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 20px rgba(76, 175, 80, 0.3);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(20px);
+  z-index: 1000;
+}
+
+.scroll-to-bottom.visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.scroll-to-bottom:hover {
+  background: linear-gradient(135deg, #45a049, #4CAF50);
+  transform: translateY(-5px) scale(1.1);
+  box-shadow: 0 8px 30px rgba(76, 175, 80, 0.4);
+}
+
+.scroll-to-bottom svg {
+  transition: transform 0.3s ease;
+}
+
+.scroll-to-bottom:hover svg {
+  transform: translateY(2px);
 }
 
 /* Hospitality hover effects */
@@ -5085,6 +5350,13 @@ export default {
   }
   
   .back-to-top {
+    width: 50px;
+    height: 50px;
+    bottom: 4.5rem;
+    right: 1rem;
+  }
+
+  .scroll-to-bottom {
     width: 50px;
     height: 50px;
     bottom: 1rem;
@@ -7626,5 +7898,311 @@ export default {
   text-align: center;
   word-break: keep-all;
   overflow-wrap: normal;
+}
+
+/* FAQ Section Styles */
+.faq-section {
+  padding: 4rem 0 8rem 0;
+  background: transparent;
+  position: relative;
+}
+
+.faq-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.faq-title {
+  font-size: 3rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 0;
+  letter-spacing: -0.02em;
+}
+
+.faq-divider {
+  width: 100%;
+  max-width: 900px;
+  height: 2px;
+  margin: 1.5rem auto;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+}
+
+.faq-divider::before,
+.faq-divider::after {
+  content: '';
+  flex: 1;
+  height: 2px;
+  background: #dc2626;
+}
+
+.faq-subtitle {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0;
+  padding: 0 2rem;
+  position: relative;
+  white-space: nowrap;
+}
+
+.faq-description {
+  font-size: 0.95rem;
+  color: #64748b;
+  max-width: 900px;
+  margin: 1rem auto 0;
+  padding: 0 2rem;
+}
+
+.faq-list {
+  max-width: 900px;
+  margin: 2rem auto 0;
+  background: transparent;
+}
+
+.faq-item {
+  background: transparent;
+  border-bottom: 2px solid transparent;
+  background-image: linear-gradient(to bottom, transparent, transparent),
+                    linear-gradient(90deg, rgba(217, 119, 6, 0.25) 0%, rgba(202, 138, 4, 0.5) 50%, rgba(217, 119, 6, 0.25) 100%);
+  background-size: 100% calc(100% - 2px), 100% 2px;
+  background-position: 0 0, 0 100%;
+  background-repeat: no-repeat;
+  transition: all 0.3s ease;
+}
+
+.faq-item:last-child {
+  background-image: linear-gradient(to bottom, transparent, transparent),
+                    linear-gradient(90deg, rgba(217, 119, 6, 0.25) 0%, rgba(202, 138, 4, 0.5) 50%, rgba(217, 119, 6, 0.25) 100%);
+  background-size: 100% calc(100% - 2px), 100% 2px;
+  background-position: 0 0, 0 100%;
+  background-repeat: no-repeat;
+}
+
+.faq-item:hover {
+  background-color: transparent;
+  background-image: linear-gradient(to bottom, transparent, transparent),
+                    linear-gradient(90deg, rgba(217, 119, 6, 0.35) 0%, rgba(202, 138, 4, 0.65) 50%, rgba(217, 119, 6, 0.35) 100%);
+}
+
+.faq-question {
+  width: 100%;
+  padding: 1.5rem 2rem;
+  background: transparent;
+  border: none;
+  text-align: left;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1e293b;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.2s ease;
+}
+
+.faq-question span {
+  flex: 1;
+  padding-right: 1rem;
+}
+
+.faq-icon {
+  flex-shrink: 0;
+  transition: transform 0.3s ease;
+  color: #64748b;
+}
+
+.faq-item.active .faq-icon {
+  transform: rotate(180deg);
+  color: #1e293b;
+}
+
+.faq-answer {
+  overflow: hidden;
+  transition: all 0.3s ease;
+  background-color: transparent;
+}
+
+.faq-answer-content {
+  padding: 0.5rem 2rem 1.5rem 2rem;
+  color: #334155;
+  font-size: 0.95rem;
+  line-height: 1.7;
+  font-weight: 500;
+}
+
+.faq-answer-content p {
+  margin: 0;
+}
+
+.faq-answer-content strong {
+  color: #1e293b;
+  font-weight: 600;
+}
+
+.faq-answer-content ul {
+  list-style-type: disc;
+}
+
+.faq-answer-content li {
+  color: #334155;
+  line-height: 1.7;
+}
+
+.faq-answer-content em {
+  font-style: italic;
+  color: #1e293b;
+}
+
+.faq-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin: 1rem 0;
+  font-size: 0.9rem;
+  background: transparent;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.faq-table thead {
+  background: linear-gradient(135deg, rgba(217, 119, 6, 0.1) 0%, rgba(202, 138, 4, 0.15) 100%);
+  border-bottom: 3px solid rgba(217, 119, 6, 0.4);
+}
+
+.faq-table th {
+  padding: 1.25rem 1rem;
+  text-align: left;
+  font-weight: 700;
+  color: #1e293b;
+  font-size: 0.95rem;
+  border-bottom: none;
+}
+
+.faq-table th:first-child {
+  border-top-left-radius: 12px;
+}
+
+.faq-table th:last-child {
+  border-top-right-radius: 12px;
+}
+
+.faq-table tbody {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+}
+
+.faq-table td {
+  padding: 1rem;
+  border-bottom: 1px solid rgba(217, 119, 6, 0.15);
+  color: #334155;
+  font-weight: 500;
+}
+
+.faq-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.faq-table tbody tr:last-child td:first-child {
+  border-bottom-left-radius: 12px;
+}
+
+.faq-table tbody tr:last-child td:last-child {
+  border-bottom-right-radius: 12px;
+}
+
+.faq-table tbody tr:hover {
+  background-color: rgba(217, 119, 6, 0.05);
+}
+
+.faq-table tbody tr:nth-child(even) {
+  background-color: rgba(248, 250, 252, 0.5);
+}
+
+.faq-table tbody tr:nth-child(even):hover {
+  background-color: rgba(217, 119, 6, 0.08);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .faq-title {
+    font-size: 2.5rem;
+  }
+
+  .faq-subtitle {
+    font-size: 1.3rem;
+  }
+
+  .faq-description {
+    padding: 0 1.5rem;
+  }
+
+  .faq-question {
+    padding: 1.25rem 1.5rem;
+    font-size: 0.95rem;
+  }
+
+  .faq-answer-content {
+    padding: 0.5rem 1.5rem 1.25rem 1.5rem;
+    font-size: 0.9rem;
+  }
+
+  .faq-table {
+    font-size: 0.85rem;
+  }
+
+  .faq-table th,
+  .faq-table td {
+    padding: 0.75rem 0.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .faq-section {
+    padding: 3rem 0 6rem 0;
+  }
+
+  .faq-title {
+    font-size: 2rem;
+  }
+
+  .faq-subtitle {
+    font-size: 1.1rem;
+    padding: 0 1rem;
+  }
+
+  .faq-description {
+    padding: 0 1rem;
+    font-size: 0.9rem;
+  }
+
+  .faq-question {
+    padding: 1rem 1.25rem;
+    font-size: 0.9rem;
+  }
+
+  .faq-answer-content {
+    padding: 0.5rem 1.25rem 1rem 1.25rem;
+    font-size: 0.85rem;
+  }
+
+  .faq-icon {
+    width: 14px;
+    height: 14px;
+  }
+
+  .faq-table {
+    font-size: 0.8rem;
+  }
+
+  .faq-table th,
+  .faq-table td {
+    padding: 0.5rem 0.35rem;
+  }
 }
 </style>

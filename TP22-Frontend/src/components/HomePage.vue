@@ -780,8 +780,8 @@ export default {
   object-fit: cover;
   filter: brightness(0.6) saturate(1.1);
   transform: scale(1.1);
-  transition: transform 15s ease-in-out;
-  animation: zoomBg 30s ease-in-out infinite alternate;
+  transition: transform 8s ease-in-out;
+  animation: zoomBg 16s ease-in-out infinite alternate;
 }
 
 @keyframes zoomBg {

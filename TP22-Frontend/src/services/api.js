@@ -206,6 +206,16 @@ export const environmentApi = {
   getAirTrend: (suburb) =>
     api.get(`/environment/air/trend`, { params: { suburb } }),
 
+
+  getTreeCardfBySuburb: (suburb) =>
+    api.get(`/environment/tree/cardf`, { params: { suburb } }),
+  getTreeCardoBySuburb: (suburb) =>
+    api.get(`/environment/tree/cardo`, { params: { suburb } }),
+  getTreeCarduBySuburb: (suburb) =>
+    api.get(`/environment/tree/cardu`, { params: { suburb } }),
+  getTreeCardrBySuburb: (suburb) =>
+    api.get(`/environment/tree/cardr`, { params: { suburb } }),
+
   getEnergyCardBySuburb: (suburb) =>
     api.get(`/environment/energy/card`,{ params: { suburb }}),
 
@@ -221,6 +231,20 @@ export const environmentApi = {
   getEnergyBlocks(suburb) {
     return api.get(`/environment/energy/map`, { params: { suburb } });
   },
+
+  getEnergyCardfBySuburb: (suburb) =>
+    api.get(`/environment/energy/cardf`, { params: { suburb } }),
+  getEnergyCardoBySuburb: (suburb) =>
+    api.get(`/environment/energy/cardo`, { params: { suburb } }),
+  getEnergyCarduBySuburb: (suburb) =>
+    api.get(`/environment/energy/cardu`, { params: { suburb } }),
+  getEnergyCardrBySuburb: (suburb) =>
+    api.get(`/environment/energy/cardr`, { params: { suburb } }),
+
+  getEnergyTrendBySuburb: (suburb) =>
+    api.get(`/environment/energy/trend`, { params: { suburb } }),
+  getEnergyTrendInsightBySuburb: (suburb) =>
+    api.get(`/environment/energy/trend/insight`, { params: { suburb } }),
 
   // Get latest indicators by suburb name
   getLatestIndicators(suburb) {

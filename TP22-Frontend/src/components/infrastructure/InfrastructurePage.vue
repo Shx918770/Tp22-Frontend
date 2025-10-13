@@ -177,7 +177,7 @@
                 :class="{ disabled: !visibleLayers.cultural }"
                 @click="toggleLayer('cultural')"
               >
-                <span class="facility-legend-icon" style="background: #a855f7"></span>
+                <span class="facility-legend-icon" style="background: #e63946"></span>
                 <span>Cultural</span>
               </button>
             </div>
@@ -546,6 +546,133 @@
         </div>
       </div>
     </section>
+
+    <!-- FAQ Section -->
+    <section class="faq-section">
+      <div class="container">
+        <div class="faq-header">
+          <h2 class="faq-title">FAQ</h2>
+          <div class="faq-divider">
+            <p class="faq-subtitle">General information</p>
+          </div>
+          <p class="faq-description">Frequently asked questions mainly relating to infrastructure sustainability indicators.</p>
+        </div>
+
+        <div class="faq-list">
+          <!-- FAQ Item 1 -->
+          <div class="faq-item" :class="{ 'active': activeFaq === 0 }">
+            <button class="faq-question" @click="toggleFaq(0)">
+              <span>How can the infrastructure map help when choosing a suburb?</span>
+              <svg class="faq-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
+                <path d="M19 9L12 16L5 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+            <div class="faq-answer" v-show="activeFaq === 0">
+              <div class="faq-answer-content">
+                <p>The map displays key infrastructure layers like public transport, cycling lanes, parking bays and cultural amenities helping users visualise accessibility and mobility options. It enables comparison between suburbs based on how well-connected and commuter-friendly they are.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- FAQ Item 2 -->
+          <div class="faq-item" :class="{ 'active': activeFaq === 1 }">
+            <button class="faq-question" @click="toggleFaq(1)">
+              <span>How does the mode distribution chart support evaluation?</span>
+              <svg class="faq-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
+                <path d="M19 9L12 16L5 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+            <div class="faq-answer" v-show="activeFaq === 1">
+              <div class="faq-answer-content">
+                <p>The mode distribution chart shows the balance between tram, bus and train stops within a suburb. A more even spread reflects a resilient transport network, while dominance by one mode can indicate limited connectivity or reliance on specific corridors.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- FAQ Item 3 -->
+          <div class="faq-item" :class="{ 'active': activeFaq === 2 }">
+            <button class="faq-question" @click="toggleFaq(2)">
+              <span>What does the Public Transport Demand Trend indicate?</span>
+              <svg class="faq-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
+                <path d="M19 9L12 16L5 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+            <div class="faq-answer" v-show="activeFaq === 2">
+              <div class="faq-answer-content">
+                <p>This trend illustrates how population growth affects public transport usage. An increasing demand ratio (more residents per stop) suggests higher crowding and pressure on existing services, while stable or declining ratios imply good transport coverage relative to growth.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- FAQ Item 4 -->
+          <div class="faq-item" :class="{ 'active': activeFaq === 3 }">
+            <button class="faq-question" @click="toggleFaq(3)">
+              <span>How should the Cycling Demand Gauge be interpreted?</span>
+              <svg class="faq-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
+                <path d="M19 9L12 16L5 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+            <div class="faq-answer" v-show="activeFaq === 3">
+              <div class="faq-answer-content">
+                <p>This metric tracks parking availability per 1,000 residents over time. A falling trend suggests rising population density or fewer new parking developments, signalling a shift toward shared transport or increased congestion in car-dependent suburbs.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- FAQ Item 5 -->
+          <div class="faq-item" :class="{ 'active': activeFaq === 4 }">
+            <button class="faq-question" @click="toggleFaq(4)">
+              <span>What does the Infrastructure Sustainability Score measure?</span>
+              <svg class="faq-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
+                <path d="M19 9L12 16L5 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+            <div class="faq-answer" v-show="activeFaq === 4">
+              <div class="faq-answer-content">
+                <p>The score reflects how balanced a suburb's infrastructure is across three domains of Public Transport, Cycling Access and Parking Availability. It highlights how effectively residents can commute, travel sustainably and access essential amenities.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- FAQ Item 6 -->
+          <div class="faq-item" :class="{ 'active': activeFaq === 5 }">
+            <button class="faq-question" @click="toggleFaq(5)">
+              <span>How is the score calculated?</span>
+              <svg class="faq-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
+                <path d="M19 9L12 16L5 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+            <div class="faq-answer" v-show="activeFaq === 5">
+              <div class="faq-answer-content">
+                <p>Scores are derived by combining three weighted domains of Public Transport (40%), Cycling Infrastructure (20%) and Parking Availability (40%) and then analysed and adjusted using coverage and balance factors.
+                  The formula ensures higher scores for suburbs that maintain accessibility across modes while discouraging imbalance (e.g., strong parking but weak cycling).
+                  Results are normalised to reflect realistic infrastructure performance across suburbs.
+                </p>
+              </div>
+            </div>
+          </div>
+          <!-- FAQ Item 7 -->
+          <div class="faq-item" :class="{ 'active': activeFaq === 6 }">
+            <button class="faq-question" @click="toggleFaq(6)">
+              <span>What benchmarks and assumptions were used?</span>
+              <svg class="faq-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
+                <path d="M19 9L12 16L5 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+            <div class="faq-answer" v-show="activeFaq === 6">
+              <div class="faq-answer-content">
+                <p>Public Transport: Optimal ratio = fewer than 250 residents per stop.</p>
+                <p>Cycling: Ideal benchmark = 20 km of lanes per 1,000 residents.</p>
+                <p>Parking: Balanced accessibility = around 250 bays per 1,000 residents.
+                  Suburbs exceeding these targets receive higher sustainability scores, indicating integrated and commuter-friendly infrastructure design.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- Score Explanation Modal -->
     <div
       v-if="showScoreExplanation"
@@ -730,6 +857,8 @@ export default {
           The Parking Demand Trend illustrates how the availability of parking bays per 1,000 residents
           changes between 2021 and 2036, reflecting the balance between transport infrastructure and car usage.`,
       },
+
+      activeFaq: null,
     }
   },
   computed: {
@@ -1024,8 +1153,7 @@ export default {
             const coords = this.parsePoint(item.geometry)
             if (!coords) return null
 
-            const fillColor =
-              item.type?.toLowerCase().includes('gallery') ? '#8B5CF6' : '#F472B6'
+            const fillColor = '#e63946'
             const iconLabel =
               item.type?.toLowerCase().includes('gallery')
                 ? '🎨 Art Gallery'
@@ -1375,6 +1503,9 @@ export default {
           }
         });
       });
+    },
+    toggleFaq(index) {
+      this.activeFaq = this.activeFaq === index ? null : index
     },
     resetMapView() {
       if (!this.map) return;
@@ -2359,6 +2490,318 @@ export default {
   -webkit-text-fill-color: transparent;
 }
 /* parking Trend Section End */
+
+
+/* faq section start */
+
+/* FAQ Section Styles */
+.faq-section {
+  padding: 4rem 0 8rem 0;
+  background: transparent;
+  position: relative;
+}
+
+.faq-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.faq-title {
+  font-size: 3rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 0;
+  letter-spacing: -0.02em;
+}
+
+.faq-divider {
+  width: 100%;
+  max-width: 900px;
+  height: 2px;
+  margin: 1.5rem auto;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+}
+
+.faq-divider::before,
+.faq-divider::after {
+  content: '';
+  flex: 1;
+  height: 2px;
+  background: #dc2626;
+}
+
+.faq-subtitle {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0;
+  padding: 0 2rem;
+  position: relative;
+  white-space: nowrap;
+}
+
+.faq-description {
+  font-size: 0.95rem;
+  color: #64748b;
+  max-width: 900px;
+  margin: 1rem auto 0;
+  padding: 0 2rem;
+}
+
+.faq-list {
+  max-width: 900px;
+  margin: 2rem auto 0;
+  background: transparent;
+}
+
+.faq-item {
+  background: transparent;
+  border-bottom: 2px solid transparent;
+  background-image: linear-gradient(to bottom, transparent, transparent),
+                    linear-gradient(90deg, rgba(217, 119, 6, 0.25) 0%, rgba(202, 138, 4, 0.5) 50%, rgba(217, 119, 6, 0.25) 100%);
+  background-size: 100% calc(100% - 2px), 100% 2px;
+  background-position: 0 0, 0 100%;
+  background-repeat: no-repeat;
+  transition: all 0.3s ease;
+}
+
+.faq-item:last-child {
+  background-image: linear-gradient(to bottom, transparent, transparent),
+                    linear-gradient(90deg, rgba(217, 119, 6, 0.25) 0%, rgba(202, 138, 4, 0.5) 50%, rgba(217, 119, 6, 0.25) 100%);
+  background-size: 100% calc(100% - 2px), 100% 2px;
+  background-position: 0 0, 0 100%;
+  background-repeat: no-repeat;
+}
+
+.faq-item:hover {
+  background-color: transparent;
+  background-image: linear-gradient(to bottom, transparent, transparent),
+                    linear-gradient(90deg, rgba(217, 119, 6, 0.35) 0%, rgba(202, 138, 4, 0.65) 50%, rgba(217, 119, 6, 0.35) 100%);
+}
+
+.faq-question {
+  width: 100%;
+  padding: 1.5rem 2rem;
+  background: transparent;
+  border: none;
+  text-align: left;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1e293b;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.2s ease;
+}
+
+.faq-question span {
+  flex: 1;
+  padding-right: 1rem;
+}
+
+.faq-icon {
+  flex-shrink: 0;
+  transition: transform 0.3s ease;
+  color: #64748b;
+}
+
+.faq-item.active .faq-icon {
+  transform: rotate(180deg);
+  color: #1e293b;
+}
+
+.faq-answer {
+  overflow: hidden;
+  transition: all 0.3s ease;
+  background-color: transparent;
+}
+
+.faq-answer-content {
+  padding: 0.5rem 2rem 1.5rem 2rem;
+  color: #334155;
+  font-size: 0.95rem;
+  line-height: 1.7;
+  font-weight: 500;
+}
+
+.faq-answer-content p {
+  margin: 0;
+}
+
+.faq-answer-content strong {
+  color: #1e293b;
+  font-weight: 600;
+}
+
+.faq-answer-content ul {
+  list-style-type: disc;
+}
+
+.faq-answer-content li {
+  color: #334155;
+  line-height: 1.7;
+}
+
+.faq-answer-content em {
+  font-style: italic;
+  color: #1e293b;
+}
+
+.faq-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin: 1rem 0;
+  font-size: 0.9rem;
+  background: transparent;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.faq-table thead {
+  background: linear-gradient(135deg, rgba(217, 119, 6, 0.1) 0%, rgba(202, 138, 4, 0.15) 100%);
+  border-bottom: 3px solid rgba(217, 119, 6, 0.4);
+}
+
+.faq-table th {
+  padding: 1.25rem 1rem;
+  text-align: left;
+  font-weight: 700;
+  color: #1e293b;
+  font-size: 0.95rem;
+  border-bottom: none;
+}
+
+.faq-table th:first-child {
+  border-top-left-radius: 12px;
+}
+
+.faq-table th:last-child {
+  border-top-right-radius: 12px;
+}
+
+.faq-table tbody {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+}
+
+.faq-table td {
+  padding: 1rem;
+  border-bottom: 1px solid rgba(217, 119, 6, 0.15);
+  color: #334155;
+  font-weight: 500;
+}
+
+.faq-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.faq-table tbody tr:last-child td:first-child {
+  border-bottom-left-radius: 12px;
+}
+
+.faq-table tbody tr:last-child td:last-child {
+  border-bottom-right-radius: 12px;
+}
+
+.faq-table tbody tr:hover {
+  background-color: rgba(217, 119, 6, 0.05);
+}
+
+.faq-table tbody tr:nth-child(even) {
+  background-color: rgba(248, 250, 252, 0.5);
+}
+
+.faq-table tbody tr:nth-child(even):hover {
+  background-color: rgba(217, 119, 6, 0.08);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .faq-title {
+    font-size: 2.5rem;
+  }
+
+  .faq-subtitle {
+    font-size: 1.3rem;
+  }
+
+  .faq-description {
+    padding: 0 1.5rem;
+  }
+
+  .faq-question {
+    padding: 1.25rem 1.5rem;
+    font-size: 0.95rem;
+  }
+
+  .faq-answer-content {
+    padding: 0.5rem 1.5rem 1.25rem 1.5rem;
+    font-size: 0.9rem;
+  }
+
+  .faq-table {
+    font-size: 0.85rem;
+  }
+
+  .faq-table th,
+  .faq-table td {
+    padding: 0.75rem 0.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .faq-section {
+    padding: 3rem 0 6rem 0;
+  }
+
+  .faq-title {
+    font-size: 2rem;
+  }
+
+  .faq-subtitle {
+    font-size: 1.1rem;
+    padding: 0 1rem;
+  }
+
+  .faq-description {
+    padding: 0 1rem;
+    font-size: 0.9rem;
+  }
+
+  .faq-question {
+    padding: 1rem 1.25rem;
+    font-size: 0.9rem;
+  }
+
+  .faq-answer-content {
+    padding: 0.5rem 1.25rem 1rem 1.25rem;
+    font-size: 0.85rem;
+  }
+
+  .faq-icon {
+    width: 14px;
+    height: 14px;
+  }
+
+  .faq-table {
+    font-size: 0.8rem;
+  }
+
+  .faq-table th,
+  .faq-table td {
+    padding: 0.5rem 0.35rem;
+  }
+}
+
+/* end of faq section */
+
 
 /* score explanation Start*/
 .modal-overlay {

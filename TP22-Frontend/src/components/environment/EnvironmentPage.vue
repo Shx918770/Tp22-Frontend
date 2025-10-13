@@ -187,34 +187,201 @@
         </div>
       </section>
 
+      <section id="tree-cards-section" class="tree-cards-section">
+        <div class="container">
+          <div class="detail-card">
+            <h2 class="section-title">Tree Sustainability Highlights</h2>
+            <p class="section-subtitle">Top-performing suburbs across multiple tree-related dimensions</p>
+
+            <div class="tree-cards-grid">
+              <!-- Card F -->
+              <div class="tree-card" v-if="treeCardF">
+                <div class="tree-card-content">
+                  <h3>{{ treeCardF.card_title }}</h3>
+                  <p class="suburb">{{ treeCardF.suburb }}</p>
+                  <p class="value">{{ treeCardF.data_value }}</p>
+                  <p class="footnote">{{ treeCardF.footnote }}</p>
+                  <p class="related">{{ treeCardF.related_data }}</p>
+                </div>
+              </div>
+
+              <!-- Card O -->
+              <div class="tree-card" v-if="treeCardO">
+                <div class="tree-card-content">
+                  <h3>{{ treeCardO.card_title }}</h3>
+                  <p class="suburb">{{ treeCardO.suburb }}</p>
+                  <p class="value">{{ treeCardO.data_value }}</p>
+                  <p class="footnote">{{ treeCardO.footnote }}</p>
+                  <p class="related">{{ treeCardO.related_data }}</p>
+                </div>
+              </div>
+
+              <!-- Card U -->
+              <div class="tree-card" v-if="treeCardU">
+                <div class="tree-card-content">
+                  <h3>{{ treeCardU.card_title }}</h3>
+                  <p class="suburb">{{ treeCardU.suburb }}</p>
+                  <p class="value">{{ treeCardU.data_value }}</p>
+                  <p class="footnote">{{ treeCardU.footnote }}</p>
+                  <p class="related">{{ treeCardU.related_data }}</p>
+                </div>
+              </div>
+
+              <!-- Card R -->
+              <div class="tree-card" v-if="treeCardR">
+                <div class="tree-card-content">
+                  <h3>{{ treeCardR.card_title }}</h3>
+                  <p class="suburb">{{ treeCardR.suburb }}</p>
+                  <p class="value">{{ treeCardR.data_value }}</p>
+                  <p class="footnote">{{ treeCardR.footnote }}</p>
+                  <p class="related">{{ treeCardR.related_data }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <!-- Energy Consumption Map -->
       <section id="energy-map-section" class="energy-map-section">
         <div class="container">
           <div class="detail-card">
             <h2 class="section-title">Block-level Energy Consumption Map (2026)</h2>
             <p class="section-subtitle">Boundaries colored by total energy consumption</p>
-
-            <l-map style="height: 400px; width: 100%;" :zoom="13" :center="mapCenter">
-              <l-tile-layer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-              <l-geo-json
-                v-if="energyBlocks"
-                :geojson="energyBlocks"
-                @ready="onGeoJsonReady"
-              />
-              <!-- Legend -->
-              <div class="legend">
-                <h4>Total Energy (2026)</h4>
-                <div><span style="background:#800026"></span> > 70,000</div>
-                <div><span style="background:#BD0026"></span> 30,001 - 70,000</div>
-                <div><span style="background:#FC4E2A"></span> 15,001 - 30,000</div>
-                <div><span style="background:#FD8D3C"></span> 5,001 - 15,000</div>
-                <div><span style="background:#FEB24C"></span> 1,001 - 5,000</div>
-                <div><span style="background:#FFEDA0"></span> 0 - 1,000</div>
-              </div>
-            </l-map>
+            <div class = "energy-map-wrapper">
+              <l-map ref="energyMapRef" style="height: 400px; width: 100%;" :zoom="15" :center="mapCenter">
+                <l-tile-layer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                <l-geo-json
+                  v-if="energyBlocks"
+                  :geojson="energyBlocks"
+                  @ready="onGeoJsonReady"
+                />
+                <!-- Legend -->
+                <div class="legend">
+                  <h4>Total Energy (2026)</h4>
+                  <div><span style="background:#800026"></span> > 70,000</div>
+                  <div><span style="background:#BD0026"></span> 30,001 - 70,000</div>
+                  <div><span style="background:#FC4E2A"></span> 15,001 - 30,000</div>
+                  <div><span style="background:#FD8D3C"></span> 5,001 - 15,000</div>
+                  <div><span style="background:#FEB24C"></span> 1,001 - 5,000</div>
+                  <div><span style="background:#FFEDA0"></span> 0 - 1,000</div>
+                </div>
+              </l-map>
+              <button class="map-reset-button" @click="resetEnergyMapView" title="Reset map view">
+                Reset
+              </button>
+            </div>
           </div>
         </div>
       </section>
+      <!-- Energy Efficiency Highlights Section -->
+      <section id="energy-cards-section" class="energy-cards-section">
+        <div class="container">
+          <div class="detail-card">
+            <h2 class="section-title">Energy Efficiency Highlights</h2>
+            <p class="section-subtitle">Suburbs leading in sustainable energy consumption and performance</p>
+
+            <div class="energy-cards-grid">
+              <!-- Card F -->
+              <div class="energy-card" v-if="energyCardF">
+                <div class="energy-card-content">
+                  <h3>{{ energyCardF.card_title }}</h3>
+                  <p class="suburb">{{ energyCardF.suburb }}</p>
+                  <p class="value">{{ energyCardF.data_value }}</p>
+                  <p class="footnote">{{ energyCardF.footnote }}</p>
+                  <p class="related">{{ energyCardF.related_data }}</p>
+                </div>
+              </div>
+
+              <!-- Card O -->
+              <div class="energy-card" v-if="energyCardO">
+                <div class="energy-card-content">
+                  <h3>{{ energyCardO.card_title }}</h3>
+                  <p class="suburb">{{ energyCardO.suburb }}</p>
+                  <p class="value">{{ energyCardO.data_value }}</p>
+                  <p class="footnote">{{ energyCardO.footnote }}</p>
+                  <p class="related">{{ energyCardO.related_data }}</p>
+                </div>
+              </div>
+
+              <!-- Card U -->
+              <div class="energy-card" v-if="energyCardU">
+                <div class="energy-card-content">
+                  <h3>{{ energyCardU.card_title }}</h3>
+                  <p class="suburb">{{ energyCardU.suburb }}</p>
+                  <p class="value">{{ energyCardU.data_value }}</p>
+                  <p class="footnote">{{ energyCardU.footnote }}</p>
+                  <p class="related">{{ energyCardU.related_data }}</p>
+                </div>
+              </div>
+
+              <!-- Card R -->
+              <div class="energy-card" v-if="energyCardR">
+                <div class="energy-card-content">
+                  <h3>{{ energyCardR.card_title }}</h3>
+                  <p class="suburb">{{ energyCardR.suburb }}</p>
+                  <p class="value">{{ energyCardR.data_value }}</p>
+                  <p class="footnote">{{ energyCardR.footnote }}</p>
+                  <p class="related">{{ energyCardR.related_data }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 📈 Energy Trend Snapshot Section -->
+      <section id="energy-trend-section" class="energy-trend-section">
+        <div class="container">
+          <div class="detail-card">
+            <h2 class="section-title">Trend Snapshot</h2>
+            <p class="section-subtitle">2011 → 2021 → 2026 total modelled consumption</p>
+
+            <!-- 上半部分趋势图 -->
+            <div class="trend-chart-wrapper">
+              <canvas ref="energyTrendChart"></canvas>
+            </div>
+
+            <!-- 中部强度信息 -->
+            <div class="trend-intensity-info">
+              <p>
+                Median per-property intensity ≈ 
+                {{ energyTrendData?.median_intensity || '-' }} Wh/m²; 
+                90<sup>th</sup>-pct ≈ 
+                {{ energyTrendData?.intensity || '-' }} Wh/m² 
+                (right-tailed distribution).
+              </p>
+              <p class="footnote">
+                *Values use the unit supplied by the dataset (converted to GWh for readability).
+              </p>
+            </div>
+          </div>
+
+          <!-- 下半部分 Insight -->
+          <div class="detail-card trend-insight-card">
+            <h3 class="insight-title">Interpretation</h3>
+            <ul class="insight-list">
+              <li>
+                <strong>Rising Energy Footprint –</strong>
+                {{ energyTrendInsight.ring_energy_footprint }}
+              </li>
+              <li>
+                <strong>Residential Share Surging –</strong>
+                {{ energyTrendInsight.residential_share_surging }}
+              </li>
+              <li>
+                <strong>Median Intensity Benchmark –</strong>
+                {{ energyTrendInsight.median_intensity_benchmark }}
+              </li>
+              <li>
+                <strong>Forward Efficiency Challenge –</strong>
+                {{ energyTrendInsight.forward_efficiency_challenge }}
+              </li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
       <!-- FAQ Section -->
       <section class="faq-section">
         <div class="container">
@@ -557,6 +724,10 @@ export default {
       airStations: [],
       latestPollutants: {},
       airTrendData: { labels: [], datasets: [] }, 
+      treeCardF: null,
+      treeCardO: null,
+      treeCardU: null,
+      treeCardR: null,
       energyTrendData: { labels: [], datasets: [] },
       residentialGauge: {               
         labels: ["Usage", "Remaining"],
@@ -574,6 +745,12 @@ export default {
         }
       },
       energyBlocks: null,
+      energyCardF: null,
+      energyCardO: null,
+      energyCardU: null,
+      energyCardR: null,
+      energyTrendData: null,
+      energyTrendInsight: {},
       activeFaq: null,
       loading: false,
       error: null
@@ -732,13 +909,16 @@ export default {
 
       try {
         await this.loadTrees(suburb);
-        await this.loadEnergyTrend(suburb);
         await this.loadEnergyBlocks(suburb);
         await this.loadAirTrend(suburb);
         await this.loadAirQuality(suburb);
         await this.loadTreeCard(suburb);
         await this.loadEnergyCardScore(suburb);
         await this.fetchEnvironmentScore(suburb);
+        await this.loadTreeExtraCards(suburb);
+        await this.loadEnergyExtraCards(suburb);
+        await this.loadEnergyTrend(suburb);
+        await this.loadEnergyTrendInsight(suburb);
       } catch (e) {
         console.error("Failed to load environmental data", e);
         this.error = `Failed to load data for ${suburb}`;
@@ -808,6 +988,24 @@ export default {
         }
       } catch (error) {
         console.error("fail to get the data of trees:", error)
+      }
+    },
+
+    async loadTreeExtraCards(suburb) {
+      try {
+        const [fRes, oRes, uRes, rRes] = await Promise.all([
+          environmentApi.getTreeCardfBySuburb(suburb),
+          environmentApi.getTreeCardoBySuburb(suburb),
+          environmentApi.getTreeCarduBySuburb(suburb),
+          environmentApi.getTreeCardrBySuburb(suburb)
+        ]);
+
+        this.treeCardF = fRes.data?.data || null;
+        this.treeCardO = oRes.data?.data || null;
+        this.treeCardU = uRes.data?.data || null;
+        this.treeCardR = rRes.data?.data || null;
+      } catch (e) {
+        console.error("Failed to load extra tree cards:", e);
       }
     },
 
@@ -934,50 +1132,21 @@ export default {
       }
     },
 
-    async loadEnergyTrend(suburb) {
+    async loadEnergyExtraCards(suburb) {
       try {
-        const res = await environmentApi.getEnergyTrend(suburb);
-        const allData = res.data?.data || [];
+        const [fRes, oRes, uRes, rRes] = await Promise.all([
+          environmentApi.getEnergyCardfBySuburb(suburb),
+          environmentApi.getEnergyCardoBySuburb(suburb),
+          environmentApi.getEnergyCarduBySuburb(suburb),
+          environmentApi.getEnergyCardrBySuburb(suburb)
+        ]);
 
-        //avg
-        const avg = (arr) => arr.reduce((a, b) => a + b, 0) / arr.length;
-
-        const totals2011 = allData.map(d => d.total_2011 || 0);
-        const totals2016 = allData.map(d => d.total_2016 || 0);
-        const totals2021 = allData.map(d => d.total_2021 || 0);
-        const totals2026 = allData.map(d => d.total_2026 || 0);
-
-        this.energyTrendData = {
-          labels: ["2011", "2016", "2021", "2026"],
-          datasets: [{
-            label: "Energy Consumption(Average)",
-            data: [
-              avg(totals2011),
-              avg(totals2016),
-              avg(totals2021),
-              avg(totals2026)
-            ],
-            borderColor: "#4CAF50",
-            backgroundColor: "rgba(76, 175, 80, 0.2)",
-            fill: true
-          }]
-        };
-        this.residentialGauge = {
-          labels: ["Usage", "Remaining"],
-          datasets: [{
-            data: [47, 53],
-            backgroundColor: ["#4CAF50", "#e0e0e0"]
-          }]
-        };
-        this.commercialGauge = {
-          labels: ["Usage", "Remaining"],
-          datasets: [{
-            data: [47, 53],
-            backgroundColor: ["#2196F3", "#e0e0e0"]
-          }]
-        };
+        this.energyCardF = fRes.data?.data || null;
+        this.energyCardO = oRes.data?.data || null;
+        this.energyCardU = uRes.data?.data || null;
+        this.energyCardR = rRes.data?.data || null;
       } catch (e) {
-        console.error("Failed to load energy trend", e);
+        console.error("Failed to load extra energy cards:", e);
       }
     },
 
@@ -1003,6 +1172,72 @@ export default {
       `);
     },
 
+    async loadEnergyTrend(suburb) {
+      try {
+        const res = await environmentApi.getEnergyTrendBySuburb(suburb);
+        this.energyTrendData = res.data?.data || null;
+
+        // 渲染折线图
+        if (this.energyTrendData) {
+          this.$nextTick(() => this.renderEnergyTrendChart());
+        }
+      } catch (e) {
+        console.error("Failed to load energy trend data:", e);
+      }
+    },
+
+    async loadEnergyTrendInsight(suburb) {
+      try {
+        const res = await environmentApi.getEnergyTrendInsightBySuburb(suburb);
+        this.energyTrendInsight = res.data?.data || {};
+      } catch (e) {
+        console.error("Failed to load energy trend insight:", e);
+      }
+    },
+
+    renderEnergyTrendChart() {
+      const ctx = this.$refs.energyTrendChart.getContext("2d");
+      if (this.energyTrendChart) this.energyTrendChart.destroy();
+
+      this.energyTrendChart = new ChartJS(ctx, {
+        type: "line",
+        data: {
+          labels: ["2011", "2021", "2026"],
+          datasets: [
+            {
+              label: "Total Energy Consumption (GWh)",
+              data: [
+                this.energyTrendData["2011_total"],
+                this.energyTrendData["2021_total"],
+                this.energyTrendData["2026_total"]
+              ],
+              borderColor: "#2196F3",
+              backgroundColor: "rgba(33,150,243,0.15)",
+              borderWidth: 2,
+              fill: true,
+              tension: 0.3,
+              pointRadius: 4,
+              pointBackgroundColor: "#2196F3"
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { grid: { color: "#eee" } },
+            y: {
+              beginAtZero: true,
+              grid: { color: "#eee" },
+              ticks: { callback: v => v.toFixed(2) }
+            }
+          }
+        }
+      });
+    },
+
+
     toggleTreeDetail() {
       this.$nextTick(() => {
         document
@@ -1024,6 +1259,16 @@ export default {
           .getElementById("energy-map-section")
           ?.scrollIntoView({ behavior: "smooth" });
       });
+    },
+    resetEnergyMapView() {
+      try {
+        const map = this.$refs.energyMapRef?.leafletObject;
+        if (map) {
+          map.setView(this.mapCenter, 15, { animate: true });
+        }
+      } catch (e) {
+        console.warn("Failed to reset energy map view:", e);
+      }
     },
     toggleFaq(index) {
       this.activeFaq = this.activeFaq === index ? null : index
@@ -1159,6 +1404,70 @@ export default {
   min-height: 100vh;
   overflow-x: hidden;
 }
+
+/* four tree card */
+.tree-cards-section {
+  margin-top: 3rem;
+  padding: 2rem 0 4rem 0;
+}
+
+.tree-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+  justify-items: center;
+}
+
+.tree-card {
+  background: #fff;
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+  text-align: center;
+  transition: all 0.3s ease;
+  width: 100%;
+  max-width: 450px;
+}
+
+.tree-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.12);
+}
+
+.tree-card-content h3 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+}
+
+.tree-card-content p {
+  margin: 0.3rem 0;
+  font-size: 1rem;
+  color: #555;
+}
+
+.tree-card-content .suburb {
+  font-weight: 700;
+  color: #00796B;
+}
+
+.tree-card-content .value {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #4CAF50;
+}
+
+.tree-card-content .footnote {
+  color: #999;
+  font-size: 0.9rem;
+}
+
+.tree-card-content .related {
+  font-style: italic;
+  color: #666;
+}
+/* end of four tree card */
 
 /* Dynamic Environmental Background */
 .dynamic-background {
@@ -1547,6 +1856,32 @@ export default {
   border: 1px solid #999;
 }
 
+.energy-map-wrapper {
+  position: relative;
+}
+
+.map-reset-button {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: rgba(255, 255, 255, 0.85);
+  color: #1e293b;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  padding: 6px 14px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  backdrop-filter: blur(4px);
+  z-index: 999;
+}
+.map-reset-button:hover {
+  background: rgba(59, 130, 246, 0.15);
+  color: #2563eb;
+  transform: scale(1.05);
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .nav-container {
@@ -1691,6 +2026,123 @@ export default {
   transform: translateY(-2px);
   box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4);
 }
+
+/* energy four card */
+.energy-cards-section {
+  margin-top: 3rem;
+  padding: 2rem 0 5rem 0;
+}
+
+.energy-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+  justify-items: center;
+}
+
+.energy-card {
+  background: #fff;
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  text-align: center;
+  transition: all 0.3s ease;
+  width: 100%;
+  max-width: 450px;
+}
+
+.energy-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12);
+}
+
+.energy-card-content h3 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+}
+
+.energy-card-content p {
+  margin: 0.3rem 0;
+  font-size: 1rem;
+  color: #555;
+}
+
+.energy-card-content .suburb {
+  font-weight: 700;
+  color: #1565C0;
+}
+
+.energy-card-content .value {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #2196F3;
+}
+
+.energy-card-content .footnote {
+  color: #999;
+  font-size: 0.9rem;
+}
+
+.energy-card-content .related {
+  font-style: italic;
+  color: #666;
+}
+/* end of energy four card */
+
+/* start of energy trend */
+.energy-trend-section {
+  margin-top: 3rem;
+  padding-bottom: 5rem;
+}
+
+.trend-chart-wrapper {
+  position: relative;
+  height: 300px;
+  margin-top: 1rem;
+}
+
+.trend-intensity-info {
+  margin-top: 1.2rem;
+  font-size: 0.95rem;
+  color: #374151;
+}
+
+.trend-intensity-info .footnote {
+  color: #888;
+  font-size: 0.85rem;
+  margin-top: 0.3rem;
+  font-style: italic;
+}
+
+.trend-insight-card {
+  margin-top: 2rem;
+}
+
+.insight-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 0.8rem;
+}
+
+.insight-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.insight-list li {
+  padding: 0.4rem 0;
+  font-size: 1rem;
+  color: #374151;
+}
+
+.insight-list li strong {
+  color: #111827;
+}
+/* end of energy trend */
 
 /* FAQ Section Styles */
 .faq-section {

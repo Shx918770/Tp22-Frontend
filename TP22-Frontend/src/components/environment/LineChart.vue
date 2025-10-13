@@ -49,7 +49,7 @@ export default {
             position: "left",
             title: {
               display: true,
-              text: "Number of Trees Planted",
+              text: "Trees Count",
             },
             ticks: { color: "#4CAF50" },
           },

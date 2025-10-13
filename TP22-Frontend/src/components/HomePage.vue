@@ -3,9 +3,14 @@
     <!-- Header/Hero Section -->
     <header class="hero-section full-height">
       <div class="hero-bg">
-        <img
+        <!-- <img
           src="https://images.unsplash.com/photo-1514395462725-fb4566210144?q=80&w=2071&auto=format&fit=crop"
           alt="Melbourne CBD skyline view"
+          class="hero-bg-img"
+        /> -->
+        <img
+          src="/img/mel-city.png"
+          alt="Melbourne city skyline"
           class="hero-bg-img"
         />
       </div>

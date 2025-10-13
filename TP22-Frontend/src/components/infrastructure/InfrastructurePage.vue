@@ -113,20 +113,37 @@
       </div>
 
     </div>
-    <div class="map-container">
-      <div class="map-area">
-        <div id="map" class="map"></div>
-        <button 
-          class="map-reset-button"
-          @click="resetMapView"
-          title="Reset map view"
-        >
-          Reset
-        </button>
-      </div>
-        <div class="map-legend">
-          <h4>Facility Legend</h4>
-          <div class="legend-items">
+    <!-- Map & Legend Section -->
+    <section id="map-section" class="map-section">
+      <div class="container map-section-container">
+        <!-- Map Section Header -->
+        <div class="map-section-header">
+          <h2>
+            Infrastructure Facilities Map
+            <button
+              class="info-btn"
+              @click="showSectionInfo = 'mapSection'"
+              title="About this section"
+            >?</button>
+          </h2>
+          <p>Visual overview of public transport, cycling, parking and cultural facilities in the selected suburb.</p>
+        </div>
+
+        <!-- Map & Legend Layout -->
+        <div class="map-container">
+          <div class="map-area">
+            <div id="map" class="map"></div>
+            <button 
+              class="map-reset-button"
+              @click="resetMapView"
+              title="Reset map view"
+            >
+              Reset
+            </button>
+          </div>
+
+          <div class="map-legend">
+            <h4>Facility Legend</h4>
             <div class="legend-items">
               <button
                 class="legend-item"
@@ -154,6 +171,7 @@
                 <span class="facility-legend-icon" style="background: #FF9800"></span>
                 <span>Parking</span>
               </button>
+
               <button
                 class="legend-item"
                 :class="{ disabled: !visibleLayers.cultural }"
@@ -165,13 +183,17 @@
             </div>
           </div>
         </div>
-    </div>
+      </div>
+    </section>
 
     <!-- Public Transport Facilities Section -->
     <section id="public-transport-detail" class="public-transport-detail">
       <div class="container">
         <div class="detail-header">
-          <h2>Public Transport Facilities</h2>
+          <h2>
+            Public Transport Facilities
+            <button class="info-btn" @click="showSectionInfo = 'transportFacilities'" title="About this section">?</button>
+          </h2>
           <p>Comprehensive overview of transport modes and stops in the suburb</p>
         </div>
 
@@ -239,7 +261,10 @@
     <section id="pt-trend" class="pt-trend">
       <div class="container pt-trend-container">
         <div class="pt-trend-header">
-          <h2>Public Transport Demand Trend</h2>
+          <h2>
+            Public Transport Demand Trend
+            <button class="info-btn" @click="showSectionInfo = 'transportTrend'" title="About this section">?</button>
+          </h2>
           <p>Demand ratio over time and the latest insight for this suburb</p>
         </div>
 
@@ -304,7 +329,10 @@
     <section id="cy-trend" class="cy-trend">
       <div class="container cy-trend-container">
         <div class="cy-trend-header">
-          <h2>Cycling Demand Trend(Gauge)</h2>
+          <h2>
+            Cycling Demand Trend(Gauge)
+            <button class="info-btn" @click="showSectionInfo = 'cyclingTrend'" title="About this section">?</button>
+          </h2>
           <p>Demand ratio over time and the latest cycling insight for this suburb</p>
         </div>
 
@@ -453,7 +481,10 @@
     <section id="pk-trend" class="pk-trend">
       <div class="container pt-trend-container">
         <div class="pt-trend-header">
-          <h2>Parking Demand Trend</h2>
+          <h2>
+            Parking Demand Trend
+            <button class="info-btn" @click="showSectionInfo = 'parkingTrend'" title="About this section">?</button>
+          </h2>
           <p>Demand ratio over time and the latest parking insight for this suburb</p>
         </div>
 
@@ -560,6 +591,33 @@
         </div>
       </div>
     </div>
+    <!-- Section Info Modal -->
+    <div
+      v-if="showSectionInfo"
+      class="modal-overlay"
+      @click="showSectionInfo = null"
+    >
+      <div class="modal-content" @click.stop>
+        <div class="modal-header">
+          <h3>Section Description</h3>
+          <button class="modal-close" @click="showSectionInfo = null">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <path
+                d="M18 6L6 18M6 6l12 12"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+              />
+            </svg>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p class="info-text">
+            {{ sectionDescriptions[showSectionInfo] }}
+          </p>
+        </div>
+      </div>
+    </div>
     <button class="back-to-top" @click="scrollToTop" :class="{ 'visible': showBackToTop }">
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
         <path d="M7 14L12 9L17 14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -650,7 +708,28 @@ export default {
       currentFilter: 'all',
       stopFilter: 'all',
       loading: false,
-      error: null
+      error: null,
+
+      showSectionInfo: null,
+      sectionDescriptions: {
+        mapSection: `
+          This section displays a dynamic map showing the distribution of all infrastructure facilities,
+          including public transport stops, cycling lanes, parking areas, and cultural locations.
+          You can toggle each facility type on or off using the legend, or reset the map view anytime.`,
+        transportFacilities: `
+          This section provides an overview of all public transport facilities in the selected suburb,
+          including train stations, tram stops, and bus stops. You can filter by mode and view details
+          of each stop such as its name, type, and locality.`,
+        transportTrend: `
+          The Public Transport Demand Trend shows how demand ratios for public transport evolve
+          from 2021 to 2036, helping understand growth in transport usage and accessibility needs.`,
+        cyclingTrend: `
+          The Cycling Demand Trend (Gauge) visualizes the ratio of cycling lane length per 1,000 residents.
+          It indicates how cycling infrastructure scales with population growth over time.`,
+        parkingTrend: `
+          The Parking Demand Trend illustrates how the availability of parking bays per 1,000 residents
+          changes between 2021 and 2036, reflecting the balance between transport infrastructure and car usage.`,
+      },
     }
   },
   computed: {
@@ -1639,6 +1718,40 @@ export default {
 /* Bubble card styles end */
 
 /* for map start */
+/* === Map Section Title === */
+.map-section {
+  padding-top: 5rem;
+  padding-bottom: 4rem;
+}
+
+.map-section-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.map-section-header h2 {
+  font-size: 2.8rem;
+  font-weight: 900;
+  color: #1e293b;
+  margin-bottom: 1rem;
+  background: linear-gradient(135deg, #1e293b 0%, #22c55e 40%, #3b82f6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.map-section-header p {
+  color: #475569;
+  font-size: 1.2rem;
+  font-weight: 500;
+  max-width: 700px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
 
 :deep(.marker-circle) {
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
@@ -2349,6 +2462,53 @@ export default {
 }
 
 /* .explanation end */
+
+/* section description start */
+.info-btn {
+  background: none;
+  border: none;
+  color: #3b82f6;
+  font-weight: bold;
+  font-size: 1.1rem;
+  margin-left: 8px;
+  cursor: pointer;
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+.info-btn:hover {
+  background: none;
+  border: none;
+  color: #2563eb;
+  font-weight: bold;
+  font-size: 2rem;
+  margin-left: 8px;
+  cursor: pointer;
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.info-text {
+  font-size: 1rem;
+  color: #334155;
+  line-height: 1.6;
+  background: rgba(248, 250, 252, 0.7);
+  padding: 1rem 1.2rem;
+  border-radius: 12px;
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+/* section description end*/
 
 /* button for back top */
 .back-to-top {

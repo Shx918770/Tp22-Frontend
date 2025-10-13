@@ -4,8 +4,8 @@
     <header class="hero-section full-height">
       <div class="hero-bg">
         <img
-          src="/img/mel-city-night.png"
-          alt="Melbourne city night view"
+          src="https://images.unsplash.com/photo-1514395462725-fb4566210144?q=80&w=2071&auto=format&fit=crop"
+          alt="Melbourne CBD skyline view"
           class="hero-bg-img"
         />
       </div>
@@ -52,101 +52,109 @@
       </div>
     </header>
 
-    <!-- How to Use Section -->
-    <section class="how-to-use full-height">
-      <div class="how-container">
-        <h1 class="how-title">🌿 How to Explore Sustainability in Melbourne</h1>
+    <!-- How to Use & Why Choose MelSustain Section -->
+    <section class="guide-section full-height">
+      <div class="guide-container">
+        <!-- How to Use Steps -->
+        <div class="steps-section">
+          <div class="section-header">
+            <h1 class="module-title">How to Explore Sustainability in Melbourne</h1>
+            <p class="module-subtitle">Navigate through our platform effortlessly to find your ideal eco-friendly community</p>
+          </div>
+          
+          <h2 class="section-sub-title">Three Simple Steps</h2>
+          <div class="steps-grid">
+            <!-- Step 1 -->
+            <div class="step-card" data-step="1">
+              <div class="step-icon-wrapper">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" class="step-icon">
+                  <path d="M3 9L12 2L21 9V20C21 20.5304 20.7893 21.0391 20.4142 21.4142C20.0391 21.7893 19.5304 22 19 22H5C4.46957 22 3.96086 21.7893 3.58579 21.4142C3.21071 21.0391 3 20.5304 3 20V9Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M9 22V12H15V22" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <div class="step-number">1</div>
+              </div>
+              <h3 class="step-title">Choose a Suburb</h3>
+              <p class="step-desc">
+                Scroll down or use the search bar on the homepage to explore Melbourne suburbs. Click a suburb card to view its <span class="highlight-text">Sustainability Overview</span>, including Environmental, Infrastructure, and Social insights.
+              </p>
+            </div>
 
-        <div class="steps">
-          <!-- Step 1 -->
-          <div class="step">
-            <div class="step-number">1</div>
-            <h2 class="step-title">Choose a Suburb</h2>
-            <p class="step-desc">
-              Scroll down or use the search bar on the homepage to explore Melbourne suburbs.
-              Click a suburb card to view its <strong>Sustainability Overview</strong>, including Environmental, Infrastructure, and Social insights.
-            </p>
-            <!-- <img src="/img/guide-step1.png" alt="Choose a suburb" class="step-img" /> -->
+            <!-- Step 2 -->
+            <div class="step-card" data-step="2">
+              <div class="step-icon-wrapper">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" class="step-icon">
+                  <path d="M2 3H8C9.06087 3 10.0783 3.42143 10.8284 4.17157C11.5786 4.92172 12 5.93913 12 7V21C12 20.2044 11.6839 19.4413 11.1213 18.8787C10.5587 18.3161 9.79565 18 9 18H2V3Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M22 3H16C14.9391 3 13.9217 3.42143 13.1716 4.17157C12.4214 4.92172 12 5.93913 12 7V21C12 20.2044 12.3161 19.4413 12.8787 18.8787C13.4413 18.3161 14.2044 18 15 18H22V3Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <div class="step-number">2</div>
+              </div>
+              <h3 class="step-title">Dive into Details</h3>
+              <p class="step-desc">
+                On each suburb page, navigate between <span class="highlight-text">Environment</span>, <span class="highlight-text">Infrastructure</span>, and <span class="highlight-text">Social</span> tabs to explore detailed data - such as air quality, tree coverage, public transport, and community facilities.
+              </p>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="step-card" data-step="3">
+              <div class="step-icon-wrapper">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" class="step-icon">
+                  <path d="M9 11L12 14L22 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M21 12V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <div class="step-number">3</div>
+              </div>
+              <h3 class="step-title">Compare Suburbs</h3>
+              <p class="step-desc">
+                Open the <span class="highlight-text">Compare</span> page from the top navigation bar. Select two suburbs and click <span class="highlight-text">"Compare Suburbs"</span> to see a side-by-side sustainability comparison.
+              </p>
+            </div>
           </div>
 
-          <!-- Step 2 -->
-          <div class="step">
-            <div class="step-number">2</div>
-            <h2 class="step-title">Dive into Details</h2>
-            <p class="step-desc">
-              On each suburb page, navigate between <strong>Environment 🌿</strong>, <strong>Infrastructure 🚧</strong>, 
-              and <strong>Social 🏙️</strong> tabs to explore detailed data — 
-              such as air quality, tree coverage, public transport, and community facilities.
-            </p>
-            <!-- <img src="/img/guide-step2.png" alt="View details" class="step-img" /> -->
-          </div>
-
-          <!-- Step 3 -->
-          <div class="step">
-            <div class="step-number">3</div>
-            <h2 class="step-title">Compare Suburbs</h2>
-            <p class="step-desc">
-              Open the <strong>Compare</strong> page from the top navigation bar.
-              Select two suburbs and click <strong>“⚖️ Compare Suburbs”</strong> to see a side-by-side sustainability comparison.
-            </p>
-            <!-- <img src="/img/guide-step3.png" alt="Compare suburbs" class="step-img" /> -->
+          <!-- Call to Action for How to Use -->
+          <div class="guide-cta">
+            <button @click="scrollToTop" class="start-exploring-btn">
+              <span>Start Exploring Now</span>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
           </div>
         </div>
-      </div>
-    </section>
 
+        <!-- Divider -->
+        <div class="section-divider"></div>
 
-    <!-- Why Choose MelSustain Section -->
-    <section class="why-section">
-      <div class="container">
-        <h2 class="section-title">Why Choose MelSustain?</h2>
-        <p class="section-description">
-          Empowering Melbourne families with comprehensive sustainability data for smarter housing decisions.
-        </p>
-        
-        <div class="feature-cards">
-          <!-- Why MelSustain -->
-          <div class="feature-card">
-            <div class="feature-icon why-icon">
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
-                <path d="M9 21H15M10 17H14M12 2C8.13 2 5 5.13 5 9C5 11.39 6.22 13.47 8.06 14.74C8.55 15.07 9 15.5 9 16V18H15V16C15 15.5 15.45 15.07 15.94 14.74C17.78 13.47 19 11.39 19 9C19 5.13 15.87 2 12 2Z" stroke="currentColor" stroke-width="2"/>
-              </svg>
-            </div>
-            <h3>Why MelSustain</h3>
-            <p>
-              The first comprehensive platform dedicated to Melbourne's suburban sustainability data, 
-              helping families make environmentally conscious housing choices with confidence and clarity.
-            </p>
+        <!-- Why Choose Section -->
+        <div class="why-section">
+          <div class="section-header">
+            <h1 class="module-title">Why Choose MelSustain?</h1>
+            <p class="module-subtitle">Empowering Melbourne families with comprehensive sustainability data for smarter housing decisions</p>
           </div>
-          <!-- How It Works -->
-          <div class="feature-card">
-            <div class="feature-icon how-icon">
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
-                <path d="M12 15.5C13.3807 15.5 14.5 14.3807 14.5 13C14.5 11.6193 13.3807 10.5 12 10.5C10.6193 10.5 9.5 11.6193 9.5 13C9.5 14.3807 10.6193 15.5 12 15.5Z" stroke="currentColor" stroke-width="2"/>
-                <path d="M19.4 15A7.963 7.963 0 0020 13C20 8.58 16.42 5 12 5C7.58 5 4 8.58 4 13C4 14.48 4.43 15.85 5.2 17L3 21L7 18.8C8.15 19.57 9.52 20 11 20C15.42 20 19 16.42 19 12" stroke="currentColor" stroke-width="2"/>
-              </svg>
+          
+          <div class="feature-cards">
+            <!-- Feature 1 -->
+            <div class="feature-card" data-feature="1">
+              <h3>Why MelSustain</h3>
+              <p>
+                The first comprehensive platform dedicated to Melbourne's suburban sustainability data, helping families make environmentally conscious housing choices with confidence and clarity.
+              </p>
             </div>
-            <h3>How It Works</h3>
-            <p>
-              Simply search for suburbs, explore detailed sustainability profiles, or compare multiple 
-              locations side-by-side. Our intuitive platform makes complex environmental data accessible and actionable.
-            </p>
-          </div>
-          <!-- Benefits for Families -->
-          <div class="feature-card">
-            <div class="feature-icon family-icon">
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
-                <path d="M12 7C13.6569 7 15 5.65685 15 4C15 2.34315 13.6569 1 12 1C10.3431 1 9 2.34315 9 4C9 5.65685 10.3431 7 12 7Z" stroke="currentColor" stroke-width="2"/>
-                <path d="M17 21V19C17 17.3431 15.6569 16 14 16H10C8.34315 16 7 17.3431 7 19V21" stroke="currentColor" stroke-width="2"/>
-                <path d="M4 21V19C4 16.7909 5.79086 15 8 15H9" stroke="currentColor" stroke-width="2"/>
-                <path d="M20 21V19C20 16.7909 18.2091 15 16 15H15" stroke="currentColor" stroke-width="2"/>
-              </svg>
+
+            <!-- Feature 2 -->
+            <div class="feature-card" data-feature="2">
+              <h3>How It Works</h3>
+              <p>
+                Simply search for suburbs, explore detailed sustainability profiles, or compare multiple locations side-by-side. Our intuitive platform makes complex environmental data accessible and actionable.
+              </p>
             </div>
-            <h3>Benefits for Families</h3>
-            <p>
-              Make informed decisions that align with your values. Find suburbs with excellent public transport, 
-              green spaces, energy efficiency, and environmental sustainability for your family's future.
-            </p>
+
+            <!-- Feature 3 -->
+            <div class="feature-card" data-feature="3">
+              <h3>Benefits for Families</h3>
+              <p>
+                Make informed decisions that align with your values. Find suburbs with excellent public transport, green spaces, energy efficiency, and environmental sustainability for your family's future.
+              </p>
+            </div>
           </div>
         </div>
       </div>
@@ -550,6 +558,13 @@ export default {
           block: 'start'
         });
       }
+    },
+
+    scrollToTop() {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
     },
 
     viewSuburbDetails(suburbName) {
@@ -1067,96 +1082,657 @@ export default {
   }
 }
 
-/* --- How to Use Section --- */
-.how-to-use {
-  height: 100vh;
+/* --- Guide Section (How to Use + Why Choose) --- */
+.guide-section {
+  min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(to bottom right, #f0fdf4, #ffffff);
+  background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 50%, #e8f5e9 100%);
+  background-size: 400% 400%;
+  animation: gradientShift 20s ease infinite;
   position: relative;
   text-align: center;
-  padding: 4rem 2rem;
+  padding: 6rem 2rem;
+  overflow: hidden;
 }
 
-.how-container {
-  max-width: 1100px;
+@keyframes gradientShift {
+  0%, 100% { 
+    background-position: 0% 50%;
+  }
+  50% { 
+    background-position: 100% 50%;
+  }
 }
 
-.how-title {
-  font-size: 3rem;
+.guide-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    repeating-linear-gradient(45deg, transparent, transparent 35px, rgba(76, 175, 80, 0.03) 35px, rgba(76, 175, 80, 0.03) 70px),
+    repeating-linear-gradient(-45deg, transparent, transparent 35px, rgba(129, 199, 132, 0.03) 35px, rgba(129, 199, 132, 0.03) 70px),
+    radial-gradient(circle at 20% 30%, rgba(76, 175, 80, 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 80% 70%, rgba(129, 199, 132, 0.08) 0%, transparent 50%);
+  animation: patternFloat 30s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes patternFloat {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 1;
+  }
+  50% {
+    transform: translateY(-20px) rotate(2deg);
+    opacity: 0.8;
+  }
+}
+
+.guide-section::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    radial-gradient(circle at 15% 20%, rgba(102, 187, 106, 0.15) 8px, transparent 8px),
+    radial-gradient(circle at 85% 80%, rgba(139, 195, 74, 0.12) 6px, transparent 6px),
+    radial-gradient(circle at 45% 50%, rgba(76, 175, 80, 0.1) 5px, transparent 5px),
+    radial-gradient(circle at 70% 25%, rgba(129, 199, 132, 0.13) 7px, transparent 7px),
+    radial-gradient(circle at 25% 75%, rgba(165, 214, 167, 0.11) 6px, transparent 6px),
+    linear-gradient(90deg, transparent 49.5%, rgba(76, 175, 80, 0.02) 49.5%, rgba(76, 175, 80, 0.02) 50.5%, transparent 50.5%),
+    linear-gradient(0deg, transparent 49.5%, rgba(76, 175, 80, 0.02) 49.5%, rgba(76, 175, 80, 0.02) 50.5%, transparent 50.5%);
+  background-size: 
+    400px 400px,
+    500px 500px,
+    350px 350px,
+    450px 450px,
+    380px 380px,
+    80px 80px,
+    80px 80px;
+  background-position: 
+    0 0,
+    200px 200px,
+    100px 100px,
+    300px 50px,
+    50px 300px,
+    0 0,
+    0 0;
+  animation: leafPattern 40s linear infinite;
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+@keyframes leafPattern {
+  0% {
+    background-position: 
+      0 0,
+      200px 200px,
+      100px 100px,
+      300px 50px,
+      50px 300px,
+      0 0,
+      0 0;
+  }
+  100% {
+    background-position: 
+      400px 400px,
+      600px 600px,
+      500px 500px,
+      750px 450px,
+      450px 700px,
+      80px 80px,
+      80px 80px;
+  }
+}
+
+.guide-container {
+  max-width: 1300px;
+  width: 100%;
+  position: relative;
+  z-index: 1;
+}
+
+/* Section Header */
+.section-header {
+  margin-bottom: 4rem;
+  animation: fadeInDown 1s ease-out;
+}
+
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.module-title {
+  font-size: 3.5rem;
+  font-weight: 900;
+  background: linear-gradient(135deg, #1b5e20 0%, #388e3c 30%, #66bb6a 70%, #81c784 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 1rem;
+  line-height: 1.2;
+  letter-spacing: -1px;
+  background-size: 200% auto;
+  animation: shimmerText 8s ease-in-out infinite;
+}
+
+@keyframes shimmerText {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+.module-subtitle {
+  font-size: 1.25rem;
+  color: #4a6e4f;
+  font-weight: 500;
+  max-width: 750px;
+  margin: 0 auto;
+  line-height: 1.6;
+  opacity: 0.9;
+}
+
+/* Steps Section */
+.steps-section {
+  margin-bottom: 6rem;
+}
+
+.section-sub-title {
+  font-size: 2.5rem;
   font-weight: 800;
-  color: #1b5e20;
+  background: linear-gradient(120deg, #1976d2 0%, #42a5f5 50%, #64b5f6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
   margin-bottom: 3rem;
+  position: relative;
+  display: inline-block;
 }
 
-.steps {
-  display: flex;
-  justify-content: space-around;
-  flex-wrap: wrap;
-  gap: 2rem;
+.section-sub-title::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 4px;
+  background: linear-gradient(90deg, #42a5f5, #64b5f6, #90caf9);
+  border-radius: 2px;
+  box-shadow: 0 2px 8px rgba(66, 165, 245, 0.3);
 }
 
-.step {
-  flex: 1 1 300px;
-  background: #fff;
-  border-radius: 20px;
-  padding: 2rem 1.5rem;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+.steps-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 2.5rem;
+  margin-top: 3rem;
 }
 
-.step:hover {
-  transform: translateY(-10px);
-  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.12);
+/* Step Cards */
+.step-card {
+  position: relative;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.3) 100%);
+  backdrop-filter: blur(50px) saturate(200%);
+  -webkit-backdrop-filter: blur(50px) saturate(200%);
+  border-radius: 24px;
+  padding: 3rem 2.8rem;
+  box-shadow: 
+    0 8px 40px rgba(76, 175, 80, 0.15),
+    0 4px 20px rgba(76, 175, 80, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  overflow: visible;
+  animation: fadeInUp 0.8s ease-out backwards;
+}
+
+.step-card[data-step="1"] { animation-delay: 0.1s; }
+.step-card[data-step="2"] { animation-delay: 0.2s; }
+.step-card[data-step="3"] { animation-delay: 0.3s; }
+
+/* Step Icon Wrapper */
+.step-icon-wrapper {
+  position: relative;
+  width: 90px;
+  height: 90px;
+  margin: 0 auto 2rem;
+}
+
+.step-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.step-card[data-step="1"] .step-icon {
+  color: #4caf50;
+  filter: drop-shadow(0 2px 8px rgba(76, 175, 80, 0.3));
+}
+
+.step-card[data-step="2"] .step-icon {
+  color: #2196f3;
+  filter: drop-shadow(0 2px 8px rgba(33, 150, 243, 0.3));
+}
+
+.step-card[data-step="3"] .step-icon {
+  color: #9c27b0;
+  filter: drop-shadow(0 2px 8px rgba(156, 39, 176, 0.3));
 }
 
 .step-number {
-  width: 65px;
-  height: 65px;
+  position: absolute;
+  bottom: -10px;
+  right: -10px;
+  width: 45px;
+  height: 45px;
   border-radius: 50%;
-  background: #4caf50;
   color: white;
-  font-size: 1.8rem;
-  font-weight: 700;
-  margin: 0 auto 1rem auto;
+  font-size: 1.4rem;
+  font-weight: 800;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
+.step-card[data-step="1"] .step-number {
+  background: linear-gradient(135deg, #4caf50, #66bb6a);
+  box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+}
+
+.step-card[data-step="2"] .step-number {
+  background: linear-gradient(135deg, #2196f3, #42a5f5);
+  box-shadow: 0 6px 20px rgba(33, 150, 243, 0.4);
+}
+
+.step-card[data-step="3"] .step-number {
+  background: linear-gradient(135deg, #9c27b0, #ba68c8);
+  box-shadow: 0 6px 20px rgba(156, 39, 176, 0.4);
+}
+
+/* Step Content */
 .step-title {
-  color: #2e7d32;
-  font-size: 1.4rem;
-  font-weight: 700;
-  margin-bottom: 0.8rem;
+  font-size: 1.9rem;
+  font-weight: 800;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  position: relative;
+  letter-spacing: -0.5px;
+}
+
+.step-card[data-step="1"] .step-title {
+  background: linear-gradient(135deg, #2e7d32 0%, #43a047 50%, #66bb6a 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.step-card[data-step="2"] .step-title {
+  background: linear-gradient(135deg, #1976d2 0%, #2196f3 50%, #42a5f5 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.step-card[data-step="3"] .step-title {
+  background: linear-gradient(135deg, #7b1fa2 0%, #9c27b0 50%, #ba68c8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .step-desc {
-  color: #555;
-  font-size: 1.05rem;
+  color: #37474f;
+  font-size: 1.1rem;
+  line-height: 1.9;
+  text-align: center;
+  margin-bottom: 1.5rem;
+  font-weight: 400;
+}
+
+/* Highlight Text */
+.highlight-text {
+  font-weight: 700;
+}
+
+.step-card[data-step="1"] .highlight-text {
+  color: #2e7d32;
+}
+
+.step-card[data-step="2"] .highlight-text {
+  color: #1976d2;
+}
+
+.step-card[data-step="3"] .highlight-text {
+  color: #7b1fa2;
+}
+
+/* Features List */
+.step-features-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.step-features-list li {
+  display: flex;
+  align-items: flex-start;
+  padding: 1rem 1.25rem;
+  background: linear-gradient(135deg, rgba(76, 175, 80, 0.05) 0%, rgba(76, 175, 80, 0.08) 100%);
+  border-radius: 12px;
+  border-left: 4px solid #4caf50;
+  transition: all 0.3s ease;
+  font-size: 1rem;
   line-height: 1.6;
+  color: #37474f;
+}
+
+.step-features-list li::before {
+  content: '\2713';
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  height: 24px;
+  margin-right: 12px;
+  background: linear-gradient(135deg, #4caf50, #66bb6a);
+  color: white;
+  border-radius: 50%;
+  font-size: 0.85rem;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
+
+.step-features-list li strong {
+  color: #1b5e20;
+  font-weight: 700;
+  margin-right: 4px;
+}
+
+/* Section Divider */
+.section-divider {
+  width: 100%;
+  max-width: 200px;
+  height: 4px;
+  background: linear-gradient(90deg, transparent, #4caf50, #81c784, #4caf50, transparent);
+  margin: 5rem auto;
+  border-radius: 2px;
+  position: relative;
+  overflow: hidden;
+}
+
+.section-divider::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.8), transparent);
+  animation: dividerShimmer 3s ease-in-out infinite;
+}
+
+@keyframes dividerShimmer {
+  0%, 100% { left: -100%; }
+  50% { left: 150%; }
+}
+
+/* Why Choose Section */
+.why-section {
+  margin-top: 0;
+}
+
+.feature-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 2.5rem;
+  margin-bottom: 3rem;
+}
+
+.feature-card {
+  position: relative;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.3) 100%);
+  backdrop-filter: blur(50px) saturate(200%);
+  -webkit-backdrop-filter: blur(50px) saturate(200%);
+  border-radius: 24px;
+  padding: 2.5rem 2rem;
+  text-align: center;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 
+    0 8px 40px rgba(76, 175, 80, 0.15),
+    0 4px 20px rgba(76, 175, 80, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.3);
+  overflow: visible;
+  animation: fadeInUp 0.8s ease-out backwards;
+}
+
+.feature-card[data-feature="1"] { animation-delay: 0.1s; }
+.feature-card[data-feature="2"] { animation-delay: 0.2s; }
+.feature-card[data-feature="3"] { animation-delay: 0.3s; }
+
+.feature-card h3 {
+  font-size: 1.5rem;
+  font-weight: 800;
   margin-bottom: 1rem;
 }
 
-.step-img {
+.feature-card[data-feature="1"] h3 {
+  background: linear-gradient(135deg, #1976d2 0%, #2196f3 50%, #42a5f5 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.feature-card[data-feature="2"] h3 {
+  background: linear-gradient(135deg, #2e7d32 0%, #43a047 50%, #66bb6a 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.feature-card[data-feature="3"] h3 {
+  background: linear-gradient(135deg, #f57c00 0%, #ff9800 50%, #ffb74d 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.feature-card p {
+  color: #555;
+  line-height: 1.75;
+  font-size: 1.05rem;
+}
+
+/* Call to Action Button */
+.guide-cta {
+  text-align: center;
+  margin-top: 3.5rem;
+  animation: fadeInUp 1s ease-out 0.6s backwards;
+}
+
+.start-exploring-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1.4rem 3.5rem;
+  background: linear-gradient(135deg, #4caf50, #45a049, #2e7d32);
+  color: white;
+  border: none;
+  border-radius: 50px;
+  font-size: 1.2rem;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 10px 35px rgba(76, 175, 80, 0.35);
+  transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative;
+  overflow: hidden;
+  letter-spacing: 0.5px;
+}
+
+.start-exploring-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
   width: 100%;
-  max-width: 260px;
-  border-radius: 12px;
-  margin-top: 1rem;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: left 0.6s ease;
+}
+
+.start-exploring-btn:hover::before {
+  left: 100%;
+}
+
+.start-exploring-btn:hover {
+  transform: translateY(-6px) scale(1.08);
+  box-shadow: 0 18px 50px rgba(76, 175, 80, 0.45);
+}
+
+.start-exploring-btn:active {
+  transform: translateY(-3px) scale(1.05);
+}
+
+.start-exploring-btn svg {
+  transition: transform 0.3s ease;
+}
+
+.start-exploring-btn:hover svg {
+  transform: translateX(6px);
+}
+
+/* Responsive Design for Guide Section */
+@media (max-width: 1024px) {
+  .module-title {
+    font-size: 3rem;
+  }
+  
+  .steps-grid {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+  }
+
+  .feature-cards {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+  }
 }
 
 @media (max-width: 768px) {
-  .how-title {
-    font-size: 2.2rem;
+  .guide-section {
+    padding: 4rem 1.5rem;
   }
-  .steps {
-    flex-direction: column;
-    align-items: center;
+
+  .module-title {
+    font-size: 2.5rem;
   }
-  .step {
-    max-width: 420px;
+  
+  .module-subtitle {
+    font-size: 1.1rem;
+  }
+
+  .section-sub-title {
+    font-size: 2rem;
+  }
+  
+  .steps-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  
+  .step-card {
+    max-width: 550px;
+    margin: 0 auto;
+    padding: 2.5rem 2rem;
+  }
+
+  .feature-cards {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .feature-card {
+    max-width: 550px;
+    margin: 0 auto;
+  }
+
+  .start-exploring-btn {
+    padding: 1.2rem 2.8rem;
+    font-size: 1.1rem;
+  }
+
+  .section-divider {
+    margin: 4rem auto;
+  }
+
+  .steps-section {
+    margin-bottom: 4rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .module-title {
+    font-size: 2rem;
+    letter-spacing: -0.5px;
+  }
+
+  .module-subtitle {
+    font-size: 1rem;
+  }
+
+  .section-sub-title {
+    font-size: 1.7rem;
+  }
+
+  .step-card {
+    padding: 2rem 1.5rem;
+  }
+
+  .step-title {
+    font-size: 1.4rem;
+  }
+
+  .step-desc {
+    font-size: 0.95rem;
+  }
+
+  .feature-card h3 {
+    font-size: 1.3rem;
+  }
+
+  .feature-card p {
+    font-size: 0.95rem;
+  }
+
+  .start-exploring-btn {
+    padding: 1rem 2rem;
+    font-size: 1rem;
+  }
+
+  .section-divider {
+    margin: 3rem auto;
+  }
+
+  .steps-section {
+    margin-bottom: 3rem;
   }
 }
 
@@ -2190,134 +2766,6 @@ export default {
   }
 }
 
-/* Why Choose MelSustain Section */
-.why-section {
-  padding: 6rem 2rem;
-  color: white;
-  position: relative;
-  overflow: hidden;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  background-image: url('/img/why-bg.png');
-  background-position: center;
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
-  overflow: hidden;
-}
-
-.why-section::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 400"><defs><radialGradient id="b" cx="0.5" cy="0.5" r="0.5"><stop offset="0%" stop-color="%23ffffff" stop-opacity="0.1"/><stop offset="100%" stop-color="%23ffffff" stop-opacity="0"/></radialGradient></defs><circle cx="300" cy="100" r="60" fill="url(%23b)"/><circle cx="900" cy="200" r="40" fill="url(%23b)"/><circle cx="600" cy="300" r="80" fill="url(%23b)"/><path d="M200 250 L250 200 L300 250 L250 300 Z" fill="url(%23b)" opacity="0.3"/><path d="M1000 150 L1050 100 L1100 150 L1050 200 Z" fill="url(%23b)" opacity="0.3"/></svg>');
-  background-size: cover;
-  animation: float 25s ease-in-out infinite reverse;
-}
-
-.why-section::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 400"><rect width="1200" height="400" fill="%231e3c72"/><circle cx="200" cy="100" r="30" fill="%23fff" opacity="0.05"/><circle cx="1000" cy="150" r="20" fill="%23fff" opacity="0.05"/><path d="M300 200 L350 180 L400 200 L350 220 Z" fill="%23fff" opacity="0.05"/><path d="M800 120 L850 100 L900 120 L850 140 Z" fill="%23fff" opacity="0.05"/><circle cx="600" cy="300" r="25" fill="%23fff" opacity="0.05"/></svg>');
-  background-size: cover;
-  opacity: 0.3;
-}
-
-.why-section .container {
-  position: relative;
-  z-index: 1;
-}
-
-.why-section .section-title {
-  color: white;
-}
-
-.why-section .section-description {
-  color: rgba(255, 255, 255, 0.9);
-}
-
-.feature-cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 2rem;
-  margin-top: 3rem;
-}
-
-.feature-card {
-  background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(20px);
-  border-radius: 20px;
-  padding: 2.5rem;
-  text-align: center;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-}
-
-.feature-card:hover {
-  transform: translateY(-8px) scale(1.02);
-  background: rgba(255, 255, 255, 0.2);
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
-}
-
-.feature-icon {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto 1.5rem;
-  backdrop-filter: blur(15px);
-  border: 2px solid rgba(255,255,255,0.4);
-}
-
-.feature-icon svg {
-  color: currentColor;
-}
-
-.feature-icon.why-icon {
-  background: linear-gradient(135deg, rgba(33,150,243,0.2), rgba(33,150,243,0.3));
-  color: #2196F3;
-}
-
-.feature-icon.how-icon {
-  background: linear-gradient(135deg, rgba(76,175,80,0.2), rgba(76,175,80,0.3));
-  color: #fff;
-}
-
-.feature-icon.family-icon {
-  background: linear-gradient(135deg, rgba(255,152,0,0.2), rgba(255,152,0,0.3));
-  color: #FF9800;
-}
-
-.feature-card h3 {
-  font-size: 1.5rem;
-  font-weight: bold;
-  margin-bottom: 1rem;
-  color: white;
-}
-
-.feature-card p {
-  color: rgba(255, 255, 255, 0.9);
-  line-height: 1.6;
-}
-
-/* Responsive Design for Why Section */
-@media (max-width: 768px) {
-  .feature-cards {
-    grid-template-columns: 1fr;
-  }
-}
 
 /* Footer Section */
 .footer {

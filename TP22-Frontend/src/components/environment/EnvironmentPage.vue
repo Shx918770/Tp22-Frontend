@@ -2036,7 +2036,7 @@ export default {
 .energy-cards-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 2rem;
+  gap: 2.5rem;
   justify-items: center;
 }
 
@@ -2048,7 +2048,7 @@ export default {
   text-align: center;
   transition: all 0.3s ease;
   width: 100%;
-  max-width: 450px;
+  max-width: 600px;
 }
 
 .energy-card:hover {

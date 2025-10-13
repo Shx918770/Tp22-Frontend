@@ -405,7 +405,6 @@
               <ul>
                 <li><a href="#">🔍 All Suburbs</a></li>
                 <li><a href="#">⚖️ Compare Tool</a></li>
-                <li><a href="#">📄 Data Sources</a></li>
               </ul>
             </div>
             
@@ -419,16 +418,6 @@
               </ul>
             </div>
           </div>
-
-          <!-- Right Column - Newsletter -->
-          <!-- <div class="footer-newsletter">
-            <h4>Connect</h4>
-            <p>Stay updated with the latest sustainability insights</p>
-            <div class="newsletter-form">
-              <input type="email" placeholder="Your email" class="newsletter-input">
-              <button class="newsletter-btn">📤</button>
-            </div>
-          </div> -->
         </div>
         
         <div class="footer-bottom">

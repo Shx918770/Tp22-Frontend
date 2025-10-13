@@ -38,7 +38,7 @@
             <div class="select-wrapper">
               <select v-model="firstSuburb" class="suburb-select first-select">
                 <option disabled value="">Select suburb...</option>
-                <option v-for="s in suburbs" :key="s" :value="s">{{ s }}</option>
+                <option v-for="s in availableFirstSuburbs" :key="s" :value="s">{{ s }}</option>
               </select>
               <div class="select-icon">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
@@ -59,7 +59,7 @@
             <div class="select-wrapper">
               <select v-model="secondSuburb" class="suburb-select second-select">
                 <option disabled value="">Select suburb...</option>
-                <option v-for="s in suburbs" :key="s" :value="s">{{ s }}</option>
+                <option v-for="s in availableSecondSuburbs" :key="s" :value="s">{{ s }}</option>
               </select>
               <div class="select-icon">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
@@ -74,7 +74,7 @@
         <div class="button-container">
           <button 
             class="compare-btn" 
-            :disabled="!firstSuburb || !secondSuburb" 
+            :disabled="!firstSuburb || !secondSuburb || firstSuburb === secondSuburb" 
             @click="handleCompareClick"
           >
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
@@ -87,7 +87,7 @@
       </section>
 
       <!-- Results Section - Two Column Comparison -->
-      <section v-if="result" class="result-section">
+      <section v-if="result && firstSuburb && secondSuburb && firstSuburb !== secondSuburb" class="result-section">
         <!-- Tip -->
         <div class="tip-wrap">
           <div class="tip-info">
@@ -178,10 +178,10 @@
                       <span class="mini-emoji">{{ metric.icon }}</span>
                       <span class="mini-name">{{ metric.label }}</span>
                     </div>
-                  <div class="mini-value first">
+                  <div class="mini-value first" :class="{ win: isHigherDetail(firstSuburb, secondSuburb, metric.key) }">
                     <span class="mini-num">{{ result[firstSuburb][metric.key] ?? '-' }}</span>
                   </div>
-                  <div class="mini-value second">
+                  <div class="mini-value second" :class="{ win: isHigherDetail(secondSuburb, firstSuburb, metric.key) }">
                     <span class="mini-num">{{ result[secondSuburb][metric.key] ?? '-' }}</span>
                   </div>
                 </div>
@@ -197,7 +197,7 @@
       </section>
 
       <!-- AI Analysis Section -->
-      <section v-if="aiResult.length" class="ai-section">
+      <section v-if="aiResult.length && firstSuburb && secondSuburb && firstSuburb !== secondSuburb" class="ai-section">
         <div class="ai-header">
           <h2 class="ai-title">AI Comparison Insight</h2>
           <p class="ai-subtitle">Concise AI-generated comparison across key sustainability pillars</p>
@@ -424,11 +424,22 @@ export default {
     },
 
     async handleCompareClick() {
+      // Prevent comparing the same suburb
+      if (this.firstSuburb === this.secondSuburb) {
+        alert('Please select two different suburbs to compare.');
+        return;
+      }
       await this.compareSuburbs();
       await this.getAIComparison();
     },
 
     async compareSuburbs() {
+      // Extra safety check: prevent comparing same suburb
+      if (this.firstSuburb === this.secondSuburb) {
+        console.warn("Cannot compare the same suburb");
+        return;
+      }
+      
       this.loading = true;
       this.result = null;
       try {
@@ -513,6 +524,14 @@ export default {
       const vb = parseFloat(this.result?.[b]?.[key] ?? -Infinity);
       return va > vb;
     },
+    // Compare detail metrics between two suburbs
+    isHigherDetail(a, b, key) {
+      const va = parseFloat(this.result?.[a]?.[key] ?? -Infinity);
+      const vb = parseFloat(this.result?.[b]?.[key] ?? -Infinity);
+      // Only highlight if both values are valid and different
+      if (va === -Infinity || vb === -Infinity || va === vb) return false;
+      return va > vb;
+    },
     formatScore(value) {
       if (value === undefined || value === null || value === '-') return '-';
       const num = Number(value);
@@ -531,6 +550,40 @@ export default {
       // map 0..100 -> 0..5 (1..5 visually)
       const s = Math.round(Math.max(0, Math.min(100, num)) / 20);
       return s; // 0..5
+    }
+  },
+  computed: {
+    // Filter out the second selected suburb from first suburb options
+    availableFirstSuburbs() {
+      if (!this.secondSuburb) {
+        return this.suburbs;
+      }
+      return this.suburbs.filter(s => s !== this.secondSuburb);
+    },
+    // Filter out the first selected suburb from second suburb options
+    availableSecondSuburbs() {
+      if (!this.firstSuburb) {
+        return this.suburbs;
+      }
+      return this.suburbs.filter(s => s !== this.firstSuburb);
+    }
+  },
+  watch: {
+    // Reset second suburb if it becomes the same as first suburb
+    firstSuburb(newVal) {
+      if (newVal && newVal === this.secondSuburb) {
+        this.secondSuburb = '';
+        // Also clear result if suburbs become the same
+        this.result = null;
+      }
+    },
+    // Reset first suburb if it becomes the same as second suburb
+    secondSuburb(newVal) {
+      if (newVal && newVal === this.firstSuburb) {
+        this.firstSuburb = '';
+        // Also clear result if suburbs become the same
+        this.result = null;
+      }
     }
   }
 };
@@ -1415,8 +1468,18 @@ export default {
 .mini-label { display: inline-flex; align-items: center; gap: 0.5rem; }
 .mini-emoji { font-size: 1.05rem; line-height: 1; }
 .mini-name { font-size: 0.95rem; font-weight: 700; color: #334155; }
-.mini-value { display: flex; align-items: center; justify-content: center; }
-.mini-num { font-size: 0.95rem; font-weight: 900; color: #0f172a; padding: 0.2rem 0.45rem; border-radius: 8px; background: #fff; border: 1px solid #e2e8f0; min-width: 48px; text-align: center; }
+.mini-value { display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; }
+.mini-num { font-size: 0.95rem; font-weight: 900; color: #0f172a; padding: 0.2rem 0.45rem; border-radius: 8px; background: #fff; border: 1px solid #e2e8f0; min-width: 48px; text-align: center; transition: all 0.3s ease; }
+
+/* Highlight winner in detail rows */
+.mini-value.win .mini-num {
+  background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+  border: 2px solid #86efac;
+  color: #166534;
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.15), 0 0 0 3px rgba(34, 197, 94, 0.1);
+  transform: scale(1.05);
+  font-weight: 900;
+}
 
 /* Group accent colors for left dot */
 .mini-row[data-group="environment"] .mini-dot { background: #16a34a; box-shadow: 0 0 0 4px rgba(22,163,74,0.18); }

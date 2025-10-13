@@ -681,7 +681,7 @@
                 </div>
                 <div class="chart-legend-enhanced">
                   <div class="legend-example-tile">
-                    <span class="legend-tile-count">1</span>
+                    <span class="legend-tile-count">count</span>
                   </div>
                   <div class="legend-explanation">
                     <span class="legend-text">Number of facilities of this type</span>
@@ -4994,19 +4994,19 @@ export default {
 
 .y-axis-label {
   writing-mode: vertical-rl;
-  text-orientation: mixed;
+  text-orientation: upright;
   color: #475569;
   font-weight: 600;
-  font-size: 0.95rem;
+  font-size: 0.65rem;
   font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
-  letter-spacing: -0.01em;
+  letter-spacing: 0.05em;
   white-space: nowrap;
   text-align: center;
   min-width: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 1rem 0;
+  padding: 0.5rem 0;
 }
 
 .bar-chart {
@@ -5370,11 +5370,13 @@ export default {
   }
   
   .y-axis-label {
-    writing-mode: initial;
-    text-orientation: initial;
+    writing-mode: vertical-rl;
+    text-orientation: upright;
     transform: none;
-    min-width: auto;
+    min-width: 20px;
     padding: 0.5rem;
+    font-size: 0.65rem;
+    letter-spacing: 0.05em;
   }
   
   .pie-chart-svg {
@@ -7064,11 +7066,12 @@ export default {
 
 .y-axis-label {
   writing-mode: vertical-rl;
-  text-orientation: mixed;
+  text-orientation: upright;
   font-weight: 600;
   color: #374151;
-  font-size: 0.9rem;
+  font-size: 0.65rem;
   margin-bottom: 1rem;
+  letter-spacing: 0.05em;
 }
 
 .y-axis-ticks {
@@ -7464,12 +7467,13 @@ export default {
   font-size: 14px;
   font-weight: 900;
   color: #6366f1;
-  padding: 5px 7px;
+  padding: 5px 10px;
   background: rgba(255, 255, 255, 0.95);
   border-radius: 10px;
   border: 1.5px solid #6366f1;
   line-height: 1;
   text-align: center;
+  white-space: nowrap;
 }
 
 .legend-explanation {
@@ -7516,7 +7520,7 @@ export default {
 .sports-mosaic-expanded {
   display: grid;
   grid-template-columns: 1fr;
-  min-height: 400px;
+  min-height: 520px;
 }
 
 .mosaic-grid { 
@@ -7827,7 +7831,7 @@ export default {
   }
   
   .sports-mosaic-expanded {
-    min-height: 320px;
+    min-height: 400px;
   }
   
   .mosaic-tile-enhanced .tile-text {

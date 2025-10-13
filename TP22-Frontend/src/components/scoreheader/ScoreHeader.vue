@@ -2,7 +2,7 @@
   <div class="facilities-header">
     <div class="total-counter">
       <div class="counter-number">
-        {{ score?.value ? score.value.toFixed(1) : '--' }}
+        {{ score?.value ? score.value.toFixed(1) + '/100' : '--' }}
       </div>
       <div class="counter-label">
         {{ label }}

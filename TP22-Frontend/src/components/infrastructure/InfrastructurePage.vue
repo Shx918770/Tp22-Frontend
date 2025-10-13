@@ -296,8 +296,8 @@
             </div>
 
             <div class="card-body insight-body">
-              <p v-if="ptTrend.insight" class="insight-text">{{ ptTrend.insight }}</p>
-              <p v-else class="insight-empty">No insight available.</p>
+              <p v-if="selectedInsightPT" class="insight-text">{{ selectedInsightPT }}</p>
+              <p v-else class="insight-empty">No insight available for the selected year.</p>
 
               <div class="insight-divider"></div>
 
@@ -743,6 +743,10 @@ export default {
     },
     selectedYearData() {
       return this.ptTrend.byYear?.[this.selectedYear] || null;
+    },
+
+    selectedInsightPT() {
+      return this.ptTrend.byYear?.[this.selectedYear]?.suburb_insight || '';
     },
 
     // about the demand of cycling

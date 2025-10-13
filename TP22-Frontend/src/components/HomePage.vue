@@ -399,7 +399,7 @@
               <h4>Platform</h4>
               <ul>
                 <li><a href="#">🔍 All Suburbs</a></li>
-                <li><a href="/#compare-section">⚖️ Compare Tool</a></li>
+                <li><a href="#">⚖️ Compare Tool</a></li>
                 <li><a href="#">📄 Data Sources</a></li>
               </ul>
             </div>

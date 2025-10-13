@@ -117,7 +117,7 @@
       <div class="map-area">
         <div id="map" class="map"></div>
         <button 
-          class="map-reset-button" 
+          class="map-reset-button"
           @click="resetMapView"
           title="Reset map view"
         >
@@ -560,6 +560,18 @@
         </div>
       </div>
     </div>
+    <button class="back-to-top" @click="scrollToTop" :class="{ 'visible': showBackToTop }">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+        <path d="M7 14L12 9L17 14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+
+    <!-- Scroll to Bottom Button -->
+    <button class="scroll-to-bottom" @click="scrollToBottom" :class="{ 'visible': showScrollToBottom }">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+        <path d="M7 10L12 15L17 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
   </div>
 </template>
 
@@ -584,6 +596,10 @@ export default {
     return {
       infrastructureScore: null,
       showScoreExplanation: false,
+
+      showBackToTop: false,
+      showScrollToBottom: false,
+
       stats: {
         transport: {},
         cycling: {},
@@ -591,8 +607,6 @@ export default {
         cultural: {},
       },
       map: null,
-      defaultCenter: [-37.8136, 144.9631],
-      defaultZoom: 15,
       layers: {
         transport: null,
         bicycle: null,
@@ -723,52 +737,23 @@ export default {
     this.loadData()
     this.loadCyclingTrend(this.selectedSuburb)
     this.loadParkingTrend(this.selectedSuburb)
+    window.addEventListener('scroll', this.checkScroll)
   },
   watch: {
-    '$route.query.suburb': {
+    selectedSuburb: {
       immediate: true,
-      async handler(newSuburb, oldSuburb) {
-        if (!newSuburb) return;
-        console.log('[Suburb changed]', oldSuburb, '→', newSuburb);
-
-        this.loading = true;
-        try {
-          await this.refreshInfrastructure(newSuburb);
-
-          if (this.map) {
-            Object.values(this.layers).forEach(layer => {
-              if (layer && this.map.hasLayer(layer)) {
-                this.map.removeLayer(layer);
-              }
-            });
-          }
-
-          await this.loadData();
-
-          console.log('[Infrastructure fully refreshed for]', newSuburb);
-        } catch (err) {
-          console.error('Error refreshing suburb:', err);
-        } finally {
-          this.loading = false;
+      handler(newSuburb) {
+        if (newSuburb) {
+          this.loadStats(newSuburb)
+          this.loadPtTrend(newSuburb)
+          this.loadCyclingTrend(newSuburb)
+          this.loadParkingTrend(newSuburb)
+          this.fetchInfrastructureScore(newSuburb)
         }
       }
     }
   },
   methods: {
-    async refreshInfrastructure(suburb) {
-      this.loading = true;
-      try {
-        await Promise.all([
-          this.loadStats(suburb),
-          this.loadPtTrend(suburb),
-          this.loadCyclingTrend(suburb),
-          this.loadParkingTrend(suburb),
-          this.fetchInfrastructureScore(suburb)
-        ]);
-      } finally {
-        this.loading = false;
-      }
-    },
     async loadStats(suburb) {
       this.loading = true
       try {
@@ -894,33 +879,14 @@ export default {
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; OpenStreetMap contributors',
       }).addTo(this.map)
-    },
 
-    resetMapView() {
-      if (!this.map || !this.layers) return;
-
-      const allCoords = [];
-      Object.values(this.layers).forEach(layer => {
-        if (layer && typeof layer.eachLayer === 'function') {
-          layer.eachLayer(marker => {
-            if (marker.getLatLng) allCoords.push(marker.getLatLng());
-          });
+      const checkLayersReady = setInterval(() => {
+        const allReady = Object.values(this.layers).some(layer => layer && layer.getLayers().length > 0);
+        if (allReady) {
+          clearInterval(checkLayersReady);
+          this.resetMapView(); 
         }
-      });
-
-      if (allCoords.length) {
-        const bounds = L.latLngBounds(allCoords);
-        const maxZoom = this.map.getBoundsZoom(bounds);
-        const targetZoom = Math.max(maxZoom + 2, 5);
-        const center = bounds.getCenter();
-
-        this.map.flyTo(center, targetZoom, {
-          duration: 1.2,
-          easeLinearity: 0.25
-        });
-      } else {
-        console.warn("No coordinates found to reset map view.");
-      }
+      }, 500);
     },
     async loadData() {
         const suburb = this.selectedSuburb
@@ -992,24 +958,6 @@ export default {
             }).bindPopup(`<b>${item.name}</b><br/>${iconLabel}`)
           }).filter(m => m)
         ).addTo(this.map)
-        const allCoords = []
-        Object.values(this.layers).forEach(layer => {
-          if (layer) {
-            layer.eachLayer(marker => {
-              if (marker.getLatLng) allCoords.push(marker.getLatLng())
-            })
-          }
-        })
-
-        if (allCoords.length) {
-          const bounds = L.latLngBounds(allCoords)
-
-          const maxZoom = this.map.getBoundsZoom(bounds)
-          const targetZoom = Math.max(maxZoom + 2 , 5)
-          const center = bounds.getCenter()
-
-          this.map.setView(center, targetZoom)
-        }
         await this.$nextTick()
         this.setFilter('all')
     },
@@ -1345,6 +1293,46 @@ export default {
         });
       });
     },
+    resetMapView() {
+      if (!this.map) return;
+
+      const allCoords = [];
+
+      Object.entries(this.layers).forEach(([key, layer]) => {
+        if (this.visibleLayers[key] && layer) {
+          layer.eachLayer(marker => {
+            if (marker.getLatLng) {
+              allCoords.push(marker.getLatLng());
+            }
+          });
+        }
+      });
+
+      if (allCoords.length) {
+        const bounds = L.latLngBounds(allCoords);
+        const maxZoom = this.map.getBoundsZoom(bounds);
+        const targetZoom = Math.max(maxZoom + 2, 5);
+        const center = bounds.getCenter();
+        this.map.flyTo(center, targetZoom, { duration: 0.5 });
+      } else {
+        this.map.setView([-37.81, 144.96], 14);
+      }
+    },
+    checkScroll() {
+      const scrollY = window.scrollY
+      const scrollHeight = document.documentElement.scrollHeight
+      const clientHeight = document.documentElement.clientHeight
+
+      this.showBackToTop = scrollY > 200
+      this.showScrollToBottom = scrollY + clientHeight < scrollHeight - 200
+    },
+    scrollToTop() {
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    },
+    scrollToBottom() {
+      const bottom = document.documentElement.scrollHeight - window.innerHeight
+      window.scrollTo({ top: bottom, behavior: 'smooth' })
+    },
   },
 };
 </script>
@@ -1558,34 +1546,6 @@ export default {
   z-index: 2;
 }
 
-.bubble-number {
-  font-size: 2.2rem;
-  font-weight: 800;
-  margin-bottom: 0.4rem;
-  animation: numberPop 2s ease-in-out infinite;
-}
-
-@keyframes numberPop {
-  0%, 100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.05);
-  }
-}
-
-.facility-bubble.transport .bubble-number {
-  color: #2196F3;
-}
-
-.facility-bubble.cycling .bubble-number {
-  color: #f44336;
-}
-
-.facility-bubble.parking .bubble-number {
-  color: #4CAF50;
-}
-
 .bubble-label {
   font-size: 1rem;
   font-weight: 600;
@@ -1723,7 +1683,7 @@ export default {
 .map-reset-button {
   position: absolute;
   top: 30px;
-  right: 30px;
+  right: 35px;
   z-index: 1000;
   background: white;
   border: 2px solid #ccc;
@@ -1750,24 +1710,6 @@ export default {
 .map-reset-button:active {
   transform: translateY(0);
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-}
-.filter-buttons {
-  position: absolute;
-  top: 50%;
-  right: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  transform: translateY(-50%);
-  z-index: 1000;
-}
-.filter-buttons button {
-  padding: 8px 12px;
-  border: none;
-  border-radius: 8px;
-  background: #fff;
-  cursor: pointer;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
 }
 .map-legend {
   flex: 1;
@@ -1831,18 +1773,6 @@ export default {
   position: relative;
 }
 
-.public-transport-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: auto auto;
-  gap: 2rem;
-  width: 80%;
-  height: 700px;
-  margin: 0 auto;
-  grid-template-areas: 
-    "pie-chart stop-list"
-}
-
 .detail-header {
   text-align: center;
   margin-bottom: 3rem;
@@ -1882,77 +1812,6 @@ export default {
   max-width: 600px;
   margin: 0 auto;
   line-height: 1.6;
-}
-
-.chart-container {
-  flex: 1;
-  padding: 1rem;
-  min-height: 500px;
-}
-
-.stops-list {
-  flex: 1;
-  background: #fff;
-  border-radius: 12px;
-  padding: 1rem;
-  min-height: 540px;
-  max-height: 540px;
-  overflow-y: auto;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-}
-
-.stops-list h3 {
-  margin-bottom: 1rem;
-  color: #2c3e50;
-  font-weight: 600;
-}
-
-.stops-list ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.stops-list li {
-  padding: 0.8rem;
-  border-bottom: 1px solid #eee;
-  font-size: 0.95rem;
-}
-
-.stops-list li:last-child {
-  border-bottom: none;
-}
-
-.section-title {
-  font-size: 2rem;
-  font-weight: 700;
-  margin-bottom: 1.5rem;
-  text-align: center;
-  background: linear-gradient(90deg, #2196F3, #4CAF50);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.facilities-content {
-  display: flex;
-  gap: 2rem;
-  align-items: flex-start;
-}
-
-.chart-container {
-  flex: 1;
-  padding: 1rem;
-}
-
-.card-header {
-  padding: 1rem 1.5rem;
-  border-bottom: 1px solid #eee;
-}
-
-.card-header h3 {
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: #1f2937;
 }
 
 .transport-grid {
@@ -2152,17 +2011,6 @@ export default {
   border-radius: 12px;
   margin-top: 1rem;
   line-height: 1.5;
-}
-
-.stats-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-.stats-list li {
-  margin: 0.6rem 0;
-  font-size: 1rem;
-  font-weight: 500;
 }
 
 /* Public Transport Facilities Section End */
@@ -2501,5 +2349,85 @@ export default {
 }
 
 /* .explanation end */
+
+/* button for back top */
+.back-to-top {
+  position: fixed;
+  bottom: 6.5rem;
+  right: 2rem;
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, #4CAF50, #45a049);
+  border: none;
+  border-radius: 50%;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 20px rgba(76, 175, 80, 0.3);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(20px);
+  z-index: 1000;
+}
+
+.back-to-top.visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.back-to-top:hover {
+  background: linear-gradient(135deg, #45a049, #4CAF50);
+  transform: translateY(-5px) scale(1.1);
+  box-shadow: 0 8px 30px rgba(76, 175, 80, 0.4);
+}
+
+.back-to-top svg {
+  transition: transform 0.3s ease;
+}
+
+.back-to-top:hover svg {
+  transform: translateY(-2px);
+}
+
+/* scroll to bottom */
+.scroll-to-bottom {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, #4CAF50, #45a049);
+  border: none;
+  border-radius: 50%;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 20px rgba(76, 175, 80, 0.3);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(20px);
+  z-index: 1000;
+}
+
+.scroll-to-bottom.visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.scroll-to-bottom:hover {
+  background: linear-gradient(135deg, #45a049, #4CAF50);
+  transform: translateY(-5px) scale(1.1);
+  box-shadow: 0 8px 30px rgba(76, 175, 80, 0.4);
+}
+
+.scroll-to-bottom svg {
+  transition: transform 0.3s ease;
+}
+
+.scroll-to-bottom:hover svg {
+  transform: translateY(2px);
+}
 
 </style>

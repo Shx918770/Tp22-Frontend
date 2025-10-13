@@ -215,46 +215,209 @@
           </div>
         </div>
       </section>
-
-      <!-- Environmental Forecasting - Predictive Dashboard -->
-      <section class="environmental-forecasting">
+      <!-- FAQ Section -->
+      <section class="faq-section">
         <div class="container">
-          <div class="forecasting-header">
-            <h2 class="section-title">Environmental Forecasting</h2>
-            <p class="section-subtitle">5-year environmental projections and sustainability insights</p>
+          <div class="faq-header">
+            <h2 class="faq-title">FAQ</h2>
+            <div class="faq-divider">
+              <p class="faq-subtitle">General information</p>
+            </div>
+            <p class="faq-description">Frequently asked questions mainly relating to environment sustainability indicators.</p>
           </div>
 
-          <div class="forecasting-dashboard">
-          <!-- Energy Projections -->
-          <section id="energy-detail-section" class="forecast-panel energy-projections">
-            <div class="projection-grid">
-              <!-- left LineChart -->
-              <div class="projection-left">
-                <h4 class="projection-subtitle">Block-level Energy Forecast: Total Trend & Sector Allocation (2011-2026)</h4>
-                <LineChart :chart-data="energyTrendData || { labels: [], datasets: [] }" />
-              </div>
-
-              <!-- right two Doughnut -->
-              <div class="projection-right">
-                <div class="gauge">
-                  <h4>Residential</h4>
-                  <DoughnutChart :chart-data="residentialGauge" :options="gaugeOptions" />
-                </div>
-                <div class="gauge">
-                  <h4>Commercial</h4>
-                  <DoughnutChart :chart-data="commercialGauge" :options="gaugeOptions" />
+          <div class="faq-list">
+            <!-- FAQ Item 1 -->
+            <div class="faq-item" :class="{ 'active': activeFaq === 0 }">
+              <button class="faq-question" @click="toggleFaq(0)">
+                <span>What does the “Urban Tree Lifespan” card show, and why is it useful?</span>
+                <svg class="faq-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
+                  <path d="M19 9L12 16L5 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+              <div class="faq-answer" v-show="activeFaq === 0">
+                <div class="faq-answer-content">
+                  <p>The "Urban Tree Lifespan" card summarises how old or newly planted the trees are in each suburb. Median lifespan values (20–60 years) reveal how close a canopy is to renewal. Suburbs such as Docklands and West Melbourne feature young, future-proof trees, while Parkville and East Melbourne hold mature forests nearing replacement. This helps identify where renewal or replanting will soon be required to sustain long-term shading and carbon benefits.</p>
                 </div>
               </div>
             </div>
 
-            <!-- improve summary -->
-            <div class="projection-section growth-summary">
-              <p>2011 → 2016: <strong>+23.0% growth</strong></p>
-              <p>2016 → 2021: <strong>+8.7% growth</strong></p>
-              <p>2021 → 2026: <strong>-12.4% decline</strong></p>
-              <p>Peak consumption around 2021, then projected to dip slightly.</p>
+            <!-- FAQ Item 2 -->
+            <div class="faq-item" :class="{ 'active': activeFaq === 1 }">
+              <button class="faq-question" @click="toggleFaq(1)">
+                <span>What does the "Shade Provider Diameter" card measure, and how can it guide cooling and comfort planning?</span>
+                <svg class="faq-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
+                  <path d="M19 9L12 16L5 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+              <div class="faq-answer" v-show="activeFaq === 1">
+                <div class="faq-answer-content">
+                  <p>The "Shade Provider Diameter" card measures the average trunk diameter of trees - a direct indicator of canopy size and cooling power. Larger diameters (60-77 cm) provide extensive shade and carbon capture, while smaller diameters (22-35 cm) show developing canopies. It helps users see which suburbs already benefit from mature, cooling shade and where young plantings still need time to deliver impact.</p>
+                </div>
+              </div>
             </div>
-          </section>
+
+            <!-- FAQ Item 3 -->
+            <div class="faq-item" :class="{ 'active': activeFaq === 2 }">
+              <button class="faq-question" @click="toggleFaq(2)">
+                <span>What does the "Species Diversity" card reveal about ecological balance and resilience?</span>
+                <svg class="faq-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
+                  <path d="M19 9L12 16L5 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+              <div class="faq-answer" v-show="activeFaq === 2">
+                <div class="faq-answer-content">
+                  <p>The "Species Diversity" card indicates how many tree species exist in each suburb, showing biodiversity strength. High species counts (like Parkville's 255) reflect stable ecosystems, while lower counts (Southbank, Docklands) reveal limited variety. This helps assess each suburb's resilience to pests, heat, and long-term climate change.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- FAQ Item 4 -->
+            <div class="faq-item" :class="{ 'active': activeFaq === 3 }">
+              <button class="faq-question" @click="toggleFaq(3)">
+                <span>What does the "Canopy Density per 1,000 Residents" card indicate, and how does it relate to liveability?</span>
+                <svg class="faq-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
+                  <path d="M19 9L12 16L5 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+              <div class="faq-answer" v-show="activeFaq === 3">
+                <div class="faq-answer-content">
+                  <p>The "Canopy Density per 1,000 Residents" card quantifies tree access per population unit. Parkville and East Melbourne rank highest, offering abundant shade and parkland, while Southbank and Docklands have low tree access due to vertical density. This indicator directly links canopy equity to environmental comfort, cooling, and mental wellbeing..</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- FAQ Item 5 -->
+            <div class="faq-item" :class="{ 'active': activeFaq === 4 }">
+              <button class="faq-question" @click="toggleFaq(4)">
+                <span>What does the "Trees Planted (Annual / Renewal Cycle)" card represent, and why is it important?</span>
+                <svg class="faq-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
+                  <path d="M19 9L12 16L5 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+              <div class="faq-answer" v-show="activeFaq === 4">
+                <div class="faq-answer-content">
+                  <p>The "Trees Planted" card records the number and timing of recent plantings, showing whether suburbs are renewing their canopy consistently. Areas with high recent planting (Docklands, West Melbourne) will see strong future shade growth, while mature areas (Parkville, East Melbourne) may need re-investment. It shows which suburbs are actively maintaining long-term environmental resilience.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- FAQ Item 6 -->
+            <div class="faq-item" :class="{ 'active': activeFaq === 5 }">
+              <button class="faq-question" @click="toggleFaq(5)">
+                <span>What does the "Air Quality Index (AQI / AVI)" graph show, and how does it connect to other indicators?</span>
+                <svg class="faq-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
+                  <path d="M19 9L12 16L5 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+              <div class="faq-answer" v-show="activeFaq === 5">
+                <div class="faq-answer-content">
+                  <p>The "Air Quality Index (AQI / AVI)" graph shows relative air purity across suburbs - lower values mean cleaner air. When compared with canopy data, it reveals how areas with more trees achieve better air quality. Combining AQI/AVI with energy maps also highlights how high-consumption or traffic-dense zones tend to have poorer air quality, helping identify areas needing greening or emission reduction.</p>
+                </div>
+              </div>
+            </div>
+            <!-- FAQ Item 7 -->
+            <div class="faq-item" :class="{ 'active': activeFaq === 6 }">
+              <button class="faq-question" @click="toggleFaq(6)">
+                <span>What does the "2011 → 2021 → 2026 Total Modelled Energy Consumption" graph show, and how is it useful?</span>
+                <svg class="faq-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
+                  <path d="M19 9L12 16L5 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+              <div class="faq-answer" v-show="activeFaq === 6">
+                <div class="faq-answer-content">
+                  <p>The “2011 → 2026 Total Modelled Energy Consumption” graph tracks how total energy demand evolves over time. A gradual upward line signals rising usage from population growth and density, while lighter tones indicate improved efficiency. It helps users and planners see whether energy trends are stabilising or escalating, informing future sustainability measures.</p>
+                </div>
+              </div>
+            </div>
+            <!-- FAQ Item 8 -->
+            <div class="faq-item" :class="{ 'active': activeFaq === 7 }">
+              <button class="faq-question" @click="toggleFaq(7)">
+                <span>What does the “Block-Level Energy Consumption Map” display, and what insight does it offer?</span>
+                <svg class="faq-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
+                  <path d="M19 9L12 16L5 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+              <div class="faq-answer" v-show="activeFaq === 7">
+                <div class="faq-answer-content">
+                  <p> The “Block-Level Energy Consumption Map” shows variations in energy use within each suburb. Colour gradients — green = efficient, yellow = moderate, red = high — highlight where energy use is concentrated. It enables users to locate efficient, low-impact communities and allows councils to target blocks that would benefit from efficiency upgrades or cooling interventions.</p>
+                </div>
+              </div>
+            </div>
+            <!-- FAQ Item 9 -->
+            <div class="faq-item" :class="{ 'active': activeFaq === 8 }">
+              <button class="faq-question" @click="toggleFaq(8)">
+                <span>What does the “Energy Lifespan / Infrastructure Age” card represent, and why does it matter?</span>
+                <svg class="faq-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
+                  <path d="M19 9L12 16L5 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+              <div class="faq-answer" v-show="activeFaq === 8">
+                <div class="faq-answer-content">
+                  <p>The “Energy Lifespan / Infrastructure Age” card reflects how modern or aged the local energy infrastructure is. Younger systems (Docklands, West Melbourne) indicate efficient grids and newer buildings, while older networks (Carlton, Parkville) may need renewal. It highlights readiness for energy transition and identifies where retrofitting or smart-grid investment is most needed.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- FAQ Item 10 -->
+            <div class="faq-item" :class="{ 'active': activeFaq === 9 }">
+              <button class="faq-question" @click="toggleFaq(9)">
+                <span>What does the “Energy Efficiency / Consumption” card measure, and how does it guide sustainable living?</span>
+                <svg class="faq-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
+                  <path d="M19 9L12 16L5 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+              <div class="faq-answer" v-show="activeFaq === 9">
+                <div class="faq-answer-content">
+                  <p>The “Energy Efficiency / Consumption” card summarises average energy use per household or building. Higher efficiency means less waste and better building design, while higher consumption suggests improvement opportunities. It helps compare suburbs on performance and supports awareness of efficient living behaviours.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- FAQ Item 11 -->
+            <div class="faq-item" :class="{ 'active': activeFaq === 10 }">
+              <button class="faq-question" @click="toggleFaq(10)">
+                <span>What does the “Energy Density per Capita” card show, and how can it be interpreted?</span>
+                <svg class="faq-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
+                  <path d="M19 9L12 16L5 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+              <div class="faq-answer" v-show="activeFaq === 10">
+                <div class="faq-answer-content">
+                  <p>The “Energy Density per Capita” card shows how much energy is used relative to population or built area. Dense commercial centres like Melbourne CBD and Southbank naturally use more per km², while residential areas like Parkville or Kensington perform better per capita. It allows balanced comparisons between density and sustainability.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- FAQ Item 12 -->
+            <div class="faq-item" :class="{ 'active': activeFaq === 11 }">
+              <button class="faq-question" @click="toggleFaq(11)">
+                <span>What does the “Energy Performance Score” card indicate, and how should users read it?</span>
+                <svg class="faq-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
+                  <path d="M19 9L12 16L5 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+              <div class="faq-answer" v-show="activeFaq === 11">
+                <div class="faq-answer-content">
+                  <p>The “Energy Performance Score” card consolidates consumption, infrastructure age, efficiency, and density into one rating. Higher scores mark balanced, low-carbon suburbs with reliable infrastructure. It provides an at-a-glance benchmark for sustainability strength across Melbourne’s districts.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- FAQ Item 13 -->
+            <div class="faq-item" :class="{ 'active': activeFaq === 12 }">
+              <button class="faq-question" @click="toggleFaq(12)">
+                <span>What insight emerges when viewing tree, air, and energy data together?</span>
+                <svg class="faq-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
+                  <path d="M19 9L12 16L5 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+              <div class="faq-answer" v-show="activeFaq === 12">
+                <div class="faq-answer-content">
+                  <p>Analysing all visuals together gives a complete sustainability picture. Tree metrics show natural resilience and shading; AQI/AVI reveals environmental quality; and energy metrics expose efficiency and infrastructure health. Suburbs performing well across all domains — high canopy, clean air, and efficient energy — represent the most sustainable and liveable areas.</p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -276,12 +439,17 @@
         </div>
       </div>
     </main>
-    <!-- back to top -->
-    <button 
-      v-show="showBackToTop" 
-      class="back-to-top" 
-      @click="scrollToTop">
-      ⬆
+    <button class="back-to-top" @click="scrollToTop" :class="{ 'visible': showBackToTop }">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+        <path d="M7 14L12 9L17 14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+
+    <!-- Scroll to Bottom Button -->
+    <button class="scroll-to-bottom" @click="scrollToBottom" :class="{ 'visible': showScrollToBottom }">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+        <path d="M7 10L12 15L17 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
     </button>
   </div>
 </template>
@@ -373,6 +541,7 @@ export default {
 
       //for button which back to top
       showBackToTop: false,
+      showScrollToBottom: false,
       //for tree part
       trees: [],
       mapCenter: [-37.81, 144.96],
@@ -405,9 +574,135 @@ export default {
         }
       },
       energyBlocks: null,
+      activeFaq: null,
       loading: false,
       error: null
     }
+  },
+
+  computed: {
+    plantedTrendData() {
+      const yearCounts = {};
+
+      this.trees.forEach(tree => {
+        if (tree.year) {
+          yearCounts[tree.year] = (yearCounts[tree.year] || 0) + 1;
+        }
+      });
+
+      const sortedYears = Object.keys(yearCounts)
+        .map(y => parseInt(y))
+        .filter(y => y >= 2010 && y <= 2021)
+        .sort((a, b) => a - b)
+        .map(String);
+
+      const cumulativeCounts = [];
+      let runningTotal = 0;
+      for (const year of sortedYears) {
+        runningTotal += yearCounts[year] || 0;
+        cumulativeCounts.push(runningTotal);
+      }
+
+      const aqiData = Array.isArray(this.airTrendData) ? this.airTrendData : [];
+
+      return {
+        labels: sortedYears,
+        datasets: [
+          {
+            label: "Total Number of Trees 🌳",
+            data: cumulativeCounts,
+            borderColor: "green",
+            backgroundColor: "rgba(0,128,0,0.3)",
+            fill: true,
+            yAxisID: "y",
+          },
+          {
+            label: "Air Quality (AQI) 🌤️",
+            data: sortedYears.map(year => {
+              const match = aqiData.find(row => String(row.year) === String(year));
+              return match ? match.aqi : null;
+            }),
+            borderColor: "#2196F3",
+            backgroundColor: "rgba(33,150,243,0.2)",
+            fill: false,
+            yAxisID: "y1",
+          },
+        ],
+      };
+    },
+    speciesList() {
+      const counts = {};
+      this.trees.forEach((tree) => {
+        counts[tree.name] = (counts[tree.name] || 0) + 1;
+      });
+
+      let list = Object.entries(counts).map(([species, count]) => ({
+        species,
+        count
+      }));
+
+      if (this.speciesSort === 'alphabetical') {
+        list.sort((a, b) => a.species.localeCompare(b.species));
+      } else if (this.speciesSort === 'count') {
+        list.sort((a, b) => b.count - a.count);
+      }
+
+      return list;
+    },
+    formattedPollutants() {
+      if (!this.latestPollutants) return {};
+      return {
+        Suburb: this.latestPollutants.suburb || '',
+        Date: this.latestPollutants.date || '',
+        CO: this.latestPollutants.CO || '',
+        NO2: this.latestPollutants.NO2 || '',
+        O3: this.latestPollutants.O3 || '',
+        PM10: this.latestPollutants.PM10 || '',
+        PM25: this.latestPollutants.PM25 || '',
+        SO2: this.latestPollutants.SO2 || ''
+      };
+    },
+    speciesCount() {
+      const counts = {};
+      this.trees.forEach((tree) => {
+        counts[tree.name] = (counts[tree.name] || 0) + 1;
+      });
+      return counts;
+    },
+    trendChartData() {
+      const limitedTrees = this.trees.slice(0, 10);
+      return {
+        labels: limitedTrees.map((t) => t.name),
+        datasets: [
+          {
+            label: "Life Expectancy (years)",
+            data: limitedTrees.map((t) => t.life),
+            borderColor: "green",
+            backgroundColor: "rgba(0,128,0,0.3)"
+          }
+        ]
+      };
+    },
+    selectedSuburb() {
+      return this.$route?.query?.suburb || '';
+    },
+
+  },
+
+  watch: {
+    selectedSuburb: {
+      immediate: true,
+      handler(newSuburb) {
+        if (newSuburb) {
+          this.loadEnvironmentalData(newSuburb);
+        }
+      }
+    },
+    selectedTimePeriod(newPeriod) {
+      if (this.selectedSuburb) {
+        this.loadTrendData(this.selectedSuburb, newPeriod);
+      }
+    },
   },
 
   mounted() {
@@ -427,13 +722,29 @@ export default {
     window.removeEventListener("resize", this.updateTabs);
     window.removeEventListener("scroll", this.checkScroll);
   },
+
   methods: {
-    //button for back top
-    checkScroll() {
-      this.showBackToTop = window.scrollY > 200;
-    },
-    scrollToTop() {
-      window.scrollTo({ top: 0, behavior: "smooth" });
+
+    async loadEnvironmentalData(suburb) {
+      if (!suburb) return;
+      this.loading = true;
+      this.error = null;
+
+      try {
+        await this.loadTrees(suburb);
+        await this.loadEnergyTrend(suburb);
+        await this.loadEnergyBlocks(suburb);
+        await this.loadAirTrend(suburb);
+        await this.loadAirQuality(suburb);
+        await this.loadTreeCard(suburb);
+        await this.loadEnergyCardScore(suburb);
+        await this.fetchEnvironmentScore(suburb);
+      } catch (e) {
+        console.error("Failed to load environmental data", e);
+        this.error = `Failed to load data for ${suburb}`;
+      } finally {
+        this.loading = false;
+      }
     },
 
     async fetchEnvironmentScore(suburb) {
@@ -456,7 +767,7 @@ export default {
       }
     },
 
-    // data for air card
+    // data for tree card
     async loadTreeCard(suburb) {
       try {
         const res = await environmentApi.getTreeCardBySuburb(suburb);
@@ -692,29 +1003,6 @@ export default {
       `);
     },
 
-    // one in
-    async loadEnvironmentalData(suburb) {
-      if (!suburb) return;
-      this.loading = true;
-      this.error = null;
-
-      try {
-        await this.loadTrees(suburb);
-        await this.loadEnergyTrend(suburb);
-        await this.loadEnergyBlocks(suburb);
-        await this.loadAirTrend(suburb);
-        await this.loadAirQuality(suburb);
-        await this.loadTreeCard(suburb);
-        await this.loadEnergyCardScore(suburb);
-        await this.fetchEnvironmentScore(suburb);
-      } catch (e) {
-        console.error("Failed to load environmental data", e);
-        this.error = `Failed to load data for ${suburb}`;
-      } finally {
-        this.loading = false;
-      }
-    },
-
     toggleTreeDetail() {
       this.$nextTick(() => {
         document
@@ -736,299 +1024,37 @@ export default {
           .getElementById("energy-map-section")
           ?.scrollIntoView({ behavior: "smooth" });
       });
-    }
+    },
+    toggleFaq(index) {
+      this.activeFaq = this.activeFaq === index ? null : index
+    },
+    //button for back top
+    checkScroll() {
+      const scrollY = window.scrollY;
+      const scrollHeight = document.documentElement.scrollHeight;
+      const clientHeight = document.documentElement.clientHeight;
+
+      this.showBackToTop = window.scrollY > 200;
+
+      this.showScrollToBottom = scrollY + clientHeight < scrollHeight - 200;
+    },
+    scrollToTop() {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    },
+    scrollToBottom() {
+      window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' })
+    },
   },
-  computed: {
-    plantedTrendData() {
-      const yearCounts = {};
-
-      this.trees.forEach(tree => {
-        if (tree.year) {
-          yearCounts[tree.year] = (yearCounts[tree.year] || 0) + 1;
-        }
-      });
-
-      const sortedYears = Object.keys(yearCounts)
-        .map(y => parseInt(y))
-        .filter(y => y >= 2010 && y <= 2021)
-        .sort((a, b) => a - b)
-        .map(String);
-
-      const cumulativeCounts = [];
-      let runningTotal = 0;
-      for (const year of sortedYears) {
-        runningTotal += yearCounts[year] || 0;
-        cumulativeCounts.push(runningTotal);
-      }
-
-      const aqiData = Array.isArray(this.airTrendData) ? this.airTrendData : [];
-
-      return {
-        labels: sortedYears,
-        datasets: [
-          {
-            label: "Total Number of Trees 🌳",
-            data: cumulativeCounts,
-            borderColor: "green",
-            backgroundColor: "rgba(0,128,0,0.3)",
-            fill: true,
-            yAxisID: "y",
-          },
-          {
-            label: "Air Quality (AQI) 🌤️",
-            data: sortedYears.map(year => {
-              const match = aqiData.find(row => String(row.year) === String(year));
-              return match ? match.aqi : null;
-            }),
-            borderColor: "#2196F3",
-            backgroundColor: "rgba(33,150,243,0.2)",
-            fill: false,
-            yAxisID: "y1",
-          },
-        ],
-      };
-    },
-    speciesList() {
-    const counts = {};
-    this.trees.forEach((tree) => {
-      counts[tree.name] = (counts[tree.name] || 0) + 1;
-    });
-
-    let list = Object.entries(counts).map(([species, count]) => ({
-      species,
-      count
-    }));
-
-    if (this.speciesSort === 'alphabetical') {
-      list.sort((a, b) => a.species.localeCompare(b.species));
-    } else if (this.speciesSort === 'count') {
-      list.sort((a, b) => b.count - a.count);
-    }
-
-    return list;
-  },
-    formattedPollutants() {
-      if (!this.latestPollutants) return {};
-      return {
-        Suburb: this.latestPollutants.suburb || '',
-        Date: this.latestPollutants.date || '',
-        CO: this.latestPollutants.CO || '',
-        NO2: this.latestPollutants.NO2 || '',
-        O3: this.latestPollutants.O3 || '',
-        PM10: this.latestPollutants.PM10 || '',
-        PM25: this.latestPollutants.PM25 || '',
-        SO2: this.latestPollutants.SO2 || ''
-      };
-    },
-    speciesCount() {
-      const counts = {};
-      this.trees.forEach((tree) => {
-        counts[tree.name] = (counts[tree.name] || 0) + 1;
-      });
-      return counts;
-    },
-    trendChartData() {
-      const limitedTrees = this.trees.slice(0, 10);
-      return {
-        labels: limitedTrees.map((t) => t.name),
-        datasets: [
-          {
-            label: "Life Expectancy (years)",
-            data: limitedTrees.map((t) => t.life),
-            borderColor: "green",
-            backgroundColor: "rgba(0,128,0,0.3)"
-          }
-        ]
-      };
-    },
-    selectedSuburb() {
-      return this.$route?.query?.suburb || '';
-    },
-
-  },
-  watch: {
-    selectedSuburb: {
-      immediate: true,
-      handler(newSuburb) {
-        if (newSuburb) {
-          this.loadEnvironmentalData(newSuburb);
-        }
-      }
-    },
-    selectedTimePeriod(newPeriod) {
-      if (this.selectedSuburb) {
-        this.loadTrendData(this.selectedSuburb, newPeriod);
-      }
-    },
-  }
 }
 </script>
 
 <style scoped>
-/* fixed on top */
-.nav-bar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  z-index: 1000;
-  background: white;
-  border-bottom: 1px solid #eee;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-}
-
-.nav-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0.5rem 1rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.3rem;
-}
-
-/* first line */
-.nav-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-/* second line */
-.nav-bottom {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-/* tabs */
-.nav-tabs {
-  display: flex;
-  flex-wrap: nowrap;
-  overflow: hidden;
-  gap: 0.5rem;
-  flex: 1;
-}
-
-.nav-tab {
-  padding: 0.6rem 1.2rem;
-  border-radius: 20px;
-  font-weight: 500;
-  color: #666;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: all 0.3s ease;
-}
-
-.nav-tab.active {
-  background: #4CAF50;
-  color: white;
-}
-
-/* ☰list + pull down */
-.more-menu {
-  position: relative;
-  margin-left: 0.5rem;
-  flex-shrink: 0;
-}
-
-.menu-toggle {
-  background: none;
-  border: none;
-  font-size: 1.5rem;
-  cursor: pointer;
-}
-
-.dropdown {
-  position: absolute;
-  right: 0;
-  top: 2.5rem;
-  background: white;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-  padding: 0.5rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.3rem;
-  z-index: 2000;
-}
-
-/* cartoon */
-.fade-slide-enter-active,
-.fade-slide-leave-active {
-  transition: all 0.3s ease;
-}
-.fade-slide-enter-from {
-  opacity: 0;
-  transform: translateY(-10px);
-}
-.fade-slide-leave-to {
-  opacity: 0;
-  transform: translateY(-10px);
-}
-
-/* button for back top */
-.back-to-top {
-  position: fixed;
-  bottom: 2rem;
-  right: 2rem;
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  border: none;
-  background: linear-gradient(135deg, #4CAF50, #45a049);
-  color: white;
-  font-size: 1.5rem;
-  font-weight: bold;
-  cursor: pointer;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-  transition: transform 0.2s ease, opacity 0.3s ease;
-  z-index: 1200;
-}
-
-.back-to-top:hover {
-  transform: scale(1.1);
-  background: linear-gradient(135deg, #45a049, #4CAF50);
-}
-
 .hero-section {
   justify-content: center;
   align-items: center;
   text-align: center;
 }
-
-  /* energy style */
-.projection-grid {
-  display: grid;
-  grid-template-columns: 2fr 1fr;
-  gap: 2rem;
-  align-items: start;
-}
-
-.projection-left {
-  background: #fff;
-  padding: 1rem;
-  border-radius: 12px;
-}
-
-.projection-right {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 1rem;
-}
-
-.projection-right .gauge {
-  flex: 1;
-  text-align: center;
-}
-
-.projection-right canvas {
-  max-width: 120px !important;
-  max-height: 80px !important;
-}
-
+/* tree map style */
 :deep(.tree-circle-icon) {
   display: flex;
   align-items: center;
@@ -1123,28 +1149,6 @@ export default {
   background: none;
   box-shadow: none;
   scroll-margin-top: var(--nav-height, 120px);
-}
-
-.tree-detail-top {
-  display: flex;
-  gap: 20px;
-}
-
-.tree-map {
-  flex: 1;
-}
-
-.tree-list {
-  flex: 1;
-  max-height: 400px;
-  overflow-y: auto;
-  border: 1px solid #ddd;
-  padding: 1rem;
-  border-radius: 8px;
-}
-
-.tree-trend {
-  margin-top: 2rem;
 }
 
 .environment-page {
@@ -1282,75 +1286,6 @@ export default {
   }
 }
 
-/* Navigation Bar */
-.nav-bar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  z-index: 1000;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.95));
-  backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-  box-shadow: 0 4px 30px rgba(0,0,0,0.1);
-}
-
-.nav-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 1rem 2rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.logo {
-  display: flex;
-  align-items: center;
-  gap: 0.8rem;
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #2c3e50;
-}
-
-.logo-icon {
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
-}
-
-.nav-tabs {
-  display: flex;
-  flex-wrap: nowrap;
-  overflow: hidden;
-  flex: 1;
-  gap: 0.5rem;
-  background: rgba(255, 255, 255, 0.3);
-  backdrop-filter: blur(10px);
-  padding: 0.5rem;
-  border-radius: 25px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.nav-tab {
-  padding: 0.8rem 1.5rem;
-  border-radius: 20px;
-  font-weight: 500;
-  color: #666;
-  text-decoration: none;
-  transition: all 0.3s ease;
-  cursor: pointer;
-}
-
-.nav-tab.active {
-  background: linear-gradient(135deg, #4CAF50, #45a049);
-  color: white;
-  box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
-}
-
-.nav-tab:hover:not(.active) {
-  background: rgba(255, 255, 255, 0.5);
-  color: #333;
-}
-
 /* Main Content */
 .main-content {
   position: relative;
@@ -1363,21 +1298,6 @@ export default {
   max-width: none; 
   margin: 0 auto;
   padding: 0;
-}
-
-/* Insights Header */
-.insights-header {
-  padding: 6rem 0 4rem;
-  text-align: center;
-}
-
-.header-content {
-  position: relative;
-  z-index: 2;
-}
-
-.title-animation {
-  margin-bottom: 2rem;
 }
 
 .page-title {
@@ -1393,33 +1313,6 @@ export default {
   -webkit-text-fill-color: transparent;
 }
 
-.title-word {
-  background: linear-gradient(135deg, #2c3e50, #3498db, #4CAF50);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  /* animation: titleGlow 3s ease-in-out infinite; */
-}
-
-.title-word:nth-child(2) {
-  animation-delay: 0.5s;
-}
-
-.title-word:nth-child(3) {
-  animation-delay: 1s;
-}
-
-@keyframes titleGlow {
-  0%, 100% {
-    filter: brightness(1);
-    transform: scale(1);
-  }
-  50% {
-    filter: brightness(1.2);
-    transform: scale(1.05);
-  }
-}
-
 .page-description {
   font-size: 1.3rem;
   color: rgba(44, 62, 80, 0.8);
@@ -1431,16 +1324,6 @@ export default {
   padding: 1.5rem 2rem;
   border-radius: 15px;
   border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-/* Environmental Indicators */
-.environmental-indicators {
-  padding: 4rem 0;
-}
-
-.indicators-header {
-  text-align: center;
-  margin-bottom: 4rem;
 }
 
 .section-title {
@@ -1518,11 +1401,6 @@ export default {
   color: #2196F3;
 }
 
-.water-usage .indicator-icon {
-  background: linear-gradient(135deg, rgba(0, 188, 212, 0.2), rgba(0, 188, 212, 0.3));
-  color: #00BCD4;
-}
-
 .indicator-card:hover .indicator-icon {
   transform: scale(1.1) rotate(360deg);
 }
@@ -1565,10 +1443,6 @@ export default {
 
 .air-quality .progress-value {
   color: #2196F3;
-}
-
-.water-usage .progress-value {
-  color: #00BCD4;
 }
 
 .progress-label {
@@ -1622,315 +1496,8 @@ export default {
   font-weight: 500;
 }
 
-.trends-header {
-  text-align: center;
-  margin-bottom: 4rem;
-}
-
-.trends-visualization {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.95));
-  backdrop-filter: blur(30px);
-  border-radius: 30px;
-  padding: 3rem;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
-  border: 2px solid rgba(255, 255, 255, 0.3);
-}
-
-.time-selector {
-  display: flex;
-  justify-content: center;
-  gap: 0.5rem;
-  margin-bottom: 3rem;
-}
-
-.time-btn {
-  padding: 0.8rem 1.5rem;
-  border: 2px solid rgba(33, 150, 243, 0.2);
-  background: rgba(255, 255, 255, 0.5);
-  color: #2196F3;
-  border-radius: 20px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  backdrop-filter: blur(10px);
-}
-
-.time-btn.active {
-  background: linear-gradient(135deg, #2196F3, #42A5F5);
-  color: white;
-  border-color: #2196F3;
-  box-shadow: 0 4px 15px rgba(33, 150, 243, 0.3);
-}
-
-.time-btn:hover:not(.active) {
-  background: rgba(33, 150, 243, 0.1);
-  border-color: rgba(33, 150, 243, 0.3);
-}
-
-.quality-chart {
-  margin-bottom: 3rem;
-}
-
-.chart-container {
-  position: relative;
-}
-
-.quality-levels {
-  display: flex;
-  justify-content: center;
-  gap: 2rem;
-  margin-bottom: 2rem;
-}
-
-.level {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.level-indicator {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-}
-
-.level.good .level-indicator {
-  background: #4CAF50;
-}
-
-.level.moderate .level-indicator {
-  background: #FFC107;
-}
-
-.level.unhealthy .level-indicator {
-  background: #F44336;
-}
-
-.level-label {
-  font-size: 0.9rem;
-  color: #666;
-  font-weight: 500;
-}
-
-.chart-area {
-  height: 300px;
-  margin-bottom: 1rem;
-}
-
-.trend-chart {
-  width: 100%;
-  height: 100%;
-}
-
-.trend-line {
-  animation: drawLine 3s ease-in-out;
-}
-
-@keyframes drawLine {
-  0% {
-    stroke-dasharray: 1000;
-    stroke-dashoffset: 1000;
-  }
-  100% {
-    stroke-dasharray: 1000;
-    stroke-dashoffset: 0;
-  }
-}
-
-.data-point {
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.data-point:hover {
-  r: 8;
-}
-
-.chart-labels {
-  display: flex;
-  justify-content: center;
-}
-
-.x-labels {
-  display: flex;
-  justify-content: space-between;
-  width: 80%;
-  font-size: 0.9rem;
-  color: #666;
-  font-weight: 500;
-}
-
-.trend-insights {
-  display: flex;
-  gap: 2rem;
-  justify-content: center;
-  flex-wrap: wrap;
-}
-
-.insight-card {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  padding: 1.5rem;
-  background: rgba(255, 255, 255, 0.7);
-  border-radius: 15px;
-  backdrop-filter: blur(15px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  min-width: 300px;
-  transition: all 0.3s ease;
-}
-
-.insight-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
-}
-
-.insight-icon {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  backdrop-filter: blur(10px);
-}
-
-.insight-icon.good {
-  background: rgba(76, 175, 80, 0.2);
-  color: #4CAF50;
-}
-
-.insight-icon.warning {
-  background: rgba(255, 193, 7, 0.2);
-  color: #FFC107;
-}
-
-.insight-content h4 {
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: #2c3e50;
-  margin-bottom: 0.5rem;
-}
-
-.insight-content p {
-  color: #666;
-  font-size: 0.95rem;
-  line-height: 1.5;
-}
-
-.energy-detail-section {
-  scroll-margin-top: var(--nav-height, 120px);
-}
-
 .energy-map-section {
   scroll-margin-top: var(--nav-height, 120px);
-}
-
-/* Environmental Forecasting */
-.environmental-forecasting {
-  padding: 6rem 0;
-}
-
-.forecasting-header {
-  text-align: center;
-  margin-bottom: 4rem;
-}
-
-.forecasting-dashboard {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: auto auto;
-  grid-template-areas:
-    'energyProjections energyProjections'
-    'emissions residential';
-  gap: 1.75rem;
-  margin-bottom: 3rem;
-  align-items: stretch;
-}
-
-/* Grid area mapping */
-.forecast-panel.emissions { grid-area: emissions; }
-.forecast-panel.energy { grid-area: residential; }
-.forecast-panel.energy-projections { grid-area: energyProjections; }
-
-.forecast-panel {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.98));
-  backdrop-filter: blur(30px);
-  border-radius: 22px;
-  padding: 1.6rem;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  transition: all 0.35s ease;
-  position: relative;
-  overflow: hidden;
-}
-
-.forecast-panel:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 25px 80px rgba(0, 0, 0, 0.15);
-}
-
-/* Fancy glowing blobs */
-.forecast-panel::after {
-  content: '';
-  position: absolute;
-  width: 220px;
-  height: 220px;
-  right: -60px;
-  top: -60px;
-  border-radius: 50%;
-  filter: blur(0);
-  opacity: 0.9;
-  pointer-events: none;
-  background: radial-gradient(closest-side, rgba(76, 175, 80, 0.10), rgba(76, 175, 80, 0));
-  animation: blobFloat 12s ease-in-out infinite alternate;
-}
-
-.forecast-panel.emissions::after { background: radial-gradient(closest-side, rgba(244, 67, 54, 0.10), rgba(244, 67, 54, 0)); }
-.forecast-panel.energy::after { background: radial-gradient(closest-side, rgba(255, 193, 7, 0.12), rgba(255, 193, 7, 0)); }
-.forecast-panel.energy-projections::after { background: radial-gradient(closest-side, rgba(76, 175, 80, 0.12), rgba(76, 175, 80, 0)); width: 300px; height: 300px; }
-
-@keyframes blobFloat {
-  from { transform: translateY(0) rotate(0); }
-  to { transform: translateY(10px) rotate(4deg); }
-}
-
-.panel-header {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-bottom: 1.2rem;
-}
-
-.panel-badges { margin-left: auto; display: inline-flex; gap: 8px; }
-.badge { font-size: 12px; padding: 6px 10px; border-radius: 999px; border: 1px solid rgba(0,0,0,0.06); backdrop-filter: blur(6px); }
-.badge.accent { background: rgba(76,175,80,.12); color: #2e7d32; border-color: rgba(76,175,80,.25); font-weight: 700; }
-.badge.soft { background: rgba(33,150,243,.08); color: #1565c0; border-color: rgba(33,150,243,.2); }
-
-.panel-icon {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  backdrop-filter: blur(15px);
-  border: 2px solid rgba(255, 255, 255, 0.5);
-}
-
-.emissions .panel-icon {
-  background: linear-gradient(135deg, rgba(244, 67, 54, 0.2), rgba(244, 67, 54, 0.3));
-  color: #F44336;
-}
-
-.energy .panel-icon {
-  background: linear-gradient(135deg, rgba(255, 193, 7, 0.2), rgba(255, 193, 7, 0.3));
-  color: #FFC107;
-}
-
-.resilience .panel-icon {
-  background: linear-gradient(135deg, rgba(76, 175, 80, 0.2), rgba(76, 175, 80, 0.3));
-  color: #4CAF50;
 }
 
 .panel-title h3 {
@@ -1945,279 +1512,7 @@ export default {
   font-size: 0.9rem;
 }
 
-.forecast-visualization {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-/* Emissions Chart */
-.emissions-chart {
-  height: 200px;
-  display: flex;
-  align-items: end;
-  justify-content: center;
-}
-
-.projection-bars {
-  display: flex;
-  gap: 2rem;
-  align-items: end;
-  height: 100%;
-}
-
-.bar-group {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.bar {
-  width: 40px;
-  border-radius: 20px 20px 0 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: end;
-  padding: 0.5rem;
-  color: white;
-  font-weight: 600;
-  font-size: 0.8rem;
-  transition: all 0.3s ease;
-}
-
-.bar.current {
-  background: linear-gradient(180deg, #F44336, #D32F2F);
-}
-
-.bar.projected {
-  background: linear-gradient(180deg, #FF9800, #F57C00);
-}
-
-.bar.target {
-  background: linear-gradient(180deg, #4CAF50, #388E3C);
-}
-
-.bar:hover {
-  transform: scale(1.05);
-}
-
-.bar-value {
-  margin-bottom: 0.3rem;
-}
-
-.bar-label {
-  font-size: 0.7rem;
-  opacity: 0.9;
-}
-
-/* Energy Chart */
-.energy-chart {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 200px;
-}
-
-.consumption-rings {
-  display: flex;
-  gap: 3rem;
-}
-
-.ring-container {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.ring-svg {
-  transform: rotate(-90deg);
-}
-
-.ring-track {
-  opacity: 0.3;
-}
-
-.ring-progress {
-  transition: stroke-dashoffset 2s ease-in-out;
-}
-
-.ring-progress.renewable {
-  stroke: #4CAF50;
-}
-
-.ring-progress.efficiency {
-  stroke: #FF9800;
-}
-
-.ring-label {
-  position: absolute;
-  text-align: center;
-}
-
-.ring-value {
-  font-size: 1.5rem;
-  font-weight: 800;
-  margin-bottom: 0.2rem;
-}
-
-.ring-text {
-  font-size: 0.8rem;
-  color: #666;
-  font-weight: 500;
-}
-
-/* Resilience Gauge */
-.resilience-gauge {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 200px;
-}
-
-.gauge-svg {
-  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
-}
-
-.gauge-progress {
-  transition: stroke-dasharray 2s ease-in-out;
-}
-
-.gauge-needle {
-  transition: all 2s ease-in-out;
-}
-
-.forecast-metrics {
-  display: flex;
-  justify-content: space-around;
-  gap: 1rem;
-}
-
-.forecast-metrics .metric {
-  text-align: center;
-  padding: 1rem;
-  background: rgba(255, 255, 255, 0.5);
-  border-radius: 12px;
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  flex: 1;
-}
-
-.forecast-metrics .metric-value {
-  font-size: 1.3rem;
-  font-weight: 700;
-  color: #4CAF50;
-}
-
-.forecast-metrics .metric-value.good {
-  color: #4CAF50;
-}
-
-/* Energy Projections Panel */
-.energy-projections .panel-icon {
-  background: linear-gradient(135deg, rgba(76, 175, 80, 0.2), rgba(76, 175, 80, 0.3));
-  color: #4CAF50;
-}
-
-/* Energy Tabs */
-.energy-tabs {
-  display: inline-flex;
-  background: rgba(255, 255, 255, 0.7);
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  border-radius: 999px;
-  padding: 6px;
-  gap: 6px;
-  margin: 0 auto 1rem auto;
-}
-
-.tab-btn {
-  appearance: none;
-  border: none;
-  background: transparent;
-  color: #2c3e50;
-  padding: 8px 14px;
-  font-weight: 600;
-  border-radius: 999px;
-  cursor: pointer;
-  transition: all .25s ease;
-}
-
-.tab-btn:hover { opacity: .85; }
-
-.tab-btn.active {
-  background: linear-gradient(135deg, #e8f5e9, #ffffff);
-  box-shadow: 0 6px 18px rgba(76, 175, 80, 0.15);
-  color: #2e7d32;
-}
-
-/* Transition */
-.fade-slide-enter-active, .fade-slide-leave-active { transition: all .28s ease; }
-.fade-slide-enter-from { opacity: 0; transform: translateY(6px); }
-.fade-slide-leave-to { opacity: 0; transform: translateY(-6px); }
-
-.energy-projections-content {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-}
-
-.projection-section {
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-  padding-bottom: 1.5rem;
-}
-
-.projection-section:last-child {
-  border-bottom: none;
-  padding-bottom: 0;
-}
-
-.projection-subtitle {
-  font-size: 1rem;
-  font-weight: 600;
-  color: #2c3e50;
-  margin-bottom: 1rem;
-  text-align: center;
-}
-
 /* Energy Projection Chart */
-.energy-projection-chart {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1rem;
-}
-
-.projection-timeline {
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-  margin-bottom: 1rem;
-}
-
-.timeline-item {
-  text-align: center;
-  flex: 1;
-}
-
-.timeline-year {
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: #2c3e50;
-  margin-bottom: 0.3rem;
-}
-
-.timeline-value {
-  font-size: 0.9rem;
-  color: #666;
-}
-
-.energy-trend {
-  width: 100%;
-  max-width: 200px;
-}
-
 .legend {
   position: absolute;
   bottom: 20px;
@@ -2252,99 +1547,6 @@ export default {
   border: 1px solid #999;
 }
 
-/* Property Energy Chart */
-.property-energy-chart {
-  display: flex;
-  justify-content: center;
-  align-items: end;
-  height: 150px;
-  margin-bottom: 1rem;
-}
-
-.capsule-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.capsule-row {
-  display: grid;
-  grid-template-columns: 90px 1fr 50px;
-  align-items: center;
-  gap: 0.75rem;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 10px;
-  padding: 0.8rem 1.2rem;
-  backdrop-filter: blur(5px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  transition: all 0.3s ease;
-}
-
-.capsule-row:hover {
-  background: rgba(255, 255, 255, 0.3);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-}
-
-.capsule-label {
-  color: #2c3e50;
-  font-weight: 600;
-  font-size: 0.9rem;
-}
-
-.capsule-track {
-  position: relative;
-  height: 14px;
-  background: rgba(76,175,80,0.12);
-  border-radius: 999px;
-  overflow: hidden;
-}
-
-.capsule-fill {
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  border-radius: 999px;
-  transition: width .5s ease;
-}
-
-.capsule-fill.residential {
-  background: linear-gradient(90deg, #66bb6a, #43a047);
-}
-
-.capsule-fill.commercial {
-  background: linear-gradient(90deg, #64b5f6, #1e88e5);
-}
-
-.capsule-fill.industrial {
-  background: linear-gradient(90deg, #ffb74d, #fb8c00);
-}
-
-.capsule-value {
-  text-align: right;
-  color: #2e7d32;
-  font-weight: 700;
-}
-
-.distribution-bar:hover {
-  transform: scale(1.05);
-}
-
-.bar-label {
-  font-size: 0.7rem;
-  opacity: 0.9;
-  text-align: center;
-}
-
-.energy-tabs { display: none; }
-.energy-projections-content.energy-split { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 1.2rem; align-items: start; }
-
-.energy-projection-chart svg { max-width: 100%; }
-.consumption-rings { gap: 1.25rem; }
-.ring-svg { width: 90px; height: 90px; }
-.ring-value { font-size: 1.2rem; }
-.projection-bars { gap: 1rem; }
-
 /* Responsive Design */
 @media (max-width: 768px) {
   .nav-container {
@@ -2362,59 +1564,6 @@ export default {
     font-size: 2.5rem;
     flex-direction: column;
     gap: 0.5rem;
-  }
-  
-  .forecasting-dashboard {
-    grid-template-columns: 1fr;
-    grid-template-areas:
-      'emissions'
-      'residential'
-      'energyProjections';
-    gap: 1.25rem;
-    margin-bottom: 2rem;
-  }
-  .energy-tabs { display: inline-flex; }
-  .energy-projections-content.energy-split { grid-template-columns: 1fr; }
-  
-  .energy-projections-content {
-    gap: 1.5rem;
-  }
-  
-  .energy-distribution {
-    gap: 1rem;
-  }
-  
-  .distribution-bar {
-    width: 30px;
-  }
-  
-  .consumption-rings {
-    flex-direction: column;
-    gap: 2rem;
-  }
-  
-  .projection-bars {
-    gap: 1rem;
-  }
-  
-  .trends-visualization,
-  .predictive-insights {
-    padding: 2rem 1rem;
-  }
-  
-  .quality-levels {
-    flex-wrap: wrap;
-    gap: 1rem;
-  }
-  
-  .trend-insights {
-    flex-direction: column;
-    gap: 1rem;
-  }
-  
-  .insights-grid {
-    grid-template-columns: 1fr;
-    gap: 1rem;
   }
 }
 
@@ -2451,27 +1600,6 @@ export default {
     font-size: 1.5rem;
   }
   
-  .time-selector {
-    flex-wrap: wrap;
-    gap: 0.5rem;
-  }
-  
-  .time-btn {
-    padding: 0.6rem 1rem;
-    font-size: 0.9rem;
-  }
-}
-.selected-suburb-pill {
-  margin-left: 0.8rem;
-  font-size: 0.95rem;
-  font-weight: 700;
-  color: #2c3e50;
-  background: rgba(255, 255, 255, 0.6);
-  border: 1px solid rgba(0, 0, 0, 0.06);
-  display: inline-flex;
-  align-items: center;
-  padding: 0.25rem 0.7rem;
-  border-radius: 999px;
 }
 
 .suburb-display {
@@ -2562,5 +1690,391 @@ export default {
   background: linear-gradient(135deg, #45a049, #4CAF50);
   transform: translateY(-2px);
   box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4);
+}
+
+/* FAQ Section Styles */
+.faq-section {
+  padding: 4rem 0 8rem 0;
+  background: transparent;
+  position: relative;
+}
+
+.faq-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.faq-title {
+  font-size: 3rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 0;
+  letter-spacing: -0.02em;
+}
+
+.faq-divider {
+  width: 100%;
+  max-width: 900px;
+  height: 2px;
+  margin: 1.5rem auto;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+}
+
+.faq-divider::before,
+.faq-divider::after {
+  content: '';
+  flex: 1;
+  height: 2px;
+  background: #dc2626;
+}
+
+.faq-subtitle {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0;
+  padding: 0 2rem;
+  position: relative;
+  white-space: nowrap;
+}
+
+.faq-description {
+  font-size: 0.95rem;
+  color: #64748b;
+  max-width: 900px;
+  margin: 1rem auto 0;
+  padding: 0 2rem;
+}
+
+.faq-list {
+  max-width: 900px;
+  margin: 2rem auto 0;
+  background: transparent;
+}
+
+.faq-item {
+  background: transparent;
+  border-bottom: 2px solid transparent;
+  background-image: linear-gradient(to bottom, transparent, transparent),
+                    linear-gradient(90deg, rgba(217, 119, 6, 0.25) 0%, rgba(202, 138, 4, 0.5) 50%, rgba(217, 119, 6, 0.25) 100%);
+  background-size: 100% calc(100% - 2px), 100% 2px;
+  background-position: 0 0, 0 100%;
+  background-repeat: no-repeat;
+  transition: all 0.3s ease;
+}
+
+.faq-item:last-child {
+  background-image: linear-gradient(to bottom, transparent, transparent),
+                    linear-gradient(90deg, rgba(217, 119, 6, 0.25) 0%, rgba(202, 138, 4, 0.5) 50%, rgba(217, 119, 6, 0.25) 100%);
+  background-size: 100% calc(100% - 2px), 100% 2px;
+  background-position: 0 0, 0 100%;
+  background-repeat: no-repeat;
+}
+
+.faq-item:hover {
+  background-color: transparent;
+  background-image: linear-gradient(to bottom, transparent, transparent),
+                    linear-gradient(90deg, rgba(217, 119, 6, 0.35) 0%, rgba(202, 138, 4, 0.65) 50%, rgba(217, 119, 6, 0.35) 100%);
+}
+
+.faq-question {
+  width: 100%;
+  padding: 1.5rem 2rem;
+  background: transparent;
+  border: none;
+  text-align: left;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1e293b;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.2s ease;
+}
+
+.faq-question span {
+  flex: 1;
+  padding-right: 1rem;
+}
+
+.faq-icon {
+  flex-shrink: 0;
+  transition: transform 0.3s ease;
+  color: #64748b;
+}
+
+.faq-item.active .faq-icon {
+  transform: rotate(180deg);
+  color: #1e293b;
+}
+
+.faq-answer {
+  overflow: hidden;
+  transition: all 0.3s ease;
+  background-color: transparent;
+}
+
+.faq-answer-content {
+  padding: 0.5rem 2rem 1.5rem 2rem;
+  color: #334155;
+  font-size: 0.95rem;
+  line-height: 1.7;
+  font-weight: 500;
+}
+
+.faq-answer-content p {
+  margin: 0;
+}
+
+.faq-answer-content strong {
+  color: #1e293b;
+  font-weight: 600;
+}
+
+.faq-answer-content ul {
+  list-style-type: disc;
+}
+
+.faq-answer-content li {
+  color: #334155;
+  line-height: 1.7;
+}
+
+.faq-answer-content em {
+  font-style: italic;
+  color: #1e293b;
+}
+
+.faq-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin: 1rem 0;
+  font-size: 0.9rem;
+  background: transparent;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.faq-table thead {
+  background: linear-gradient(135deg, rgba(217, 119, 6, 0.1) 0%, rgba(202, 138, 4, 0.15) 100%);
+  border-bottom: 3px solid rgba(217, 119, 6, 0.4);
+}
+
+.faq-table th {
+  padding: 1.25rem 1rem;
+  text-align: left;
+  font-weight: 700;
+  color: #1e293b;
+  font-size: 0.95rem;
+  border-bottom: none;
+}
+
+.faq-table th:first-child {
+  border-top-left-radius: 12px;
+}
+
+.faq-table th:last-child {
+  border-top-right-radius: 12px;
+}
+
+.faq-table tbody {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+}
+
+.faq-table td {
+  padding: 1rem;
+  border-bottom: 1px solid rgba(217, 119, 6, 0.15);
+  color: #334155;
+  font-weight: 500;
+}
+
+.faq-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.faq-table tbody tr:last-child td:first-child {
+  border-bottom-left-radius: 12px;
+}
+
+.faq-table tbody tr:last-child td:last-child {
+  border-bottom-right-radius: 12px;
+}
+
+.faq-table tbody tr:hover {
+  background-color: rgba(217, 119, 6, 0.05);
+}
+
+.faq-table tbody tr:nth-child(even) {
+  background-color: rgba(248, 250, 252, 0.5);
+}
+
+.faq-table tbody tr:nth-child(even):hover {
+  background-color: rgba(217, 119, 6, 0.08);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .faq-title {
+    font-size: 2.5rem;
+  }
+
+  .faq-subtitle {
+    font-size: 1.3rem;
+  }
+
+  .faq-description {
+    padding: 0 1.5rem;
+  }
+
+  .faq-question {
+    padding: 1.25rem 1.5rem;
+    font-size: 0.95rem;
+  }
+
+  .faq-answer-content {
+    padding: 0.5rem 1.5rem 1.25rem 1.5rem;
+    font-size: 0.9rem;
+  }
+
+  .faq-table {
+    font-size: 0.85rem;
+  }
+
+  .faq-table th,
+  .faq-table td {
+    padding: 0.75rem 0.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .faq-section {
+    padding: 3rem 0 6rem 0;
+  }
+
+  .faq-title {
+    font-size: 2rem;
+  }
+
+  .faq-subtitle {
+    font-size: 1.1rem;
+    padding: 0 1rem;
+  }
+
+  .faq-description {
+    padding: 0 1rem;
+    font-size: 0.9rem;
+  }
+
+  .faq-question {
+    padding: 1rem 1.25rem;
+    font-size: 0.9rem;
+  }
+
+  .faq-answer-content {
+    padding: 0.5rem 1.25rem 1rem 1.25rem;
+    font-size: 0.85rem;
+  }
+
+  .faq-icon {
+    width: 14px;
+    height: 14px;
+  }
+
+  .faq-table {
+    font-size: 0.8rem;
+  }
+
+  .faq-table th,
+  .faq-table td {
+    padding: 0.5rem 0.35rem;
+  }
+}
+
+/* button for back top */
+.back-to-top {
+  position: fixed;
+  bottom: 6.5rem;
+  right: 2rem;
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, #4CAF50, #45a049);
+  border: none;
+  border-radius: 50%;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 20px rgba(76, 175, 80, 0.3);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(20px);
+  z-index: 1000;
+}
+
+.back-to-top.visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.back-to-top:hover {
+  background: linear-gradient(135deg, #45a049, #4CAF50);
+  transform: translateY(-5px) scale(1.1);
+  box-shadow: 0 8px 30px rgba(76, 175, 80, 0.4);
+}
+
+.back-to-top svg {
+  transition: transform 0.3s ease;
+}
+
+.back-to-top:hover svg {
+  transform: translateY(-2px);
+}
+
+/* scroll to bottom */
+.scroll-to-bottom {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, #4CAF50, #45a049);
+  border: none;
+  border-radius: 50%;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 20px rgba(76, 175, 80, 0.3);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(20px);
+  z-index: 1000;
+}
+
+.scroll-to-bottom.visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.scroll-to-bottom:hover {
+  background: linear-gradient(135deg, #45a049, #4CAF50);
+  transform: translateY(-5px) scale(1.1);
+  box-shadow: 0 8px 30px rgba(76, 175, 80, 0.4);
+}
+
+.scroll-to-bottom svg {
+  transition: transform 0.3s ease;
+}
+
+.scroll-to-bottom:hover svg {
+  transform: translateY(2px);
 }
 </style>

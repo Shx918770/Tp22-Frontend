@@ -425,6 +425,20 @@
         </div>
       </div>
     </footer>
+
+    <!-- Back to Top Button -->
+    <button class="back-to-top" @click="scrollToTop">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+        <path d="M7 14L12 9L17 14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+
+    <!-- Scroll to Bottom Button -->
+    <button class="scroll-to-bottom" @click="scrollToBottom">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+        <path d="M7 10L12 15L17 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
   </div>
 </template>
 
@@ -472,7 +486,9 @@ export default {
       selectedNewsArticle: null,
       newsCacheTime: null,
       newsCacheDuration: 30 * 60 * 1000, // 30 minutes cache
-      jumpToPage: null // For page jump input
+      jumpToPage: null, // For page jump input
+      showBackToTop: false,
+      showScrollToBottom: false
     }
   },
   async mounted() {
@@ -480,6 +496,10 @@ export default {
     // await this.loadAvailableSuburbs() 
     await this.fetchNews()
     this.initHeroVideoHD()
+    window.addEventListener('scroll', this.handleScroll)
+  },
+  beforeUnmount() {
+    window.removeEventListener('scroll', this.handleScroll)
   },
   computed: {
     canCompare() {
@@ -559,6 +579,22 @@ export default {
         top: 0,
         behavior: 'smooth'
       });
+    },
+
+    scrollToBottom() {
+      window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' })
+    },
+
+    handleScroll() {
+      const scrollY = window.scrollY
+      const windowHeight = window.innerHeight
+      const documentHeight = document.documentElement.scrollHeight
+      
+      // Show back to top when scrolled down
+      this.showBackToTop = scrollY > 300
+      
+      // Show scroll to bottom when not at bottom (with 100px threshold)
+      this.showScrollToBottom = scrollY + windowHeight < documentHeight - 100
     },
 
     viewSuburbDetails(suburbName) {
@@ -1033,14 +1069,14 @@ export default {
 }
 
 .btn-secondary {
-  background: linear-gradient(135deg, #6c757d, #5a6268);
+  background: linear-gradient(135deg, #10b981, #059669);
   color: white;
 }
 
 .btn-secondary:hover {
-  background: linear-gradient(135deg, #5a6268, #6c757d);
-  transform: translateY(-3px);
-  box-shadow: 0 8px 25px rgba(108, 117, 125, 0.4);
+  background: linear-gradient(135deg, #059669, #10b981);
+  transform: translateY(-5px) scale(1.05);
+  box-shadow: 0 12px 30px rgba(16, 185, 129, 0.4);
 }
 
 .btn-icon {
@@ -3721,6 +3757,108 @@ export default {
     min-width: 32px;
     height: 32px;
     font-size: 0.85rem;
+  }
+}
+
+/* Back to Top Button */
+.back-to-top {
+  position: fixed;
+  bottom: 6.5rem;
+  right: 2rem;
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, #4CAF50, #45a049);
+  border: none;
+  border-radius: 50%;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 20px rgba(76, 175, 80, 0.3);
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  z-index: 9999;
+}
+
+.back-to-top.visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.back-to-top:hover {
+  background: linear-gradient(135deg, #45a049, #4CAF50);
+  transform: translateY(-5px) scale(1.1);
+  box-shadow: 0 8px 30px rgba(76, 175, 80, 0.4);
+}
+
+.back-to-top svg {
+  transition: transform 0.3s ease;
+}
+
+.back-to-top:hover svg {
+  transform: translateY(-2px);
+}
+
+/* Scroll to Bottom Button */
+.scroll-to-bottom {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, #4CAF50, #45a049);
+  border: none;
+  border-radius: 50%;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 20px rgba(76, 175, 80, 0.3);
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  z-index: 9999;
+}
+
+.scroll-to-bottom.visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.scroll-to-bottom:hover {
+  background: linear-gradient(135deg, #45a049, #4CAF50);
+  transform: translateY(-5px) scale(1.1);
+  box-shadow: 0 8px 30px rgba(76, 175, 80, 0.4);
+}
+
+.scroll-to-bottom svg {
+  transition: transform 0.3s ease;
+}
+
+.scroll-to-bottom:hover svg {
+  transform: translateY(2px);
+}
+
+@media (max-width: 768px) {
+  .back-to-top {
+    width: 50px;
+    height: 50px;
+    bottom: 4.5rem;
+    right: 1rem;
+  }
+
+  .scroll-to-bottom {
+    width: 50px;
+    height: 50px;
+    bottom: 1rem;
+    right: 1rem;
   }
 }
 </style>

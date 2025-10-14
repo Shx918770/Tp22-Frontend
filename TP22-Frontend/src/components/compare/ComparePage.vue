@@ -645,6 +645,10 @@ export default {
         this.secondSuburb = '';
         // Also clear result if suburbs become the same
         this.result = null;
+        return
+      }
+      if (newVal && this.secondSuburb && newVal !== this.secondSuburb) {
+        this.handleCompareClick();
       }
     },
     // Reset first suburb if it becomes the same as second suburb
@@ -653,6 +657,10 @@ export default {
         this.firstSuburb = '';
         // Also clear result if suburbs become the same
         this.result = null;
+        return
+      }
+      if (newVal && this.firstSuburb && newVal !== this.firstSuburb) {
+        this.handleCompareClick();
       }
     }
   }

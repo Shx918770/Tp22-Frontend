@@ -543,6 +543,7 @@ export default {
       }
     },
     goToSocial(suburb){
+      localStorage.setItem("selectedSuburb", suburb);
       this.$router.push(`/social?suburb=${encodeURIComponent(suburb)}`);
     },
 

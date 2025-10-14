@@ -24,6 +24,7 @@
       <div class="game-board-wrapper">
         <div class="game-board" ref="gameBoard">
           <canvas ref="canvas" :width="COLS * BLOCK_SIZE" :height="ROWS * BLOCK_SIZE"></canvas>
+          
           <div v-if="gameOver" class="game-over-overlay">
             <div class="game-over-content">
               <h2 class="game-over-title">🌍 Mission Complete!</h2>
@@ -77,7 +78,7 @@ export default {
       nextPiece: null,
       linesCleared: 0,
       gameOver: false,
-      paused: false,
+      paused: true,
       gameLoopId: null,
       dropCounter: 0,
       dropInterval: 1000,
@@ -139,7 +140,7 @@ export default {
       );
       this.linesCleared = 0;
       this.gameOver = false;
-      this.paused = false;
+      this.paused = true;
       this.dropCounter = 0;
       this.lastTime = 0;
       this.nextPiece = this.createRandomPiece();

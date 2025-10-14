@@ -45,7 +45,7 @@
       </div>
 
       <div class="game-instructions">
-        <p class="instruction-title">Controls:</p>
+        <p class="instruction-title">Key board Controls:</p>
         <div class="instruction-items">
           <div class="instruction-item">
             <kbd>←</kbd><kbd>→</kbd> Move

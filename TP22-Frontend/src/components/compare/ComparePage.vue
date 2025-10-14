@@ -87,7 +87,7 @@
       </section>
 
       <!-- Results Section - Two Column Comparison -->
-      <section v-if="result && firstSuburb && secondSuburb && firstSuburb !== secondSuburb" class="result-section">
+      <section v-if="result && result[firstSuburb] && result[secondSuburb] && firstSuburb && secondSuburb && firstSuburb !== secondSuburb" class="result-section">
         <!-- Tip -->
         <div class="tip-wrap">
           <div class="tip-info">
@@ -136,7 +136,7 @@
             <div class="row-cell value-cell first-value">
               <div class="score-plate first" :class="{ win: isHigher(firstSuburb, secondSuburb, metric.key) }">
                 <div class="score-main">
-                  <span class="score-number">{{ formatScore(result[firstSuburb][metric.key]) }}</span>
+                  <span class="score-number">{{ formatScore(result?.[firstSuburb]?.[metric.key]) }}</span>
                   <span class="score-unit">/100</span>
                 </div>
               </div>
@@ -179,7 +179,7 @@
                       <span class="mini-name">{{ metric.label }}</span>
                     </div>
                   <div class="mini-value first" :class="{ win: isHigherDetail(firstSuburb, secondSuburb, metric.key) }">
-                    <span class="mini-num">{{ result[firstSuburb][metric.key] ?? '-' }}</span>
+                    <span class="mini-num">{{ result?.[firstSuburb]?.[metric.key] ?? '-' }}</span>
                   </div>
                   <div class="mini-value second" :class="{ win: isHigherDetail(secondSuburb, firstSuburb, metric.key) }">
                     <span class="mini-num">{{ result[secondSuburb][metric.key] ?? '-' }}</span>
@@ -452,8 +452,6 @@ export default {
         return;
       }
       await this.compareSuburbs();
-      await this.getAIComparison();
-      
       // Scroll to results section after comparison
       this.$nextTick(() => {
         const resultsSection = document.querySelector('.result-section');
@@ -463,6 +461,9 @@ export default {
           window.scrollTo({ top: y, behavior: 'smooth' });
         }
       });
+      await this.getAIComparison();
+      
+      
     },
 
     async compareSuburbs() {

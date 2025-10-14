@@ -394,7 +394,7 @@
             <!-- FAQ Item 1 -->
             <div class="faq-item" :class="{ 'active': activeFaq === 0 }">
               <button class="faq-question" @click="toggleFaq(0)">
-                <span>What does the “Urban Tree Lifespan” card show, and why is it useful?</span>
+                <span>What does the Urban Tree Lifespan card show, and why is it useful?</span>
                 <svg class="faq-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
                   <path d="M19 9L12 16L5 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
@@ -409,7 +409,7 @@
             <!-- FAQ Item 2 -->
             <div class="faq-item" :class="{ 'active': activeFaq === 1 }">
               <button class="faq-question" @click="toggleFaq(1)">
-                <span>What does the "Shade Provider Diameter" card measure, and how can it guide cooling and comfort planning?</span>
+                <span>What does the Shade Provider Diameter card measure, and how can it guide cooling and comfort planning?</span>
                 <svg class="faq-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
                   <path d="M19 9L12 16L5 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
@@ -424,7 +424,7 @@
             <!-- FAQ Item 3 -->
             <div class="faq-item" :class="{ 'active': activeFaq === 2 }">
               <button class="faq-question" @click="toggleFaq(2)">
-                <span>What does the "Species Diversity" card reveal about ecological balance and resilience?</span>
+                <span>What does the Species Diversity card reveal about ecological balance and resilience?</span>
                 <svg class="faq-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
                   <path d="M19 9L12 16L5 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
@@ -439,7 +439,7 @@
             <!-- FAQ Item 4 -->
             <div class="faq-item" :class="{ 'active': activeFaq === 3 }">
               <button class="faq-question" @click="toggleFaq(3)">
-                <span>What does the "Canopy Density per 1,000 Residents" card indicate, and how does it relate to liveability?</span>
+                <span>What does the Canopy Density per 1,000 Residents card indicate, and how does it relate to liveability?</span>
                 <svg class="faq-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
                   <path d="M19 9L12 16L5 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
@@ -454,7 +454,7 @@
             <!-- FAQ Item 5 -->
             <div class="faq-item" :class="{ 'active': activeFaq === 4 }">
               <button class="faq-question" @click="toggleFaq(4)">
-                <span>What does the "Trees Planted (Annual / Renewal Cycle)" card represent, and why is it important?</span>
+                <span>What does the Trees Planted (Annual / Renewal Cycle) card represent, and why is it important?</span>
                 <svg class="faq-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
                   <path d="M19 9L12 16L5 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
@@ -469,7 +469,7 @@
             <!-- FAQ Item 6 -->
             <div class="faq-item" :class="{ 'active': activeFaq === 5 }">
               <button class="faq-question" @click="toggleFaq(5)">
-                <span>What does the "Air Quality Index (AQI / AVI)" graph show, and how does it connect to other indicators?</span>
+                <span>What does the Air Quality Index (AQI / AVI) graph show, and how does it connect to other indicators?</span>
                 <svg class="faq-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
                   <path d="M19 9L12 16L5 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
@@ -483,7 +483,7 @@
             <!-- FAQ Item 7 -->
             <div class="faq-item" :class="{ 'active': activeFaq === 6 }">
               <button class="faq-question" @click="toggleFaq(6)">
-                <span>What does the "2011 → 2021 → 2026 Total Modelled Energy Consumption" graph show, and how is it useful?</span>
+                <span>What does the 2011 → 2021 → 2026 Total Modelled Energy Consumption graph show, and how is it useful?</span>
                 <svg class="faq-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
                   <path d="M19 9L12 16L5 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
@@ -497,7 +497,7 @@
             <!-- FAQ Item 8 -->
             <div class="faq-item" :class="{ 'active': activeFaq === 7 }">
               <button class="faq-question" @click="toggleFaq(7)">
-                <span>What does the “Block-Level Energy Consumption Map” display, and what insight does it offer?</span>
+                <span>What does the Block-Level Energy Consumption Map display, and what insight does it offer?</span>
                 <svg class="faq-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
                   <path d="M19 9L12 16L5 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
@@ -511,7 +511,7 @@
             <!-- FAQ Item 9 -->
             <div class="faq-item" :class="{ 'active': activeFaq === 8 }">
               <button class="faq-question" @click="toggleFaq(8)">
-                <span>What does the “Energy Lifespan / Infrastructure Age” card represent, and why does it matter?</span>
+                <span>What does the Energy Lifespan / Infrastructure Age card represent, and why does it matter?</span>
                 <svg class="faq-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
                   <path d="M19 9L12 16L5 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
@@ -526,7 +526,7 @@
             <!-- FAQ Item 10 -->
             <div class="faq-item" :class="{ 'active': activeFaq === 9 }">
               <button class="faq-question" @click="toggleFaq(9)">
-                <span>What does the “Energy Efficiency / Consumption” card measure, and how does it guide sustainable living?</span>
+                <span>What does the Energy Efficiency / Consumption card measure, and how does it guide sustainable living?</span>
                 <svg class="faq-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
                   <path d="M19 9L12 16L5 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
@@ -541,7 +541,7 @@
             <!-- FAQ Item 11 -->
             <div class="faq-item" :class="{ 'active': activeFaq === 10 }">
               <button class="faq-question" @click="toggleFaq(10)">
-                <span>What does the “Energy Density per Capita” card show, and how can it be interpreted?</span>
+                <span>What does the Energy Density per Capita card show, and how can it be interpreted?</span>
                 <svg class="faq-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
                   <path d="M19 9L12 16L5 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
@@ -556,7 +556,7 @@
             <!-- FAQ Item 12 -->
             <div class="faq-item" :class="{ 'active': activeFaq === 11 }">
               <button class="faq-question" @click="toggleFaq(11)">
-                <span>What does the “Energy Performance Score” card indicate, and how should users read it?</span>
+                <span>What does the Energy Performance Score card indicate, and how should users read it?</span>
                 <svg class="faq-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
                   <path d="M19 9L12 16L5 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
@@ -571,14 +571,71 @@
             <!-- FAQ Item 13 -->
             <div class="faq-item" :class="{ 'active': activeFaq === 12 }">
               <button class="faq-question" @click="toggleFaq(12)">
-                <span>What insight emerges when viewing tree, air, and energy data together?</span>
+                <span>How is the Environment Score calculated?</span>
                 <svg class="faq-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
                   <path d="M19 9L12 16L5 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
               </button>
               <div class="faq-answer" v-show="activeFaq === 12">
                 <div class="faq-answer-content">
-                  <p>Analysing all visuals together gives a complete sustainability picture. Tree metrics show natural resilience and shading; AQI/AVI reveals environmental quality; and energy metrics expose efficiency and infrastructure health. Suburbs performing well across all domains — high canopy, clean air, and efficient energy — represent the most sustainable and liveable areas.</p>
+                  <p>The Environment Score combines three core environmental indicators — Air Quality (AQI), Resident Shade Access (RAS), and Socio-Economic Score (SES) — to measure suburb-level sustainability. Each metric is normalized (0–1), weighted, and rescaled between 65 and 95 to ensure comparability.</p>
+                  <div style="margin: 1.5rem 0; padding: 1rem; background: rgba(241, 245, 249, 0.8); border-radius: 8px; font-family: 'Courier New', monospace; font-size: 0.9rem;">
+                    "Environment Score"=65+30×(0.40R+0.35A+0.25S)
+                  </div>
+                  <p>Where:</p>
+                  <p>R = normalized RAS (shade access %)</p>
+                  <p>	A = normalized air quality =1-(AQI-min⁡(AQI))/(max⁡(AQI)-min⁡(AQI))</p>
+                  <p>S = normalized SES percentile</p>
+                </div>
+              </div>
+            </div>
+            <!-- FAQ Item 14 -->
+            <div class="faq-item" :class="{ 'active': activeFaq === 13 }">
+              <button class="faq-question" @click="toggleFaq(13)">
+                <span>How is the Socio-Economic Score (SES) calculated?</span>
+                <svg class="faq-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
+                  <path d="M19 9L12 16L5 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+              <div class="faq-answer" v-show="activeFaq === 13">
+                <div class="faq-answer-content">
+                  <p>SES is derived from suburb-level SEIFA indices (Australian Bureau of Statistics), reflecting income, education, and environmental resilience. It is normalized using:</p>
+                  <div style="margin: 1.5rem 0; padding: 1rem; background: rgba(241, 245, 249, 0.8); border-radius: 8px; font-family: 'Courier New', monospace; font-size: 0.9rem;">
+                    S=(SES-min⁡(SES))/(max⁡(SES)-min⁡(SES))
+                  </div>
+                  <p>This ensures equitable scaling between low- and high-advantage areas, highlighting the community’s capacity to sustain green infrastructure and respond to environmental stress.</p>
+                </div>
+              </div>
+            </div>
+            <!-- FAQ Item 15 -->
+            <div class="faq-item" :class="{ 'active': activeFaq === 14 }">
+              <button class="faq-question" @click="toggleFaq(14)">
+                <span>How is the Resident Shade Access (RAS) calculated?</span>
+                <svg class="faq-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
+                  <path d="M19 9L12 16L5 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+              <div class="faq-answer" v-show="activeFaq === 14">
+                <div class="faq-answer-content">
+                  <p>RAS measures the percentage of residents living within 100 m of effective tree canopy or shaded public space. It is expressed as:</p>
+                  <div style="margin: 1.5rem 0; padding: 1rem; background: rgba(241, 245, 249, 0.8); border-radius: 8px; font-family: 'Courier New', monospace; font-size: 0.9rem;">
+                    R="Residents with canopy access" /"Total residents" ×100
+                  </div>
+                  <p>High RAS values (>70%) indicate strong microclimate resilience, reduced heat exposure, and mature urban forestry coverage.</p>
+                </div>
+              </div>
+            </div>
+            <!-- FAQ Item 16 -->
+            <div class="faq-item" :class="{ 'active': activeFaq === 15 }">
+              <button class="faq-question" @click="toggleFaq(15)">
+                <span>What insight emerges when viewing tree, air, and energy data together?</span>
+                <svg class="faq-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
+                  <path d="M19 9L12 16L5 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+              <div class="faq-answer" v-show="activeFaq === 15">
+                <div class="faq-answer-content">
+                  <p>Analysing all visuals together gives a complete sustainability picture. Tree metrics show natural resilience and shading; AQI reveals environmental quality; and energy metrics expose efficiency and infrastructure health. Suburbs performing well across all domains — high canopy, clean air, and efficient energy — represent the most sustainable and liveable areas.</p>
                 </div>
               </div>
             </div>

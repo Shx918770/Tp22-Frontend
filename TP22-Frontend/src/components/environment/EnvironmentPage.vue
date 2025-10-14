@@ -337,12 +337,10 @@
             <h2 class="section-title">Trend Snapshot</h2>
             <p class="section-subtitle">2011 → 2021 → 2026 total modelled consumption</p>
 
-            <!-- 上半部分趋势图 -->
             <div class="trend-chart-wrapper">
               <canvas ref="energyTrendChart"></canvas>
             </div>
 
-            <!-- 中部强度信息 -->
             <div class="trend-intensity-info">
               <p>
                 Median per-property intensity ≈ 
@@ -357,13 +355,12 @@
             </div>
           </div>
 
-          <!-- 下半部分 Insight -->
           <div class="detail-card trend-insight-card">
             <h3 class="insight-title">Interpretation</h3>
             <ul class="insight-list">
               <li>
                 <strong>Rising Energy Footprint –</strong>
-                {{ energyTrendInsight.ring_energy_footprint }}
+                {{ energyTrendInsight.rising_energy_footprint }}
               </li>
               <li>
                 <strong>Residential Share Surging –</strong>
@@ -1176,8 +1173,6 @@ export default {
       try {
         const res = await environmentApi.getEnergyTrendBySuburb(suburb);
         this.energyTrendData = res.data?.data || null;
-
-        // 渲染折线图
         if (this.energyTrendData) {
           this.$nextTick(() => this.renderEnergyTrendChart());
         }
